@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
     "test:env": "vitest run tests/env-contract.test.ts",
+    "test:motion": "vitest run tests/motion/reduced-motion.test.ts",
     "test:e2e": "playwright test",
     "copy-idl": "node scripts/copy-idl.mjs"
   },
@@ -23,6 +24,7 @@
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-wallets": "^0.19.32",
     "@solana/web3.js": "^1.98.0",
+    "gsap": "^3.13.0",
     "nuxt": "^3.16.0",
     "pinia": "^2.3.1",
     "reka-ui": "^2.9.8",

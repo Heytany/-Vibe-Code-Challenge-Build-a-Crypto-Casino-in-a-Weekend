@@ -1,8 +1,11 @@
 /**
- * @agent-context E2E: lobby loads with Brutal wibe branding and footer footnotes.
- * @env Requires valid .env or .env.example values copied to .env
+ * @agent-context E2E smoke — reduced motion for stable navigation (matrix skipped in CI).
  */
 import { test, expect } from '@playwright/test'
+
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+})
 
 test.describe('lobby', () => {
   test('shows Brutal wibe title and footnotes accordion', async ({ page }) => {
@@ -12,12 +15,12 @@ test.describe('lobby', () => {
     await expect(page.getByText('Testnet only')).toBeVisible()
   })
 
-  test('game cards link to dice and slot routes', async ({ page }) => {
+  test('game cards navigate to dice and slot routes', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('link', { name: /Glitch Roll/i }).click()
+    await page.getByRole('button', { name: /Glitch Roll/i }).click()
     await expect(page).toHaveURL(/\/games\/dice/)
     await page.goto('/')
-    await page.getByRole('link', { name: /Corrupted Reels/i }).click()
+    await page.getByRole('button', { name: /Corrupted Reels/i }).click()
     await expect(page).toHaveURL(/\/games\/slot/)
   })
 })

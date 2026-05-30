@@ -21,8 +21,17 @@
 
 ## Motion
 
-- Win: `.bw-shake` or `.bw-glitch`
-- Loading: `.bw-corrupt-bar`
+- **Flat:** `.bw-glitch`, `.bw-shake`, `.bw-corrupt-bar` (CSS)
+- **Hero (GSAP):** matrix route, crack wallet — see [`ui-motion.md`](ui-motion.md)
+- **Rule:** hyper vs flat — never GSAP everything
+
+## Hyper vs flat
+
+| Flat | Hyper (GSAP) |
+|------|----------------|
+| Buttons, panels, footer | Lobby → game transition |
+| Disconnect wallet | Connect wallet crack modal |
+| Game UI shell | Win/deposit (it.3+) |
 
 ## Meta-narrative
 

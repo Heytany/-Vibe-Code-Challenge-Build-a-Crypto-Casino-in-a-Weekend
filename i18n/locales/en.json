@@ -40,6 +40,20 @@
       "hacker": "You are not exploiting a bug — you are playing a game styled like a exploit. The chain is the source of truth."
     }
   },
+  "motion": {
+    "wallet": {
+      "title": "Wallet breach",
+      "subtitle": "// screen.crack — viewport center",
+      "opening": "Monitor fissure detected. Forcing link channel…",
+      "linking": "LINKING PHANTOM",
+      "connecting": "Awaiting Phantom signature…",
+      "linked": "LINK ESTABLISHED",
+      "success": "Wallet connected. You may close this fracture.",
+      "failed": "LINK FAILED",
+      "error": "Phantom rejected or missing. Check extension.",
+      "close": "Seal crack"
+    }
+  },
   "errors": {
     "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values."
   }

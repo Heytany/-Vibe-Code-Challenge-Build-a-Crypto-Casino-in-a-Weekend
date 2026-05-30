@@ -11,12 +11,14 @@
     </section>
 
     <section class="grid gap-6 md:grid-cols-2">
-      <NuxtLink
+      <button
         v-for="game in games"
         :key="game.to"
-        :to="game.to"
-        class="bw-panel bw-panel--broken p-6 block no-underline text-[var(--bw-fg)] hover:bg-[var(--bw-accent)] hover:text-[var(--bw-bg)] transition-colors group"
+        type="button"
+        class="bw-panel bw-panel--broken p-6 block text-left w-full text-[var(--bw-fg)] hover:bg-[var(--bw-accent)] hover:text-[var(--bw-bg)] transition-colors group"
         :class="game.tilt"
+        :disabled="motionStore.isLocked"
+        @click="goToGame(game.to)"
       >
         <span class="text-xs text-[var(--bw-muted)] group-hover:text-[var(--bw-bg)] font-mono">
           {{ t(game.statusKey) }}
@@ -27,16 +29,19 @@
         <p class="text-sm whitespace-normal opacity-80">
           {{ t(game.descKey) }}
         </p>
-      </NuxtLink>
+      </button>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
 /**
- * @agent-context Lobby — entry point with links to both games.
+ * @agent-context Lobby — matrix GSAP transition on game card click.
+ * @see composables/useBrutalMotion.ts
  */
 const { t } = useI18n()
+const { playRouteTransition } = useBrutalMotion()
+const motionStore = useMotionStore()
 
 const games = [
   {
@@ -54,4 +59,8 @@ const games = [
     tilt: 'bw-broken-tilt-alt',
   },
 ]
+
+function goToGame(to: string) {
+  playRouteTransition(to, 'matrix')
+}
 </script>

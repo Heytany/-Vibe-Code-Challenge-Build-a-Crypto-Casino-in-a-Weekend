@@ -2,7 +2,7 @@
   <button
     type="button"
     class="bw-btn bw-broken-tilt"
-    :disabled="connecting"
+    :disabled="connecting || motionStore.isLocked"
     @click="onClick"
   >
     <span v-if="connected && publicKey">
@@ -19,11 +19,13 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Phantom connect button — delegates to useWallet composable.
- * @see composables/useWallet.ts
+ * @agent-context Phantom connect — crack modal on connect, plain disconnect.
+ * @see composables/useBrutalMotion.ts playCrackModal
  */
 const { t } = useI18n()
 const { connected, connecting, publicKey, connect, disconnect } = useWallet()
+const { playCrackModal } = useBrutalMotion()
+const motionStore = useMotionStore()
 
 const truncatedAddress = computed(() => {
   if (!publicKey.value) return ''
@@ -35,9 +37,13 @@ async function onClick() {
   try {
     if (connected.value) {
       await disconnect()
-    } else {
-      await connect()
+      return
     }
+    await playCrackModal({
+      connect: async () => {
+        await connect()
+      },
+    })
   } catch (error) {
     useBrutalToast().showError(error)
   }

@@ -8,6 +8,10 @@
   --bw-danger: #ff3333;
   --bw-font: 'IBM Plex Mono', ui-monospace, monospace;
   --bw-glitch-offset: 2px;
+  --bw-motion-matrix-fg: #39ff14;
+  --bw-motion-overlay-z: 500;
+  --bw-motion-duration-route: 1.4s;
+  --bw-motion-duration-crack: 0.9s;
 }
 
 html {
@@ -142,4 +146,17 @@ body {
   max-width: 40rem;
   overflow-x: auto;
   white-space: pre-wrap;
+}
+
+body.bw-motion-lock {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bw-glitch,
+  .bw-shake,
+  .bw-corrupt-bar {
+    animation: none !important;
+  }
 }

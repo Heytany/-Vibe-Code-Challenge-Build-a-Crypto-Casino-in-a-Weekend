@@ -2,7 +2,7 @@
 
 **Project:** Brutal wibe — brutalist on-chain crypto casino  
 **Challenge:** Vibe-Code 48h build (Solana devnet, testnet only)  
-**Phase:** Skeleton complete — wire game logic + deploy program next
+**Phase:** GSAP motion base done — handoff Claude for on-chain + game logic
 
 ## Roles
 
