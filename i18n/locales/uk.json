@@ -10,6 +10,13 @@
   "common": {
     "back": "← Лobby"
   },
+  "toast": {
+    "win": {
+      "title": "ВИГРАШ",
+      "message": "+{delta} кредитів",
+      "super": "// ДЖЕКПОТ — +{delta}"
+    }
+  },
   "theme": {
     "day": "День",
     "night": "Ніч",
@@ -118,7 +125,59 @@
     }
   },
   "errors": {
-    "ENV_INVALID": "Помилка оточення. Скопіюйте .env.example у .env."
+    "ACCESS_DENIED": "Доступ заборонено",
+    "pageHint": "// маршрут заблоковано — статус {code}",
+    "back": "← У лобі",
+    "offline": {
+      "banner": "// мережа мертва — RPC може не відповісти",
+      "toast": "Ви offline"
+    },
+    "liveBlocked": {
+      "title": "LIVE заблоковано",
+      "dismiss": "Залишитись у FUN",
+      "noWallet": "Підключіть Phantom на devnet для LIVE.",
+      "noProgram": "Program не задеployено. Вкажіть NUXT_PUBLIC_CASINO_PROGRAM_ID після anchor deploy.",
+      "generic": "LIVE потребує гаманець і задеployений program."
+    },
+    "ENV_INVALID": "Помилка оточення. Скопіюйте .env.example у .env.",
+    "unknown": {
+      "title": "Сигнал втрачено",
+      "message": "Щось зламалось. Спробуйте знову або поверніться в лобі."
+    },
+    "codes": {
+      "WALLET_NOT_CONNECTED": {
+        "title": "Гаманець offline",
+        "message": "Підключіть Phantom для продовження."
+      },
+      "WALLET_REJECTED": {
+        "title": "Підпис відхилено",
+        "message": "Phantom відхилив запит."
+      },
+      "RPC_UNREACHABLE": {
+        "title": "RPC недоступний",
+        "message": "Немає зв'язку з Solana RPC. Перевірте NUXT_PUBLIC_SOLANA_RPC_URL."
+      },
+      "PROGRAM_NOT_CONFIGURED": {
+        "title": "Program ID відсутній",
+        "message": "Deploy контракту та налаштуйте .env."
+      },
+      "INSUFFICIENT_BALANCE": {
+        "title": "Недостатньо коштів",
+        "message": "Поповніть баланс або зменшіть ставку."
+      },
+      "INVALID_BET": {
+        "title": "Невірна ставка",
+        "message": "Ставка або параметри гри некоректні."
+      },
+      "TRANSACTION_FAILED": {
+        "title": "Транзакцію відхилено",
+        "message": "On-chain транзакція не пройшла."
+      },
+      "ENV_INVALID": {
+        "title": "Env пошкоджено",
+        "message": "Конфігурація оточення некоректна."
+      }
+    }
   },
   "seo": {
     "lobby": {

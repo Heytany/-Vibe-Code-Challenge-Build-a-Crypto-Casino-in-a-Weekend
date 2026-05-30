@@ -152,6 +152,86 @@ body {
   margin: 0;
 }
 
+/* ── Dancing text (access denied, glitch headings) ─────────────────────── */
+
+.bw-dancing-text {
+  margin: 0;
+}
+
+.bw-dancing-text__char {
+  display: inline-block;
+  transform-origin: center bottom;
+  animation: bw-dance-letter 0.85s ease-in-out infinite;
+  animation-delay: calc(var(--bw-dance-i, 0) * 0.07s);
+}
+
+@keyframes bw-dance-letter {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-7px) rotate(-5deg); }
+  75% { transform: translateY(5px) rotate(4deg); }
+}
+
+/* ── Brutal skeleton ───────────────────────────────────────────────────── */
+
+.bw-skeleton {
+  display: inline-block;
+  vertical-align: middle;
+  border: 2px solid var(--bw-border);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--bw-bg) 0,
+    var(--bw-bg) 6px,
+    color-mix(in srgb, var(--bw-fg) 8%, var(--bw-bg)) 6px,
+    color-mix(in srgb, var(--bw-fg) 8%, var(--bw-bg)) 12px
+  );
+  background-size: 200% 200%;
+  animation: bw-skeleton-pulse 1.1s steps(4) infinite;
+}
+
+.bw-skeleton--block {
+  display: block;
+}
+
+@keyframes bw-skeleton-pulse {
+  0%, 100% { background-position: 0% 50%; opacity: 0.85; }
+  50% { background-position: 100% 50%; opacity: 1; }
+}
+
+/* ── Form / shell UX ───────────────────────────────────────────────────── */
+
+.bw-input--invalid {
+  border-color: var(--bw-danger) !important;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--bw-danger) 55%, transparent);
+}
+
+.bw-offline-banner {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  font-family: var(--bw-font);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bw-bg);
+  background: var(--bw-danger);
+  border-bottom: 3px solid var(--bw-fg);
+}
+
+.nuxt-loading-indicator {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--bw-accent) 35%,
+    var(--bw-accent) 65%,
+    transparent
+  ) !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--bw-accent) 65%, transparent);
+}
+
 .bw-accent {
   color: var(--bw-accent);
 }
@@ -1235,6 +1315,11 @@ body.bw-motion-lock {
   .bw-slot-bandit.is-settled .bw-slot-bandit__cabinet,
   .bw-slot-bandit.is-settled.bw-slot-bandit--bare .bw-slot-bandit__reels--bare,
   .bw-slot-bandit.is-spinning .bw-slot-bandit__reel-flip {
+    animation: none !important;
+  }
+
+  .bw-dancing-text__char,
+  .bw-skeleton {
     animation: none !important;
   }
 

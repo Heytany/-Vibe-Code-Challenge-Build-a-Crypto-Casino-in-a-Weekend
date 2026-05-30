@@ -10,6 +10,13 @@
   "common": {
     "back": "← Lobby"
   },
+  "toast": {
+    "win": {
+      "title": "WIN",
+      "message": "+{delta} credits",
+      "super": "// JACKPOT — +{delta}"
+    }
+  },
   "theme": {
     "day": "Day",
     "night": "Night",
@@ -118,7 +125,59 @@
     }
   },
   "errors": {
-    "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values."
+    "ACCESS_DENIED": "Access denied",
+    "pageHint": "// route blocked — status {code}",
+    "back": "← Force lobby",
+    "offline": {
+      "banner": "// network dead — RPC may fail",
+      "toast": "You went offline"
+    },
+    "liveBlocked": {
+      "title": "LIVE locked",
+      "dismiss": "Stay in FUN",
+      "noWallet": "Connect Phantom on devnet to unlock LIVE mode.",
+      "noProgram": "Casino program is not deployed. Set NUXT_PUBLIC_CASINO_PROGRAM_ID after anchor deploy.",
+      "generic": "LIVE mode needs wallet + deployed program."
+    },
+    "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values.",
+    "unknown": {
+      "title": "Signal lost",
+      "message": "Something broke. Try again or return to the lobby."
+    },
+    "codes": {
+      "WALLET_NOT_CONNECTED": {
+        "title": "Wallet offline",
+        "message": "Connect Phantom to continue."
+      },
+      "WALLET_REJECTED": {
+        "title": "Signature rejected",
+        "message": "Phantom declined the request."
+      },
+      "RPC_UNREACHABLE": {
+        "title": "RPC dead",
+        "message": "Cannot reach Solana RPC. Check NUXT_PUBLIC_SOLANA_RPC_URL."
+      },
+      "PROGRAM_NOT_CONFIGURED": {
+        "title": "Program missing",
+        "message": "Casino program ID not set. Deploy and configure .env."
+      },
+      "INSUFFICIENT_BALANCE": {
+        "title": "Not enough credits",
+        "message": "Deposit devnet tokens or lower your bet."
+      },
+      "INVALID_BET": {
+        "title": "Bad bet",
+        "message": "Bet amount or game parameters are invalid."
+      },
+      "TRANSACTION_FAILED": {
+        "title": "Chain rejected",
+        "message": "On-chain transaction failed."
+      },
+      "ENV_INVALID": {
+        "title": "Env corrupt",
+        "message": "Environment configuration is invalid."
+      }
+    }
   },
   "seo": {
     "lobby": {

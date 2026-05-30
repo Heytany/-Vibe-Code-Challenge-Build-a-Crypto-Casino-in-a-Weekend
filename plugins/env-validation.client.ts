@@ -1,8 +1,8 @@
 /**
- * @agent-context Client-only env validation — fullscreen error if NUXT_PUBLIC_* invalid.
+ * @agent-context Client-only env validation — access denied screen if NUXT_PUBLIC_* invalid.
  * @depends tests/helpers/env-contract.ts (same zod schema)
- * @failure-modes: Missing PROGRAM_ID → lists exact key; bad URL → RPC field highlighted
  */
+import { showError } from '#app'
 import { validatePublicEnv } from '~/shared/env-contract'
 
 export default defineNuxtPlugin(() => {
@@ -17,17 +17,14 @@ export default defineNuxtPlugin(() => {
 
   if (result.ok) return
 
-  const lines = [
-    'Brutal wibe — environment misconfigured',
-    '',
-    'Fix .env (see .env.example):',
-    ...result.issues.map(i => `  • ${i.path}: ${i.message}`),
-  ]
-
-  const el = document.createElement('div')
-  el.className = 'bw-env-error'
-  el.innerHTML = `<pre>${lines.join('\n')}</pre>`
-  document.body.appendChild(el)
-
   console.error('[env-validation]', result.issues)
+
+  showError(
+    createError({
+      statusCode: 503,
+      statusMessage: 'ENV_INVALID',
+      message: result.issues.map(i => `${i.path}: ${i.message}`).join('; '),
+      fatal: true,
+    }),
+  )
 })

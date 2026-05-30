@@ -10,6 +10,13 @@
   "common": {
     "back": "← Лobby"
   },
+  "toast": {
+    "win": {
+      "title": "ВЫИГРЫШ",
+      "message": "+{delta} кредитов",
+      "super": "// ДЖЕКПОТ — +{delta}"
+    }
+  },
   "theme": {
     "day": "День",
     "night": "Ночь",
@@ -118,7 +125,59 @@
     }
   },
   "errors": {
-    "ENV_INVALID": "Ошибка окружения. Скопируйте .env.example в .env."
+    "ACCESS_DENIED": "Доступ запрещён",
+    "pageHint": "// маршрут заблокирован — статус {code}",
+    "back": "← В лобби",
+    "offline": {
+      "banner": "// сеть мертва — RPC может не ответить",
+      "toast": "Вы offline"
+    },
+    "liveBlocked": {
+      "title": "LIVE заблокирован",
+      "dismiss": "Остаться в FUN",
+      "noWallet": "Подключите Phantom на devnet для LIVE.",
+      "noProgram": "Program не задеployен. Укажите NUXT_PUBLIC_CASINO_PROGRAM_ID после anchor deploy.",
+      "generic": "LIVE требует кошелёк и задеployенный program."
+    },
+    "ENV_INVALID": "Ошибка окружения. Скопируйте .env.example в .env.",
+    "unknown": {
+      "title": "Сигнал потерян",
+      "message": "Что-то сломалось. Попробуйте снова или вернитесь в лобби."
+    },
+    "codes": {
+      "WALLET_NOT_CONNECTED": {
+        "title": "Кошелёк offline",
+        "message": "Подключите Phantom для продолжения."
+      },
+      "WALLET_REJECTED": {
+        "title": "Подпись отклонена",
+        "message": "Phantom отклонил запрос."
+      },
+      "RPC_UNREACHABLE": {
+        "title": "RPC недоступен",
+        "message": "Нет связи с Solana RPC. Проверьте NUXT_PUBLIC_SOLANA_RPC_URL."
+      },
+      "PROGRAM_NOT_CONFIGURED": {
+        "title": "Program ID отсутствует",
+        "message": "Deploy контракта и настройте .env."
+      },
+      "INSUFFICIENT_BALANCE": {
+        "title": "Недостаточно средств",
+        "message": "Пополните баланс или уменьшите ставку."
+      },
+      "INVALID_BET": {
+        "title": "Неверная ставка",
+        "message": "Ставка или параметры игры некорректны."
+      },
+      "TRANSACTION_FAILED": {
+        "title": "Транзакция отклонена",
+        "message": "On-chain транзакция не прошла."
+      },
+      "ENV_INVALID": {
+        "title": "Env повреждён",
+        "message": "Конфигурация окружения некорректна."
+      }
+    }
   },
   "seo": {
     "lobby": {

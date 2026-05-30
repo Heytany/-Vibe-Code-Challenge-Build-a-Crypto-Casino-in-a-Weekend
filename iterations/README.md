@@ -57,8 +57,9 @@ iterations/NN-kratkoe-nazvanie.md
 | 4 | _(вошло в it.5)_ fun mode ADR-014 | [04-fun-mode.md](./04-fun-mode.md) | — |
 | 5 | `ca5fae0` — glitch roll dice + fun mode (Claude/Cursor) | [05-dice-glitch-roll.md](./05-dice-glitch-roll.md) | 30.05.2026 · **~1 ч PO · $20 Cursor** |
 | 6 | `8ddfcaa` — corrupted reels slot + layout polish | [06-slot-corrupted-reels.md](./06-slot-corrupted-reels.md) | 30.05.2026 · **~15 мин PO** финал + slot hero |
+| 7 | _(PO коммитит)_ — access denied UX, toasts, offline | [07-access-denied-ux.md](./07-access-denied-ux.md) | 30.05.2026 · **~30 мин PO** |
 
-**QA:** FUN — `/games/dice`, `/games/slot` без Phantom
+**QA:** FUN — `/games/dice`, `/games/slot` без Phantom · 404 → `/games/nope`
 
 ---
 

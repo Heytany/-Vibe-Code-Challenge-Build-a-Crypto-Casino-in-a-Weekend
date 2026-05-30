@@ -125,7 +125,9 @@
                 type="number"
                 min="1"
                 class="bw-input w-full"
+                :class="{ 'bw-input--invalid': betInvalid && betTouched }"
                 :disabled="spinning"
+                @blur="markBetTouched"
               >
             </label>
             <div class="text-xs font-mono space-y-1">
@@ -207,16 +209,20 @@ const activeTab = ref<'play' | 'rules'>('play')
 const panelRef = ref<HTMLElement | null>(null)
 const banditRef = ref<ComponentPublicInstance | null>(null)
 const matrixBackdropRef = ref<{ play: (intense?: boolean) => Promise<void> } | null>(null)
+const { touched: betTouched, invalid: betInvalid, markTouched: markBetTouched, validateBetOrToast } = useBetField(bet)
+const { showWin } = useBrutalToast()
 
 onMounted(() => {
   playGameEnter(panelRef.value)
 })
 
 async function onSpin() {
+  if (!validateBetOrToast()) return
   try {
     const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
     await spin(el)
     if (won.value) {
+      showWin(lastPayoutDelta.value, isSuperWin.value)
       await matrixBackdropRef.value?.play(isSuperWin.value)
     }
   } catch (e) {
