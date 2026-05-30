@@ -53,4 +53,15 @@ After deploy:
 
 ## 5. Deploy frontend
 
-Vercel / Cloudflare Pages — set all `NUXT_PUBLIC_*` env vars in dashboard.
+See [`specs/deploy.md`](specs/deploy.md):
+
+- **Vercel** — [`vercel.json`](../vercel.json), set `NUXT_PUBLIC_*` in dashboard  
+- **Netlify** — [`netlify.toml`](../netlify.toml)  
+- **Cloudflare Pages** — build `pnpm build`, output `.output/public`  
+- **CI** — [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
+
+After deploy: add live URL to [`CONTEXT.md`](CONTEXT.md).
+
+## 6. Tester wallet (human PO)
+
+[`iterations/help.md`](../iterations/help.md) — Phantom devnet setup in Russian.

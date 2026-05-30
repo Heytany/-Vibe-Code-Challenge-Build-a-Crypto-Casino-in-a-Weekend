@@ -2,13 +2,13 @@
   <footer class="border-t-4 border-[var(--bw-border)] mt-auto py-8 bg-[var(--bw-bg)]">
     <div class="container mx-auto px-4 max-w-5xl space-y-6">
       <p class="text-sm text-[var(--bw-muted)] uppercase tracking-wider">
-        {{ t('footer.tagline') }}
+        <UiLocaleText path="footer.tagline" tag="span" />
       </p>
 
       <UiPrimitivesBrutalAccordion :items="accordionItems" />
 
       <p class="text-xs text-[var(--bw-muted)] pt-4 border-t border-[var(--bw-muted)]/30">
-        Brutal wibe · Solana devnet · {{ t('footer.disclaimer') }}
+        Brutal wibe · Solana devnet · <UiLocaleText path="footer.disclaimer" tag="span" />
       </p>
     </div>
   </footer>

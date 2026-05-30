@@ -58,19 +58,21 @@ export const useMotionStore = defineStore('motion', () => {
   function finishMatrix(navigate: (to: string) => void) {
     const target = matrixTarget.value
     matrixTarget.value = null
-    if (target) {
-      navigate(target)
-    }
     matrixComplete?.()
     matrixComplete = null
     unlockMotion()
+    if (target) {
+      navigate(target)
+    }
   }
 
   function cancelMatrix() {
+    const target = matrixTarget.value
     matrixTarget.value = null
     matrixComplete?.()
     matrixComplete = null
     unlockMotion()
+    return target
   }
 
   function startCrack(connectFn: () => Promise<void>): Promise<void> {

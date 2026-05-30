@@ -15,14 +15,14 @@
         <AccordionTrigger
           class="flex w-full min-h-[44px] items-center justify-between gap-2 p-4 font-bold uppercase text-left hover:bg-[var(--bw-accent)] hover:text-[var(--bw-bg)] transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-[var(--bw-accent)]"
         >
-          <span class="whitespace-normal">{{ item.title }}</span>
+          <span class="whitespace-normal bw-locale-text">{{ item.title }}</span>
           <span class="text-[var(--bw-accent)] shrink-0" aria-hidden="true">+</span>
         </AccordionTrigger>
       </AccordionHeader>
       <AccordionContent
         class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       >
-        <div class="px-4 pb-4 text-sm whitespace-normal text-[var(--bw-muted)]">
+        <div class="px-4 pb-4 text-sm whitespace-normal text-[var(--bw-muted)] bw-locale-text">
           {{ item.content }}
         </div>
       </AccordionContent>

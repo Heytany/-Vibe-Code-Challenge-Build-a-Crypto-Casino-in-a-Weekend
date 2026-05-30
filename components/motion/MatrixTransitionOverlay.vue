@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      v-show="visible"
+      v-if="visible"
       ref="rootRef"
       class="bw-motion-overlay"
       aria-hidden="true"
@@ -19,6 +19,7 @@
 /**
  * @agent-context Full-screen matrix rain + glitch wipe before route change.
  * @see ai/specs/ui-motion.md
+ * @failure-modes: overlay mount fail → finishMatrix still navigates
  */
 import gsap from 'gsap'
 import { MATRIX_GLYPHS, MOTION_DURATIONS } from '~/shared/motion'
@@ -34,40 +35,65 @@ const visible = ref(false)
 const sliceCount = 5
 
 let rafId = 0
+let running = false
 let columns: { y: number; speed: number; chars: string[] }[] = []
 let ctx: CanvasRenderingContext2D | null = null
+
+const FONT_SIZE = 16
+const COL_MIN_STEP = 14
+
+let colWidth = COL_MIN_STEP
+let logicalW = 0
+let logicalH = 0
 
 function resizeCanvas() {
   const canvas = canvasRef.value
   if (!canvas) return
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-  const colCount = Math.min(40, Math.floor(canvas.width / 18))
+
+  const dpr = window.devicePixelRatio || 1
+  logicalW = window.innerWidth
+  logicalH = window.innerHeight
+
+  canvas.width = Math.floor(logicalW * dpr)
+  canvas.height = Math.floor(logicalH * dpr)
+  canvas.style.width = `${logicalW}px`
+  canvas.style.height = `${logicalH}px`
+
+  if (ctx) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'top'
+    ctx.font = `600 ${FONT_SIZE}px "IBM Plex Mono", monospace`
+  }
+
+  const colCount = Math.max(1, Math.ceil(logicalW / COL_MIN_STEP))
+  colWidth = logicalW / colCount
+
   columns = Array.from({ length: colCount }, () => ({
-    y: Math.random() * canvas.height,
-    speed: 2 + Math.random() * 4,
-    chars: Array.from({ length: 24 }, () => MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)]),
+    y: Math.random() * logicalH,
+    speed: 3 + Math.random() * 6,
+    chars: Array.from({ length: 28 }, () => MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)]),
   }))
 }
 
 function drawMatrix() {
   const canvas = canvasRef.value
   if (!canvas || !ctx) return
-  ctx.fillStyle = 'rgba(10, 10, 10, 0.12)'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-  ctx.font = '14px IBM Plex Mono, monospace'
-  const fontSize = 16
+
+  ctx.fillStyle = 'rgba(10, 10, 10, 0.18)'
+  ctx.fillRect(0, 0, logicalW, logicalH)
+
   columns.forEach((col, i) => {
-    const x = i * 18
+    const x = (i + 0.5) * colWidth
     col.chars.forEach((char, j) => {
-      const y = col.y - j * fontSize
-      if (y < 0 || y > canvas.height) return
-      ctx!.fillStyle = j === 0 ? '#39ff14' : `rgba(57, 255, 20, ${0.15 + (1 - j / col.chars.length) * 0.6})`
+      const y = col.y - j * FONT_SIZE
+      if (y < -FONT_SIZE || y > logicalH) return
+      ctx!.fillStyle = j === 0 ? '#39ff14' : `rgba(57, 255, 20, ${0.25 + (1 - j / col.chars.length) * 0.55})`
       ctx!.fillText(char, x, y)
     })
     col.y += col.speed
-    if (col.y > canvas.height + col.chars.length * fontSize) {
-      col.y = -col.chars.length * fontSize
+    if (col.y > logicalH + col.chars.length * FONT_SIZE) {
+      col.y = -col.chars.length * FONT_SIZE
       col.chars = col.chars.map(() => MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)])
     }
   })
@@ -78,15 +104,29 @@ function stopMatrix() {
   cancelAnimationFrame(rafId)
 }
 
+function completeTransition() {
+  if (!running) return
+  stopMatrix()
+  visible.value = false
+  running = false
+  const mainEl = document.querySelector('main')
+  if (mainEl) gsap.set(mainEl, { clearProps: 'all' })
+  motionStore.finishMatrix((to) => router.push(to))
+}
+
 async function runTransition() {
   const target = motionStore.matrixTarget
-  if (!target || !rootRef.value) {
-    motionStore.cancelMatrix()
-    return
-  }
+  if (!target || running) return
 
+  running = true
   visible.value = true
   await nextTick()
+
+  if (!rootRef.value) {
+    console.warn('[matrix-transition] overlay mount failed — navigating immediately')
+    completeTransition()
+    return
+  }
 
   const canvas = canvasRef.value
   if (canvas) {
@@ -98,55 +138,69 @@ async function runTransition() {
   const mainEl = document.querySelector('main')
   const slices = slicesRef.value?.querySelectorAll('.bw-motion-slice') ?? []
 
+  const failsafe = window.setTimeout(() => {
+    if (running) {
+      console.warn('[matrix-transition] failsafe navigate')
+      completeTransition()
+    }
+  }, 2500)
+
   const tl = gsap.timeline({
     onComplete: () => {
-      stopMatrix()
-      visible.value = false
-      motionStore.finishMatrix((to) => router.push(to))
-      if (mainEl) gsap.set(mainEl, { clearProps: 'all' })
-    },
-    onInterrupt: () => {
-      stopMatrix()
-      visible.value = false
-      motionStore.cancelMatrix()
+      window.clearTimeout(failsafe)
+      completeTransition()
     },
   })
 
-  tl.fromTo(rootRef.value, { opacity: 0 }, { opacity: 1, duration: 0.15 }, 0)
+  tl.fromTo(rootRef.value, { opacity: 0 }, { opacity: 1, duration: 0.12 }, 0)
 
   if (mainEl && slices.length) {
     const rect = mainEl.getBoundingClientRect()
-    const sliceH = rect.height / sliceCount
+    const sliceH = Math.max(rect.height / sliceCount, 40)
     slices.forEach((slice, i) => {
       const el = slice as HTMLElement
       el.style.height = `${sliceH}px`
       el.style.top = `${rect.top + i * sliceH}px`
     })
     tl.to(slices, {
-      x: () => (Math.random() > 0.5 ? 1 : -1) * (40 + Math.random() * 80),
-      duration: 0.35,
-      stagger: 0.06,
-      ease: 'power2.inOut',
-    }, 0.3)
-    tl.to(mainEl, { opacity: 0.2, filter: 'hue-rotate(90deg)', duration: 0.4 }, 0.35)
+      x: () => (Math.random() > 0.5 ? 1 : -1) * (50 + Math.random() * 100),
+      duration: 0.4,
+      stagger: 0.05,
+      ease: 'power3.inOut',
+    }, 0.25)
+    tl.to(mainEl, { opacity: 0.15, filter: 'hue-rotate(90deg) contrast(1.4)', duration: 0.45 }, 0.3)
   }
 
   if (scanlineRef.value) {
-    gsap.set(scanlineRef.value, { x: '-100%', opacity: 1 })
-    tl.to(scanlineRef.value, { x: '100%', duration: 0.5, ease: 'power3.inOut' }, 0.7)
+    gsap.set(scanlineRef.value, { x: 0, scaleX: 0, opacity: 0, transformOrigin: 'left center' })
+    tl.fromTo(
+      scanlineRef.value,
+      { scaleX: 0, opacity: 0 },
+      { scaleX: 1, opacity: 1, duration: 0.35, ease: 'power2.in' },
+      0.55,
+    )
+    tl.fromTo(
+      scanlineRef.value,
+      { x: '-100%' },
+      { x: '100%', duration: 0.45, ease: 'power3.inOut' },
+      0.75,
+    )
   }
 
-  tl.to(rootRef.value, { opacity: 0, duration: 0.25 }, MOTION_DURATIONS.route - 0.25)
+  tl.to(rootRef.value, { opacity: 0, duration: 0.2 }, MOTION_DURATIONS.route - 0.2)
 }
 
 watch(
-  () => motionStore.matrixTarget,
-  (target) => {
-    if (target && motionStore.activeOverlay === 'matrix') runTransition()
+  () => motionStore.activeOverlay === 'matrix' && motionStore.matrixTarget,
+  (active) => {
+    if (active) runTransition()
   },
 )
 
-onUnmounted(() => stopMatrix())
+onUnmounted(() => {
+  stopMatrix()
+  running = false
+})
 </script>
 
 <style scoped>
@@ -155,14 +209,16 @@ onUnmounted(() => stopMatrix())
   inset: 0;
   z-index: var(--bw-motion-overlay-z, 500);
   pointer-events: all;
-  background: var(--bw-bg);
+  background: rgba(10, 10, 10, 0.92);
 }
 
 .bw-motion-matrix-canvas {
   position: absolute;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 .bw-motion-scanline {
@@ -174,13 +230,14 @@ onUnmounted(() => stopMatrix())
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(57, 255, 20, 0.35) 45%,
-    rgba(57, 255, 20, 0.8) 50%,
-    rgba(57, 255, 20, 0.35) 55%,
+    rgba(57, 255, 20, 0.25) 42%,
+    rgba(57, 255, 20, 0.95) 50%,
+    rgba(57, 255, 20, 0.25) 58%,
     transparent 100%
   );
   opacity: 0;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .bw-motion-slices {
@@ -191,8 +248,9 @@ onUnmounted(() => stopMatrix())
   position: fixed;
   left: 0;
   width: 100%;
-  background: var(--bw-bg);
-  border-bottom: 1px solid rgba(57, 255, 20, 0.2);
-  opacity: 0.85;
+  background: rgba(10, 10, 10, 0.75);
+  border-bottom: 2px solid rgba(57, 255, 20, 0.35);
+  opacity: 0.9;
+  will-change: transform;
 }
 </style>

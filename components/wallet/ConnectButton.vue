@@ -8,12 +8,8 @@
     <span v-if="connected && publicKey">
       {{ truncatedAddress }}
     </span>
-    <span v-else-if="connecting">
-      {{ t('wallet.connecting') }}
-    </span>
-    <span v-else>
-      {{ t('wallet.connect') }}
-    </span>
+    <UiLocaleText v-else-if="connecting" path="wallet.connecting" />
+    <UiLocaleText v-else path="wallet.connect" />
   </button>
 </template>
 
@@ -22,7 +18,6 @@
  * @agent-context Phantom connect — crack modal on connect, plain disconnect.
  * @see composables/useBrutalMotion.ts playCrackModal
  */
-const { t } = useI18n()
 const { connected, connecting, publicKey, connect, disconnect } = useWallet()
 const { playCrackModal } = useBrutalMotion()
 const motionStore = useMotionStore()
