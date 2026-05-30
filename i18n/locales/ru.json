@@ -9,6 +9,14 @@
   "common": {
     "back": "← Лobby"
   },
+  "theme": {
+    "day": "День",
+    "night": "Ночь",
+    "dayLabel": "ДЕНЬ",
+    "nightLabel": "НОЧЬ",
+    "switchToDay": "Переключить на дневную тему",
+    "switchToNight": "Переключить на ночную тему"
+  },
   "wallet": {
     "connect": "Подключить Phantom",
     "connecting": "Подключение…",

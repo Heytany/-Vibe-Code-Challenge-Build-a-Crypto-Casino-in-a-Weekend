@@ -2,10 +2,10 @@
   <div ref="panelRef">
     <UiBrokenPanel tilt="right">
       <p class="text-[var(--bw-muted)] text-sm mb-4 font-mono">
-        {{ t('games.slot.subtitle') }}
+        <UiLocaleText path="games.slot.subtitle" tag="span" />
       </p>
       <h2 class="text-2xl font-bold uppercase mb-6 bw-accent">
-        {{ t('games.slot.title') }}
+        <UiLocaleText path="games.slot.title" tag="span" />
       </h2>
 
       <div class="grid grid-cols-3 gap-2 mb-6 max-w-xs">
@@ -20,14 +20,14 @@
       </div>
 
       <p class="mb-6 whitespace-normal">
-        {{ t('games.slot.placeholder') }}
+        <UiLocaleText path="games.slot.placeholder" tag="span" />
       </p>
       <div class="flex flex-wrap gap-4">
         <UiBrutalButton disabled variant="accent">
-          {{ t('games.slot.spin') }}
+          <UiLocaleText path="games.slot.spin" tag="span" />
         </UiBrutalButton>
         <button type="button" class="bw-btn" @click="goLobby">
-          {{ t('common.back') }}
+          <UiLocaleText path="common.back" tag="span" />
         </button>
       </div>
     </UiBrokenPanel>
@@ -39,7 +39,6 @@
  * @agent-context Slot game UI shell — logic in useGameSlot + on-chain play_slot.
  * @see ai/specs/game-slot.md
  */
-const { t } = useI18n()
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const panelRef = ref<HTMLElement | null>(null)
 

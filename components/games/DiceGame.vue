@@ -2,20 +2,20 @@
   <div ref="panelRef">
     <UiBrokenPanel>
       <p class="text-[var(--bw-muted)] text-sm mb-4 font-mono">
-        {{ t('games.dice.subtitle') }}
+        <UiLocaleText path="games.dice.subtitle" tag="span" />
       </p>
       <h2 class="text-2xl font-bold uppercase mb-6 bw-accent">
-        {{ t('games.dice.title') }}
+        <UiLocaleText path="games.dice.title" tag="span" />
       </h2>
       <p class="mb-6 whitespace-normal">
-        {{ t('games.dice.placeholder') }}
+        <UiLocaleText path="games.dice.placeholder" tag="span" />
       </p>
       <div class="flex flex-wrap gap-4">
         <UiBrutalButton disabled>
-          {{ t('games.dice.roll') }}
+          <UiLocaleText path="games.dice.roll" tag="span" />
         </UiBrutalButton>
         <button type="button" class="bw-btn" @click="goLobby">
-          {{ t('common.back') }}
+          <UiLocaleText path="common.back" tag="span" />
         </button>
       </div>
     </UiBrokenPanel>
@@ -27,7 +27,6 @@
  * @agent-context Dice game UI shell — logic in useGameDice + on-chain play_dice.
  * @see ai/specs/game-dice.md
  */
-const { t } = useI18n()
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const panelRef = ref<HTMLElement | null>(null)
 

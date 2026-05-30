@@ -9,6 +9,14 @@
   "common": {
     "back": "← Lobby"
   },
+  "theme": {
+    "day": "Day",
+    "night": "Night",
+    "dayLabel": "DAY",
+    "nightLabel": "NIGHT",
+    "switchToDay": "Switch to day mode",
+    "switchToNight": "Switch to night mode"
+  },
   "wallet": {
     "connect": "Connect Phantom",
     "connecting": "Connecting…",

@@ -6,6 +6,9 @@
 import gsap from 'gsap'
 import type { CrackModalOptions, RouteTransitionVariant } from '~/shared/motion'
 import { shouldSkipHeroMotion } from '~/shared/motion'
+import type { ThemeFlashIcon, ThemeFlashJob } from '~/shared/settings-motion'
+import { LOCALE_SWITCH_DURATION } from '~/shared/settings-motion'
+import { queryLocaleTextElements } from '~/shared/locale-text-motion'
 
 export function useBrutalMotion() {
   const router = useRouter()
@@ -18,7 +21,17 @@ export function useBrutalMotion() {
       await router.push(to)
       return
     }
-    await motionStore.startMatrix(to)
+    try {
+      await Promise.race([
+        motionStore.startMatrix(to),
+        new Promise<void>((_, reject) =>
+          setTimeout(() => reject(new Error('matrix transition timeout')), 4000),
+        ),
+      ])
+    } catch {
+      await router.push(to)
+      motionStore.unlockMotion()
+    }
   }
 
   async function playCrackModal(options: CrackModalOptions) {
@@ -55,6 +68,85 @@ export function useBrutalMotion() {
     gsap.fromTo(el, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out' })
   }
 
+  const themeFlashJob = useState<ThemeFlashJob | null>('bw-theme-flash', () => null)
+
+  /** Button glitch + stagger on all `.bw-locale-text` copy (slugs + page strings) */
+  async function playLocaleSwitch(
+    apply: () => void | Promise<void>,
+    button: HTMLElement | null,
+  ) {
+    if (motionStore.isLocked || prefersReducedMotion.value) {
+      await apply()
+      return
+    }
+
+    const textEls = import.meta.client ? queryLocaleTextElements() : []
+
+    if (button) {
+      gsap.to(button, {
+        scale: 0.86,
+        rotate: -4,
+        duration: 0.07,
+        ease: 'power2.in',
+        transformOrigin: 'center center',
+      })
+    }
+
+    if (textEls.length) {
+      await gsap.to(textEls, {
+        opacity: 0,
+        y: -6,
+        skewX: () => (Math.random() - 0.5) * 10,
+        duration: 0.1,
+        stagger: 0.01,
+        ease: 'power2.in',
+      })
+    } else {
+      await gsap.to({}, { duration: LOCALE_SWITCH_DURATION * 0.35 })
+    }
+
+    await apply()
+    await nextTick()
+
+    const refreshed = import.meta.client ? queryLocaleTextElements() : []
+
+    if (refreshed.length) {
+      gsap.set(refreshed, { opacity: 0, y: 6 })
+      await gsap.to(refreshed, {
+        opacity: 1,
+        y: 0,
+        skewX: 0,
+        duration: 0.16,
+        stagger: 0.014,
+        ease: 'power3.out',
+        clearProps: 'transform',
+      })
+    }
+
+    if (button) {
+      gsap.to(button, {
+        scale: 1,
+        rotate: 0,
+        duration: 0.16,
+        ease: 'power3.out',
+        clearProps: 'boxShadow,transform',
+      })
+    }
+  }
+
+  async function playThemeSwitch(
+    icon: ThemeFlashIcon,
+    apply: () => void | Promise<void>,
+  ) {
+    if (motionStore.isLocked || prefersReducedMotion.value) {
+      await apply()
+      return
+    }
+    await new Promise<void>((resolve) => {
+      themeFlashJob.value = { icon, apply, resolve }
+    })
+  }
+
   return {
     prefersReducedMotion,
     playRouteTransition,
@@ -62,5 +154,7 @@ export function useBrutalMotion() {
     playWinBurst,
     playDepositPulse,
     playGameEnter,
+    playLocaleSwitch,
+    playThemeSwitch,
   }
 }
