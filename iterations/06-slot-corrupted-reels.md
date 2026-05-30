@@ -94,4 +94,4 @@ flowchart TB
 
 ---
 
-**Коммит:** `14a3555` — `feat: iteration 6 — corrupted reels slot, stable game layout (FUN both games)`
+**Коммит:** `8ddfcaa` — `feat: iteration 6 — corrupted reels slot, stable game layout (FUN both games)`
