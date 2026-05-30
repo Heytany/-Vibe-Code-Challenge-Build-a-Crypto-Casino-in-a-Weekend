@@ -1,78 +1,49 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-30 — iteration 3 (Claude/Cloud operator, first pass)  
+**Last updated:** 2026-05-30 — iteration 5 (Dice FUN playable)  
 **Project name:** Brutal wibe  
-**Current iteration:** 3 → [`iterations/03-monster-lobby.md`](../iterations/03-monster-lobby.md)
+**Current iteration:** 5 → [`iterations/05-dice-glitch-roll.md`](../iterations/05-dice-glitch-roll.md)
 
-## Iteration 3 (this commit when PO signs off)
+## Iteration 5 — Glitch Roll (FUN, ready to commit)
 
-- [x] `components/lobby/MonsterHero.vue` — pixel-art monster holds both game panels (ADR-013)
-- [x] Lobby rewritten around monster, fits viewport 320px → desktop, day/night safe
-- [x] CSS-only idle motion `bw-mon-*` (GSAP still reserved for route/wallet/win)
-- [x] `lobby.tagline` in en/ru/uk
-- [x] Monster made more brutal — 8 writhing tentacles (varied size, sine curves), within panel area
-- [x] **SEO:** monster-face `favicon.svg` + `favicon-32.png` + `apple-touch-icon.png` + `og-image.png`; OG/Twitter/theme-color meta in `nuxt.config.ts`; per-page `useSeoMeta` (i18n `seo.*`)
-- [x] **Games prep:** `shared/rng-verify.ts` (+`tests/rng-verify.test.ts`), `playWinBurst`/`playDepositPulse` implemented, `games.*` i18n, `ai/specs/games-implementation.md`
-- [ ] **PO:** on host run `pnpm build`, `pnpm test:e2e`, `pnpm test:motion`, `pnpm exec vitest run tests/rng-verify.test.ts`, then commit
-- [ ] **Blocker:** stale `.git/index.lock` must be removed before any commit (see below)
+- [x] First game **playable without wallet** — `/games/dice`
+- [x] Monster hero + 3D `DiceCube` + roll under cube + tabs (Play / Rules)
+- [x] Matrix panel backdrop on win; jackpot variant on extreme rolls
+- [x] Fun mode (ADR-014) + slot FUN spin
+- [x] Tests: env, motion (8), rng-verify (14), build OK
+- [ ] **PO:** commit `feat: iteration 5 — …` + optional `pnpm test:e2e`
+- [ ] **Next (it.6):** LIVE dice — deploy, IDL, deposit/withdraw, Explorer verify, public URL
 
-## Next iteration — glitch games (ready to build)
+## Cloud handoff (it.3)
 
-Everything needed is scaffolded — see [`specs/games-implementation.md`](specs/games-implementation.md).
-Order: deploy program → set env + IDL → wire `useCasinoProgram` (deposit/withdraw/play) →
-fill `useGameDice`/`useGameSlot` → build Dice/Slot UI + "verify on Explorer" via `shared/rng-verify.ts`.
+Claude committed monster lobby; **could not** deploy Anchor / sign Phantom in sandbox (~75% session limit). PO back on **Cursor** ($20 included limit reached).
 
-> **Git note:** an empty `.git/index.lock` is blocking commits. Remove it on host:
-> `rm -f .git/index.lock`. Sandbox could not delete it (filesystem perms).
+## Challenge README — honest status
 
-## Handoff note (PO)
+| Requirement | Status |
+|-------------|--------|
+| Testnet only | ✅ config devnet |
+| Verifiable on-chain | ⚠️ math + program ready; LIVE wire-up pending |
+| Public URL | ❌ deploy pending |
+| Casino edge | ✅ FUN 200 bps + on-chain in `lib.rs` |
+| Wallet → deposit → play → withdraw | ⚠️ connect ✅; rest LIVE it.6 |
 
-Iteration 2 scoped in Cursor. **PO switches to Claude (Cloud)** — standard Cursor included limit (**$20**) reached; **~$10** and **~45 min PO** spent on iteration 2. Cloud continues from [`HANDOFF.md`](HANDOFF.md).
+## Dev / QA
 
-## Roles (Spark model)
+```bash
+pnpm dev                    # :3000
+# FUN dice: /games/dice — no Phantom
+pnpm test:env && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts && pnpm build
+```
+
+Tester: [`iterations/help.md`](../iterations/help.md)
+
+## Roles
 
 | Agent | Role |
 |-------|------|
-| **Cursor** | Setup, architecture, `ai/`, env contract, motion foundation, deploy configs |
-| **Claude (Cloud)** | Operator — on-chain, game logic, polish, live deploy URL |
-| **Human (PO)** | UI testing, iteration reports, Phantom QA — see [`iterations/help.md`](../iterations/help.md) |
+| **Cursor** | Primary — dice FUN, next LIVE on host |
+| **Claude (Cloud)** | it.3 lobby only — blocked on deploy |
+| **PO** | QA, commits, Phantom devnet, Vercel |
 
-## Dev server
-
-```bash
-pnpm install
-cp .env.example .env
-pnpm dev          # http://localhost:3000
-```
-
-**Note:** `ssr: false` requires `experimental.viteEnvironmentApi: true` in `nuxt.config.ts`.
-
-## Iteration 2 scope (this commit when PO signs off)
-
-- [x] GSAP matrix route + crack wallet modal
-- [x] Jagged crack geometry + desktop 3D modal
-- [x] Day/night theme + Lucide icons (`lucide-vue-next`)
-- [x] Locale motion — slug glitch + `UiLocaleText` stagger
-- [x] Deploy configs + CI + [`iterations/help.md`](../iterations/help.md)
-- [ ] PO final commit `feat: iteration 2 — …` (может сделать Claude после pull)
-
-**PO metrics (it.2):** ~45 min · **$10 Cursor** · handoff reason: **$20 limit hit**
-
-## Cloud — after iteration 2 commit
-
-- [ ] Deploy `wibe_casino` to devnet → real `NUXT_PUBLIC_CASINO_PROGRAM_ID`
-- [ ] Wire `useCasinoProgram` / games
-- [ ] `playWinBurst` / `playDepositPulse`
-- [ ] Live URL on Vercel/Netlify/Cloudflare
-
-## Motion rule
-
-Pages never import GSAP — extend `useBrutalMotion` + `MotionRoot`.
-
-## Commands
-
-```bash
-pnpm test:env && pnpm test:motion && pnpm build && pnpm test:e2e
-```
-
-Deploy: [`specs/deploy.md`](specs/deploy.md)
+Deploy: [`specs/deploy.md`](specs/deploy.md) · LIVE plan: [`iterations/04-plan-dice-game.md`](../iterations/04-plan-dice-game.md)

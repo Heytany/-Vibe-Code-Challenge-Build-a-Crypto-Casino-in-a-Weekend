@@ -94,6 +94,63 @@ export function useBrutalMotion() {
     gsap.fromTo(el, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.2, ease: 'power2.out' })
   }
 
+  /** Dice tumble → face front toward player → gentle wobble */
+  function playDiceTumble(target: HTMLElement | null): Promise<void> {
+    if (!target || prefersReducedMotion.value) {
+      if (target) {
+        const body = target.querySelector('.bw-dice-cube__body') as HTMLElement | null
+        body?.classList.add('bw-dice-cube__body--front')
+      }
+      return Promise.resolve()
+    }
+    const body = target.querySelector('.bw-dice-cube__body') as HTMLElement | null
+    if (!body) return Promise.resolve()
+
+    const idleX = -18
+    const idleY = 28
+    body.classList.remove('bw-dice-cube__body--front')
+
+    return new Promise((resolve) => {
+      gsap.set(body, { transformPerspective: 640, transformOrigin: '50% 50%' })
+      gsap
+        .timeline({
+          onComplete: () => {
+            gsap.set(body, { clearProps: 'transform,transformPerspective' })
+            body.classList.add('bw-dice-cube__body--front')
+            resolve()
+          },
+        })
+        .fromTo(
+          body,
+          { rotateX: idleX, rotateY: idleY, rotateZ: 0, scale: 1 },
+          {
+            rotateX: idleX + 720,
+            rotateY: idleY + 630,
+            rotateZ: 52,
+            scale: 1.04,
+            duration: 1.08,
+            ease: 'power2.inOut',
+          },
+        )
+        .to(body, {
+          rotateX: 0,
+          rotateY: 0,
+          rotateZ: 0,
+          scale: 1.02,
+          duration: 0.38,
+          ease: 'power3.out',
+        })
+        .to(body, {
+          rotateX: 4,
+          rotateY: -3,
+          duration: 0.11,
+          yoyo: true,
+          repeat: 4,
+          ease: 'sine.inOut',
+        })
+    })
+  }
+
   const themeFlashJob = useState<ThemeFlashJob | null>('bw-theme-flash', () => null)
 
   /** Button glitch + stagger on all `.bw-locale-text` copy (slugs + page strings) */
@@ -180,6 +237,7 @@ export function useBrutalMotion() {
     playWinBurst,
     playDepositPulse,
     playGameEnter,
+    playDiceTumble,
     playLocaleSwitch,
     playThemeSwitch,
   }

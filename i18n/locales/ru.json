@@ -34,7 +34,16 @@
       "rollUnder": "Меньше",
       "rollOver": "Больше",
       "youRolled": "Выпало",
-      "chance": "Шанс"
+      "chance": "Шанс",
+      "tabPlay": "Игра",
+      "tabRules": "Как играть",
+      "rulesIntro": "Выбери цель (2–98), меньше или больше, ставку — и жми «Бросить» под кубом.",
+      "rulesStep1": "Меньше — выигрыш, если результат строго ниже цели.",
+      "rulesStep2": "Больше — выигрыш, если результат строго выше цели.",
+      "rulesStep3": "Шанс = доля исходов в твою пользу (до house edge).",
+      "rulesStep4": "FUN — та же FNV-1a математика, что on-chain; только виртуальные кредиты.",
+      "rulesRng": "// live: исход = hash(blockhash ‖ seed ‖ nonce ‖ \"dice\") mod 100 + 1 — проверка в Explorer",
+      "superWin": "// ДЖЕКПОТ — экстремальный ролл или шанс ≤5%"
     },
     "slot": {
       "title": "Corrupted Reels",
@@ -61,8 +70,16 @@
       "nonce": "Nonce",
       "seed": "Seed",
       "playAgain": "Ещё раз",
-      "connectFirst": "Подключи Phantom для игры",
-      "insufficient": "Недостаточно баланса — сделай депозит"
+      "connectFirst": "Подключи Phantom для live-режима",
+      "insufficient": "Недостаточно баланса — сделай депозит",
+      "modeLabel": "Режим игры",
+      "funMode": "FUN",
+      "liveMode": "LIVE",
+      "funBanner": "// fun mode — без кошелька, виртуальные кредиты, та же RNG-математика",
+      "funNote": "Играй сразу. Виртуальный баланс — для devnet подключи Phantom и LIVE.",
+      "liveModeHint": "Реальные devnet-токены через Phantom",
+      "liveModeLocked": "LIVE: нужны Phantom и задеплоенная программа",
+      "resetFun": "Сбросить fun-кредиты"
     }
   },
   "footer": {

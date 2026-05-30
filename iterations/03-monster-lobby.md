@@ -96,6 +96,8 @@ Anchor-программа (`play_dice`, `play_slot`, deposit/withdraw, FNV-1a RN
 > **`pnpm build` / `pnpm test:e2e` / `pnpm test:motion` + `tests/rng-verify.test.ts` — гонять у PO на хосте:**
 > в Linux-песочнице падают нативные модули (`oxc-parser`, `rollup`) — node_modules собран под macOS-arm64. Это ограничение среды, не код.
 
+**Handoff:** Claude не смог задеплоить программу и подписать Phantom в sandbox (~75% лимита сессии). PO вернулся в Cursor; **it.4** — обязательный fun mode ([`04-fun-mode.md`](./04-fun-mode.md)); live Dice — [`04-plan-dice-game.md`](./04-plan-dice-game.md).
+
 ---
 
 ## Ресурсы

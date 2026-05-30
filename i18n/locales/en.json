@@ -34,7 +34,16 @@
       "rollUnder": "Roll under",
       "rollOver": "Roll over",
       "youRolled": "You rolled",
-      "chance": "Win chance"
+      "chance": "Win chance",
+      "tabPlay": "Play",
+      "tabRules": "How it works",
+      "rulesIntro": "Pick a target number (2–98), choose roll under or roll over, set your bet, then hit Roll dice under the cube.",
+      "rulesStep1": "Roll under — you win if the result is strictly below your target.",
+      "rulesStep2": "Roll over — you win if the result is strictly above your target.",
+      "rulesStep3": "Win chance equals the percentage of outcomes in your favour (before house edge).",
+      "rulesStep4": "FUN mode uses the same FNV-1a RNG math as on-chain play — virtual credits only.",
+      "rulesRng": "// live: outcome = hash(blockhash ‖ seed ‖ nonce ‖ \"dice\") mod 100 + 1 — verifiable on Explorer",
+      "superWin": "// JACKPOT — extreme roll or ≤5% odds"
     },
     "slot": {
       "title": "Corrupted Reels",
@@ -61,8 +70,16 @@
       "nonce": "Nonce",
       "seed": "Seed",
       "playAgain": "Play again",
-      "connectFirst": "Connect Phantom to play",
-      "insufficient": "Not enough balance — deposit first"
+      "connectFirst": "Connect Phantom for live mode",
+      "insufficient": "Not enough balance — deposit first",
+      "modeLabel": "Game mode",
+      "funMode": "FUN",
+      "liveMode": "LIVE",
+      "funBanner": "// fun mode — no wallet, virtual credits, same RNG math",
+      "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",
+      "liveModeHint": "Real devnet tokens via Phantom",
+      "liveModeLocked": "Connect Phantom + deployed program for live mode",
+      "resetFun": "Reset fun credits"
     }
   },
   "footer": {

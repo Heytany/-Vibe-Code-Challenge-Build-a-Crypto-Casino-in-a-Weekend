@@ -1,66 +1,58 @@
-# Brutal wibe — Claude / agent handoff (read first)
+# Brutal wibe — agent handoff (read first)
 
 **Project:** Brutal wibe — brutalist on-chain crypto casino  
-**Challenge:** Vibe-Code 48h build (Solana devnet, testnet only)  
-**Phase:** Iteration 2 in progress — GSAP motion + theme/locale polish before Cloud handoff
+**Phase:** Iteration 4 — **fun mode done**; live Dice wire-up next (host with Anchor + Phantom)
 
 ## Roles
 
 | Who | Role |
 |-----|------|
-| Human (PO) | Product owner, UI tester — [`iterations/help.md`](../iterations/help.md) for Phantom QA |
-| **Cursor** | **Setup** — architecture, `ai/`, env contract, motion foundation, deploy configs |
-| **You (Claude / Cloud)** | **Operator** — implement features, deploy program, wire games, live URL |
+| Human (PO) | Product owner, UI tester — [`iterations/help.md`](../iterations/help.md) |
+| **Cursor** | **Primary now** — fun mode, live wire-up on macOS host |
+| Claude (Cloud) | Operator when available — it.3 lobby; blocked on deploy/sign in sandbox |
 
-Same split as Spark: setup is done; you run iterations 4+ without re-scaffolding.
+## Mandatory: Fun mode (ADR-014)
 
-## Stack (fixed — do not change without ADR)
+Every game **must** work without wallet:
 
-- **Chain:** Solana devnet + Anchor 0.30 (`programs/wibe-casino`)
-- **Frontend:** Nuxt 3 SPA (`ssr: false`), Vue 3, Tailwind, Pinia, `@nuxtjs/i18n`
-- **UI primitives:** Reka UI → wrappers in `components/ui/primitives/`
-- **Motion:** GSAP via [`useBrutalMotion()`](../composables/useBrutalMotion.ts) only — see [`specs/ui-motion.md`](specs/ui-motion.md)
-- **Theme:** day/night via `stores/theme.ts` (ADR-012)
-- **Wallet:** Phantom (`composables/useWallet.ts`)
-- **Games:** Dice «Glitch Roll» + Slot «Corrupted Reels»
+- Default mode: **`fun`** — virtual balance, client RNG (`shared/rng-verify.ts`)
+- Toggle: `GameModeToggle` + `useGameMode()`
+- **Live** only when Phantom connected + `NUXT_PUBLIC_CASINO_PROGRAM_ID` set
+
+Test: `/games/dice`, `/games/slot` with no wallet → roll/spin works.
 
 ## Read order
 
 1. This file  
-2. [`AGENT_ONBOARDING.md`](AGENT_ONBOARDING.md)  
-3. [`CONTEXT.md`](CONTEXT.md) — **current status**  
-4. Latest [`iterations/`](../iterations/) report (RU)  
-5. [`PLAN.md`](PLAN.md) + relevant [`specs/`](specs/)
+2. [`CONTEXT.md`](CONTEXT.md)  
+3. Latest [`iterations/`](../iterations/) — [`04-fun-mode.md`](../iterations/04-fun-mode.md)  
+4. Live Dice plan: [`iterations/04-plan-dice-game.md`](../iterations/04-plan-dice-game.md)
 
-## Current priorities (Cloud)
+## Current priorities (host)
 
-1. Deploy `wibe_casino` to devnet → set `NUXT_PUBLIC_CASINO_PROGRAM_ID`  
-2. Wire `useCasinoProgram` (deposit, withdraw, fetch balance)  
-3. Implement `useGameDice` + Dice UI  
-4. Implement `useGameSlot` + Slot UI + `playWinBurst` / `playDepositPulse`  
-5. Deploy frontend from Git → document live URL in `CONTEXT.md`  
-6. Human UI review pass
+1. `anchor build/deploy` → `NUXT_PUBLIC_CASINO_PROGRAM_ID` + `pnpm copy-idl`  
+2. Wire `useCasinoProgram` (deposit, withdraw, playDice)  
+3. `useGameDice.rollLive()` + verify UI in `DiceGame.vue`  
+4. Copy pattern to Slot live  
+5. PO commit + deploy frontend URL
+
+## Stack (fixed)
+
+- Solana devnet + Anchor 0.30 (`programs/wibe-casino`)
+- Nuxt 3 SPA, GSAP via `useBrutalMotion` only
+- Phantom via `useWallet.ts` (needs `signTransaction` for live)
 
 ## Commands
 
 ```bash
-pnpm install
-cp .env.example .env
-pnpm dev                    # :3000
-pnpm test:env               # env contract
-pnpm test:motion            # motion unit tests
-pnpm test:e2e               # Playwright smoke
-pnpm build                  # .output/public for static host
-anchor build && anchor test # when Solana/Anchor installed
-pnpm copy-idl               # after anchor build
+pnpm dev
+pnpm test:motion    # includes fun-mode tests
+pnpm build
+anchor build && pnpm copy-idl
 ```
-
-Deploy: [`specs/deploy.md`](specs/deploy.md)
 
 ## Rules
 
-- Long docs → `ai/` only. Code gets `@agent-context` headers.  
-- After your task → update [`CONTEXT.md`](CONTEXT.md).  
-- New architecture choice → ADR in `decisions/` + [`DISCUSSION_LOG.md`](DISCUSSION_LOG.md).  
-- **Iterations:** 1 iteration = 1 commit + RU report in [`iterations/`](../iterations/). See [`specs/iterations-workflow.md`](specs/iterations-workflow.md).  
-- **Do not** import GSAP in pages — extend `useBrutalMotion`.
+- **Fun mode never blocks on wallet** for default path  
+- 1 iteration = 1 commit + RU report in [`iterations/`](../iterations/)  
+- Update [`CONTEXT.md`](CONTEXT.md) after your task

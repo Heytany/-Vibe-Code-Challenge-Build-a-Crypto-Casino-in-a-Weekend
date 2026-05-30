@@ -73,6 +73,8 @@ pnpm dev
 | Язык | EN / RU / UK в шапке — текст меняется, есть короткая анимация |
 | Тема | ☀ / ☾ — день / ночь |
 | Лобби → игра | Карточка Dice или Slot — matrix-переход, открывается страница игры |
+| **Dice (FUN)** | `/games/dice` без Phantom — roll, 3D-куб, matrix на win, вкладка «Как играть» |
+| Slot (FUN) | `/games/slot` — spin, виртуальный баланс |
 | Назад | «← Lobby» — возврат без matrix |
 | Кошелёк | Connect → crack modal → Phantom |
 | Reduced motion | В OS включить «Reduce motion» — переходы без оверлеев, но работают |

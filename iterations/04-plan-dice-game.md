@@ -14,9 +14,14 @@
 
 ## Definition of Done (Dice)
 
-Подключённый Phantom (devnet) может: задепозить SPL-токен → выставить ставку/цель/под-над →
-крутить → увидеть выпавшее число и выигрыш/проигрыш с анимацией → нажать «Verify on Explorer»
-и локально подтвердить ролл через `rng-verify` → вывести баланс назад в кошелёк. Баланс меняется on-chain.
+### Fun mode (обязательно — ADR-014)
+
+Без Phantom и без денег: открыть `/games/dice` → режим **FUN** по умолчанию → ставка/цель/under-over → Roll →
+число + win/lose + виртуальный баланс. Тот же RNG (`rng-verify`), анимация `playWinBurst` при выигрыше.
+
+### Live mode
+
+Подключённый Phantom (devnet) может: deposit → bet → roll → verify on Explorer → withdraw. Баланс on-chain.
 
 ---
 

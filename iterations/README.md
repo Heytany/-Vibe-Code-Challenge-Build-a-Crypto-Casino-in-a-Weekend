@@ -52,10 +52,12 @@ iterations/NN-kratkoe-nazvanie.md
 | Итерация | Коммит | Отчёт | Дата |
 |----------|--------|-------|------|
 | 1 | `feat: iteration 1 — skeleton, architecture, ai handoff` | [01-kostyak-i-arhitektura.md](./01-kostyak-i-arhitektura.md) | 30.05.2026 15:00–~17:30 МСК · $6 |
-| 2 | feat: iteration 2 — GSAP motion (WIP, не закоммичено) | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 · **45 мин PO · $10** · handoff → Claude (лимит Cursor $20) |
-| 3 | feat: iteration 3 — lobby pixel-art monster (ожидает коммита) | [03-monster-lobby.md](./03-monster-lobby.md) | 30.05.2026 · Claude (Cloud), первый проход оператора |
+| 2 | GSAP motion, theme, locale, deploy configs | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 · ~45 мин PO · $10 |
+| 3 | `48e7de2` — monster lobby (Claude) | [03-monster-lobby.md](./03-monster-lobby.md) | 30.05.2026 · ~1 ч PO · ~75% лимита Cloud |
+| 4 | _(вошло в it.5)_ fun mode ADR-014 | [04-fun-mode.md](./04-fun-mode.md) | — |
+| 5 | feat: iteration 5 — glitch roll dice (ожидает коммита) | [05-dice-glitch-roll.md](./05-dice-glitch-roll.md) · live: [04-plan-dice-game.md](./04-plan-dice-game.md) | 30.05.2026 · **~1 ч PO · $20 Cursor** · Cloud недоступен |
 
-**QA / PO:** [help.md](./help.md) — тестовый кошелёк Phantom на devnet
+**QA / PO:** [help.md](./help.md) — FUN dice: `/games/dice` без Phantom; LIVE — после deploy
 
 ---
 

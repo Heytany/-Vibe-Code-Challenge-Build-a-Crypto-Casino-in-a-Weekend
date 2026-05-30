@@ -4,7 +4,14 @@
 
 `/games/slot` → `components/games/SlotGame.vue`
 
-## On-chain
+## Modes (mandatory — ADR-014)
+
+| Mode | Default | Wallet | Balance | RNG |
+|------|---------|--------|---------|-----|
+| **FUN** | yes | not required | virtual credits | client `computeReels` |
+| **LIVE** | no | Phantom | on-chain | `play_slot` |
+
+## On-chain (live only)
 
 Instruction: `play_slot(bet, user_seed)`
 
@@ -14,10 +21,9 @@ Instruction: `play_slot(bet, user_seed)`
 
 ## Frontend
 
-- Composable: `composables/useGameSlot.ts`
-- TODO: wire to Anchor `play_slot`
+- Composable: `composables/useGameSlot.ts` — `spinFun()` / `spinLive()`
+- Live: wire to Anchor `play_slot` (after Dice)
 
-## UI (later)
+## UI
 
-- Misaligned reel columns, scanlines, jitter animation
-- Use custom Vue — not Reka (game-specific)
+- FUN/LIVE toggle, 3 reels, bet, spin, `playWinBurst` on win

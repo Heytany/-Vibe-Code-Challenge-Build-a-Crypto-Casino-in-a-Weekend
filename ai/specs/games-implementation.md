@@ -13,12 +13,14 @@ Everything below is scaffolded and ready. The next agent wires it to the deploye
 | Piece | File | State |
 |-------|------|-------|
 | On-chain RNG mirror | `shared/rng-verify.ts` | ✅ done + tested (`tests/rng-verify.test.ts`) |
+| **Fun mode (mandatory)** | `shared/fun-mode.ts`, `useGameMode`, ADR-014 | ✅ FUN default, no wallet |
 | Game constants (multipliers, target range, house edge cap) | `shared/rng-verify.ts` | ✅ mirror of `lib.rs` |
 | Win / deposit motion | `useBrutalMotion().playWinBurst / playDepositPulse` | ✅ implemented |
 | Game UI i18n | `games.common.*`, `games.dice.*`, `games.slot.*` (en/ru/uk) | ✅ keys ready |
 | SEO per game | `useSeoMeta` in `pages/games/{dice,slot}.vue` | ✅ done |
-| Dice composable | `composables/useGameDice.ts` | stub — throws `play_dice not wired` |
-| Slot composable | `composables/useGameSlot.ts` | stub — throws `play_slot not wired` |
+| Dice composable | `composables/useGameDice.ts` | ✅ fun mode playable; live stub |
+| Slot composable | `composables/useGameSlot.ts` | ✅ fun mode playable; live stub |
+| Dice / Slot UI | `DiceGame.vue`, `SlotGame.vue` | ✅ fun mode UI + `GameModeToggle` |
 | Casino program client | `composables/useCasinoProgram.ts` | stub — `deposit/withdraw/refreshBalance` TODO |
 
 ## Wiring checklist

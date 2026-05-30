@@ -1,5 +1,8 @@
 <template>
-  <div class="bw-monster-stage">
+  <div
+    class="bw-monster-stage"
+    :class="{ 'is-rolling': rolling, 'bw-monster-stage--dice': variant === 'dice' }"
+  >
     <!-- Decorative pixel-art monster. CSS-driven idle motion (flat layer). -->
     <div class="bw-monster-figure" aria-hidden="true">
       <svg
@@ -140,13 +143,18 @@
       </svg>
     </div>
 
-    <!-- the two panels the monster holds in its paws -->
-    <div class="bw-monster-hands">
-      <div class="bw-paw-mount bw-paw-mount--left">
-        <slot name="left" />
-      </div>
-      <div class="bw-paw-mount bw-paw-mount--right">
-        <slot name="right" />
+    <!-- panels the monster holds in its paws (lobby: 2 cols, dice: 1 center cube) -->
+    <div class="bw-monster-hands" :class="`bw-monster-hands--${variant}`">
+      <template v-if="variant === 'lobby'">
+        <div class="bw-paw-mount bw-paw-mount--left">
+          <slot name="left" />
+        </div>
+        <div class="bw-paw-mount bw-paw-mount--right">
+          <slot name="right" />
+        </div>
+      </template>
+      <div v-else class="bw-paw-mount bw-paw-mount--center">
+        <slot name="center" />
       </div>
     </div>
   </div>
@@ -154,10 +162,17 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Lobby hero — decorative pixel-art monster that "holds" the two game
- * panels (left/right slots) in its paws. Idle motion is CSS-only (flat brutalist layer,
- * see ai/specs/ui-brutalism.md), NOT GSAP — GSAP stays reserved for route/wallet/win.
- * Fully responsive: arms land at 25% / 75% width, aligned to the 2-col panel grid.
- * @see ai/specs/ui-motion.md, ai/specs/ui-brutalism.md
+ * @agent-context Lobby hero — decorative pixel-art monster that "holds" game panels in
+ * its paws. `variant="lobby"` → #left/#right; `variant="dice"` → #center (one rolling die).
+ * Idle motion is CSS-only — GSAP stays reserved for route/wallet/win/dice tumble.
+ * @see ai/specs/ui-motion.md, ai/decisions/013-lobby-monster-hero.md
  */
+withDefaults(
+  defineProps<{
+    variant?: 'lobby' | 'dice'
+    /** Faster paw/arm motion while the die is tumbling */
+    rolling?: boolean
+  }>(),
+  { variant: 'lobby', rolling: false },
+)
 </script>

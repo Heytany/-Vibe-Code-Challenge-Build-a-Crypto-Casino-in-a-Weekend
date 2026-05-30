@@ -389,6 +389,385 @@ body.bw-motion-lock {
   animation: bw-mon-hold-r 3.2s ease-in-out infinite;
 }
 
+/* Dice game — single center paw + rolling die */
+.bw-monster-hands--dice {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  max-width: min(220px, 58vw);
+  margin-top: clamp(-42px, -5vw, -20px);
+}
+
+.bw-paw-mount--center {
+  animation: bw-mon-hold-center 3.2s ease-in-out infinite;
+}
+
+@keyframes bw-mon-hold-center {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(5px) rotate(0.3deg); }
+}
+
+.bw-monster-stage.is-rolling .bw-mon-arm--l {
+  animation: bw-mon-arm-roll-l 0.12s steps(2) infinite;
+}
+
+.bw-monster-stage.is-rolling .bw-mon-arm--r {
+  animation: bw-mon-arm-roll-r 0.12s steps(2) infinite;
+}
+
+.bw-monster-stage.is-rolling .bw-paw-mount--center {
+  animation: bw-mon-shake-center 0.1s steps(3) infinite;
+}
+
+.bw-monster-stage.is-rolling .bw-mon-pupil {
+  animation: bw-mon-pupil-roll 0.15s steps(2) infinite;
+}
+
+@keyframes bw-mon-arm-roll-l {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@keyframes bw-mon-arm-roll-r {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-6deg); }
+}
+
+@keyframes bw-mon-shake-center {
+  0%, 100% { transform: translate(0, 4px); }
+  33% { transform: translate(-2px, 6px); }
+  66% { transform: translate(2px, 2px); }
+}
+
+@keyframes bw-mon-pupil-roll {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.4); opacity: 0.7; }
+}
+
+/* ── Dice cube (3D CSS — monster rolls this) ────────────────────────────── */
+
+.bw-dice-cube {
+  --bw-dice-edge: clamp(5.5rem, 20vw, 7.5rem);
+  --bw-dice-half: calc(var(--bw-dice-edge) / 2);
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: calc(var(--bw-dice-edge) + 2rem);
+  overflow: visible;
+}
+
+.bw-dice-cube__scene {
+  position: relative;
+  width: var(--bw-dice-edge);
+  height: var(--bw-dice-edge);
+  perspective: 640px;
+  perspective-origin: 50% 38%;
+  overflow: visible;
+}
+
+.bw-dice-cube__body {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(-18deg) rotateY(28deg);
+  will-change: transform;
+}
+
+.bw-dice-cube__body.bw-dice-cube__body--front {
+  transform: rotateX(0deg) rotateY(0deg);
+  animation: bw-dice-face-sway 2.6s ease-in-out infinite;
+}
+
+@keyframes bw-dice-face-sway {
+  0%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+  35% { transform: rotateX(2.5deg) rotateY(-2deg); }
+  70% { transform: rotateX(-2deg) rotateY(2.5deg); }
+}
+
+.bw-dice-cube__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 4px solid var(--bw-border);
+  background: var(--bw-bg);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--bw-fg) 8%, transparent);
+  backface-visibility: hidden;
+}
+
+.bw-dice-cube__face--front {
+  transform: rotateY(0deg) translateZ(var(--bw-dice-half));
+}
+
+.bw-dice-cube__face--back {
+  transform: rotateY(180deg) translateZ(var(--bw-dice-half));
+  gap: 0.35rem;
+}
+
+.bw-dice-cube__face--right {
+  transform: rotateY(90deg) translateZ(var(--bw-dice-half));
+  background: color-mix(in srgb, var(--bw-fg) 6%, var(--bw-bg));
+}
+
+.bw-dice-cube__face--left {
+  transform: rotateY(-90deg) translateZ(var(--bw-dice-half));
+  background: color-mix(in srgb, var(--bw-fg) 6%, var(--bw-bg));
+}
+
+.bw-dice-cube__face--top {
+  transform: rotateX(90deg) translateZ(var(--bw-dice-half));
+  background: color-mix(in srgb, var(--bw-accent) 14%, var(--bw-bg));
+}
+
+.bw-dice-cube__face--bottom {
+  transform: rotateX(-90deg) translateZ(var(--bw-dice-half));
+  background: color-mix(in srgb, var(--bw-fg) 10%, var(--bw-bg));
+}
+
+.bw-dice-cube__label {
+  margin: 0 0 0.25rem;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  font-family: var(--bw-font);
+  color: var(--bw-muted);
+}
+
+.bw-dice-cube__value {
+  margin: 0;
+  font-size: clamp(1.75rem, 8vw, 2.75rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.bw-dice-cube__verdict {
+  margin: 0;
+  min-height: 1.25rem;
+}
+
+.bw-dice-cube__tag {
+  font-family: var(--bw-font);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--bw-accent);
+}
+
+.bw-dice-cube__stripes {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 55%;
+}
+
+.bw-dice-cube__stripes span {
+  display: block;
+  height: 4px;
+  background: var(--bw-fg);
+  opacity: 0.35;
+}
+
+.bw-dice-cube__stripes span:nth-child(odd) {
+  width: 100%;
+}
+
+.bw-dice-cube__stripes span:nth-child(even) {
+  width: 65%;
+  align-self: flex-end;
+  background: var(--bw-accent);
+  opacity: 0.7;
+}
+
+.bw-dice-cube__pip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 58%;
+  aspect-ratio: 1;
+}
+
+.bw-dice-cube__pip-grid span {
+  border: 2px solid var(--bw-border);
+  background: transparent;
+}
+
+.bw-dice-cube__pip-grid span.on {
+  background: var(--bw-fg);
+}
+
+.bw-dice-cube__pip-grid--alt span.on {
+  background: var(--bw-accent);
+}
+
+.bw-dice-cube__cross {
+  width: 42%;
+  height: 42%;
+  border: 4px solid var(--bw-fg);
+  position: relative;
+}
+
+.bw-dice-cube__cross::before,
+.bw-dice-cube__cross::after {
+  content: '';
+  position: absolute;
+  background: var(--bw-accent);
+}
+
+.bw-dice-cube__cross::before {
+  top: 50%;
+  left: 8%;
+  right: 8%;
+  height: 4px;
+  transform: translateY(-50%);
+}
+
+.bw-dice-cube__cross::after {
+  left: 50%;
+  top: 8%;
+  bottom: 8%;
+  width: 4px;
+  transform: translateX(-50%);
+}
+
+.bw-dice-cube__shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -14%;
+  height: 18%;
+  background: var(--bw-fg);
+  opacity: 0.12;
+  filter: blur(6px);
+  transform: rotateX(78deg) scaleY(0.55);
+  pointer-events: none;
+}
+
+.bw-dice-cube.is-rolling .bw-dice-cube__face {
+  border-color: var(--bw-accent);
+}
+
+.bw-dice-cube.is-rolling .bw-dice-cube__shadow {
+  opacity: 0.22;
+  animation: bw-dice-shadow-pulse 0.12s steps(2) infinite;
+}
+
+@keyframes bw-dice-shadow-pulse {
+  0%, 100% { transform: rotateX(78deg) scaleY(0.55) scaleX(1); }
+  50% { transform: rotateX(78deg) scaleY(0.45) scaleX(1.08); }
+}
+
+.bw-dice-cube.is-win .bw-dice-cube__face--front {
+  border-color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 14%, var(--bw-bg));
+  box-shadow: inset 0 0 18px color-mix(in srgb, var(--bw-accent) 35%, transparent);
+}
+
+.bw-dice-cube.is-lose .bw-dice-cube__face--front {
+  opacity: 0.88;
+}
+
+/* ── Dice hero stage (monster + panel matrix backdrop) ──────────────────── */
+
+.bw-dice-hero-stage {
+  position: relative;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  isolation: isolate;
+  overflow: hidden;
+  border: 3px solid var(--bw-border);
+  background: var(--bw-bg);
+}
+
+.bw-dice-hero-stage__fg {
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.bw-dice-hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.bw-dice-roll-btn {
+  width: 100%;
+  max-width: 12rem;
+}
+
+.bw-dice-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  border: 3px solid var(--bw-border);
+}
+
+.bw-dice-tabs__btn {
+  flex: 1;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--bw-font);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--bw-bg);
+  color: var(--bw-fg);
+  border: none;
+  border-right: 3px solid var(--bw-border);
+  cursor: pointer;
+}
+
+.bw-dice-tabs__btn:last-child {
+  border-right: none;
+}
+
+.bw-dice-tabs__btn.is-active {
+  background: var(--bw-accent);
+  color: var(--bw-bg);
+}
+
+.bw-dice-tabs__btn:focus-visible {
+  outline: 3px solid var(--bw-accent);
+  outline-offset: -3px;
+}
+
+.bw-dice-result {
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 3px solid var(--bw-border);
+  text-align: center;
+}
+
+.bw-dice-result.is-win {
+  border-color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 10%, var(--bw-bg));
+}
+
+.bw-dice-result.is-super {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--bw-accent) 45%, transparent);
+}
+
+.bw-dice-rules {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--bw-fg);
+}
+
+.bw-dice-rules ol {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.bw-dice-rules li + li {
+  margin-top: 0.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bw-glitch,
   .bw-shake,
@@ -408,7 +787,18 @@ body.bw-motion-lock {
   .bw-mon-antenna,
   .bw-mon-slice,
   .bw-paw-mount--left,
-  .bw-paw-mount--right {
+  .bw-paw-mount--right,
+  .bw-paw-mount--center,
+  .bw-monster-stage.is-rolling .bw-mon-arm--l,
+  .bw-monster-stage.is-rolling .bw-mon-arm--r,
+  .bw-monster-stage.is-rolling .bw-paw-mount--center,
+  .bw-monster-stage.is-rolling .bw-mon-pupil,
+  .bw-dice-cube.is-rolling .bw-dice-cube__shadow,
+  .bw-dice-cube__body.bw-dice-cube__body--front {
     animation: none !important;
+  }
+
+  .bw-dice-cube__body.bw-dice-cube__body--front {
+    transform: rotateX(0deg) rotateY(0deg) !important;
   }
 }
