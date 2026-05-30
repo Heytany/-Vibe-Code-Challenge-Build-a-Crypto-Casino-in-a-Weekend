@@ -21,14 +21,8 @@ pnpm install
 cp .env.example .env
 pnpm dev              # http://localhost:3000
 pnpm test:env         # env contract
-pnpm test:motion      # GSAP / motion unit tests
 pnpm test:e2e         # Playwright smoke
-pnpm build            # → .output/public (static SPA)
 ```
-
-**Deploy from Git:** Vercel / Netlify / Cloudflare — see [`ai/specs/deploy.md`](ai/specs/deploy.md).
-
-**Tester wallet (Phantom devnet):** [`iterations/help.md`](iterations/help.md)
 
 Solana program (requires Anchor + Rust):
 
@@ -51,7 +45,7 @@ pnpm copy-idl
 
 ### Status
 
-Platform base ready for Cloud operator — see [`ai/CONTEXT.md`](ai/CONTEXT.md).
+Skeleton complete — see [`ai/CONTEXT.md`](ai/CONTEXT.md).
 
 ---
 

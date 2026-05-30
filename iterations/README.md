@@ -15,8 +15,6 @@
 - [ ] [`ai/CONTEXT.md`](../ai/CONTEXT.md) обновлён
 - [ ] Claude сможет продолжить по [`ai/HANDOFF.md`](../ai/HANDOFF.md)
 
-**Тестировщику:** инструкция Phantom devnet → [`help.md`](./help.md)
-
 **Архитектор напоминает тебе об этом перед финальным коммитом итерации.**
 
 ---
@@ -52,9 +50,7 @@ iterations/NN-kratkoe-nazvanie.md
 | Итерация | Коммит | Отчёт | Дата |
 |----------|--------|-------|------|
 | 1 | `feat: iteration 1 — skeleton, architecture, ai handoff` | [01-kostyak-i-arhitektura.md](./01-kostyak-i-arhitektura.md) | 30.05.2026 15:00–~17:30 МСК · $6 |
-| 2 | feat: iteration 2 — GSAP motion (WIP, не закоммичено) | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 |
-
-**QA / PO:** [help.md](./help.md) — тестовый кошелёк Phantom на devnet
+| 2 | feat: iteration 2 — GSAP motion | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 |
 
 ---
 

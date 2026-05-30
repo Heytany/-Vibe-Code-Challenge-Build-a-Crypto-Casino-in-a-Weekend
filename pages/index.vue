@@ -2,10 +2,10 @@
   <div class="space-y-10">
     <section class="space-y-4">
       <UiGlitchText tag="h1" :glitching="true" class="text-4xl md:text-5xl font-bold uppercase tracking-tight">
-        <UiLocaleText path="lobby.title" tag="span" />
+        {{ t('lobby.title') }}
       </UiGlitchText>
       <p class="text-[var(--bw-muted)] max-w-2xl whitespace-normal">
-        <UiLocaleText path="lobby.subtitle" tag="span" />
+        {{ t('lobby.subtitle') }}
       </p>
       <WalletBalanceDisplay />
     </section>
@@ -20,16 +20,14 @@
         :disabled="motionStore.isLocked"
         @click="goToGame(game.to)"
       >
-        <UiLocaleText
-          :path="game.statusKey"
-          tag="span"
-          class="text-xs text-[var(--bw-muted)] group-hover:text-[var(--bw-bg)] font-mono"
-        />
+        <span class="text-xs text-[var(--bw-muted)] group-hover:text-[var(--bw-bg)] font-mono">
+          {{ t(game.statusKey) }}
+        </span>
         <h2 class="text-2xl font-bold uppercase mt-2 mb-3">
-          <UiLocaleText :path="game.titleKey" tag="span" />
+          {{ t(game.titleKey) }}
         </h2>
         <p class="text-sm whitespace-normal opacity-80">
-          <UiLocaleText :path="game.descKey" tag="span" />
+          {{ t(game.descKey) }}
         </p>
       </button>
     </section>
@@ -41,6 +39,7 @@
  * @agent-context Lobby — matrix GSAP transition on game card click.
  * @see composables/useBrutalMotion.ts
  */
+const { t } = useI18n()
 const { playRouteTransition } = useBrutalMotion()
 const motionStore = useMotionStore()
 

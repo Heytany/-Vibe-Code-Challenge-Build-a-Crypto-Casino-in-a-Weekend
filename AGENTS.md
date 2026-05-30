@@ -9,6 +9,4 @@
 
 Do not skip `ai/` — it is the project's memory across agents.
 
-**Roles:** Cursor = setup · Claude Cloud = operator · PO tests via [`iterations/help.md`](iterations/help.md)
-
 4. Read latest report in [`iterations/`](iterations/) (Russian, human-facing) — **mandatory workflow:** [`ai/specs/iterations-workflow.md`](ai/specs/iterations-workflow.md)

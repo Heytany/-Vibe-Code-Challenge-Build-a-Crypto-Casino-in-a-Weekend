@@ -13,10 +13,8 @@
 | `playRouteTransition(to, 'matrix')` | Lobby → game |
 | `playRouteTransition(to, 'instant')` | Back to lobby |
 | `playCrackModal({ connect })` | Wallet connect |
-| `playLocaleSwitch(apply, btn)` | Slug btn glitch + stagger on all `.bw-locale-text` |
-| `playThemeSwitch('sun' \| 'moon', apply)` | Day/night — full-screen Lucide flash |
-| `playWinBurst(el)` | @todo Cloud — win |
-| `playDepositPulse(el)` | @todo Cloud — deposit |
+| `playWinBurst(el)` | @todo it.3 win |
+| `playDepositPulse(el)` | @todo it.3 deposit |
 | `playGameEnter(el)` | Game page mount |
 
 ## Components
@@ -24,8 +22,6 @@
 - [`MotionRoot.vue`](../../components/motion/MotionRoot.vue) — mount in app.vue
 - [`MatrixTransitionOverlay.vue`](../../components/motion/MatrixTransitionOverlay.vue)
 - [`BrutalCrackModal.vue`](../../components/motion/BrutalCrackModal.vue)
-- [`SettingsFlashOverlay.vue`](../../components/motion/SettingsFlashOverlay.vue) — theme only
-- [`LocaleText.vue`](../../components/ui/LocaleText.vue) — mark i18n copy for locale motion
 
 ## Reduced motion
 

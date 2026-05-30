@@ -1,6 +1,6 @@
 <template>
   <div v-if="connected" class="text-xs font-mono text-[var(--bw-muted)] whitespace-normal">
-    <UiLocaleText path="wallet.casinoBalance" tag="span" class="text-[var(--bw-accent)]" />:
+    <span class="text-[var(--bw-accent)]">{{ t('wallet.casinoBalance') }}:</span>
     {{ formattedBalance }}
   </div>
 </template>
@@ -9,6 +9,7 @@
 /**
  * @agent-context Displays in-casino balance from useCasinoProgram (stub until on-chain wired).
  */
+const { t } = useI18n()
 const { connected } = useWallet()
 const { casinoBalance } = useCasinoProgram()
 

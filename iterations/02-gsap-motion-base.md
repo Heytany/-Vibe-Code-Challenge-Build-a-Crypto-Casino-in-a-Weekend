@@ -1,8 +1,6 @@
 # Итерация 2
 
-## GSAP motion foundation — matrix, crack wallet, theme, locale slugs
-
-> **Статус:** в работе, ещё не закоммичено. 1 итерация = 1 коммит.
+## GSAP motion foundation — matrix-переходы и crack-modal кошелька
 
 ---
 
@@ -12,37 +10,36 @@
 
 - Сохранить простой brutalist UI, но **разрешить и требовать** сложные анимации в ключевых точках.
 - Подключить **GreenSock (GSAP)** до передачи Claude.
-- **Matrix glitch** при переходе lobby → игра.
-- **Crack popup** для кошелька — ломаные трещины, 3D на ПК.
-- **День/ночь** — полноэкранная анимация с иконками (Lucide).
-- **Язык** — анимация **только на slug-кнопках** EN / RU / UK, не на всей странице.
-- Deploy из Git + [`help.md`](./help.md) для тестера Phantom.
+- **Matrix glitch** при переходе lobby → игра (чёрный + зелёный, код на весь экран).
+- **Crack popup** для кошелька — трещина из центра монитора, modal «вылезает» из скола.
+- Концепт: **просто + брутально + местами СЛИШКОМ проработано**.
 
 ### Архитектор
 
-- `gsap` + Pinia `motion` store, единый `useBrutalMotion()`.
-- Hero: `MatrixTransitionOverlay`, `ScreenCrackOverlay`, `BrutalCrackModal`.
-- Settings: `SettingsFlashOverlay` — **только theme**; locale — inline GSAP на кнопке.
-- Icons: **`lucide-vue-next`** (Sun / Moon).
-- Theme: `stores/theme.ts`, ADR-012, day/night CSS tokens.
-- Deploy: `vercel.json`, `netlify.toml`, CI, `ai/specs/deploy.md`.
+- `gsap` + client plugin, Pinia `motion` store, единый `useBrutalMotion()`.
+- Компоненты: `MatrixTransitionOverlay`, `ScreenCrackOverlay`, `BrutalCrackModal`, `MotionRoot`.
+- Wallet: crack → auto Phantom @450ms (wow без лишнего клика).
+- Back to lobby: `instant` (без matrix).
+- Stubs: `playWinBurst`, `playDepositPulse` для ит.3.
+- ADR-011, `ai/specs/ui-motion.md`.
 
 ### Реализовано
 
 ```mermaid
 flowchart TB
-    Lobby -->|matrix| Game
-    Connect -->|crack| Phantom
-    Slug[EN/RU/UK slug] -->|button pulse| i18n
-    Theme[☀/☾ Lucide] -->|full flash| DayNight[day/night tokens]
+    Lobby[Lobby button] -->|playRouteTransition matrix| Matrix[Matrix overlay]
+    Matrix --> Game[Game page + playGameEnter]
+    Connect[Connect Phantom] -->|playCrackModal| Crack[Crack + modal]
+    Crack --> Phantom[Phantom SDK]
+    Back[Back button] -->|instant| Lobby
 ```
 
-| API | Эффект |
-|-----|--------|
-| `playRouteTransition` | Matrix на весь экран |
-| `playCrackModal` | Трещины + modal |
-| `playLocaleSwitch(apply, btn)` | Только slug-кнопка |
-| `playThemeSwitch(sun/moon, apply)` | Full-screen + Lucide |
+| Файл | Назначение |
+|------|------------|
+| `composables/useBrutalMotion.ts` | Единый API |
+| `stores/motion.ts` | Lock + overlay state |
+| `components/motion/*` | GSAP сцены |
+| `plugins/gsap.client.ts` | GSAP defaults |
 
 ---
 
@@ -50,9 +47,10 @@ flowchart TB
 
 | Метрика | Значение |
 |---------|----------|
-| Motion-компонентов | 5 |
-| GSAP hero-сцен | 3 (+ stubs win/deposit) |
-| `pnpm test:motion` | 5/5 ✅ |
+| Новых motion-компонентов | 4 |
+| GSAP hero-сцен | 2 (+ 2 stubs) |
+| `pnpm test:motion` | 3/3 ✅ |
+| `pnpm test:e2e` | 3/3 ✅ (reduced-motion) |
 | `pnpm build` | ✅ |
 
 ---
@@ -61,10 +59,10 @@ flowchart TB
 
 | | |
 |---|---|
-| **Старт** | 30.05.2026, ~17:30 МСK (после ит.1) |
+| **Старт** | 30.05.2026, ~17:30 МСК (после ит.1) |
 | **USD (Cursor AI)** | PO: дополнить |
 | **Время PO** | PO: дополнить |
 
 ---
 
-**Коммит (ожидается):** `feat: iteration 2 — GSAP motion, theme, locale slugs, deploy scaffold`
+**Коммит:** `feat: iteration 2 — GSAP matrix transitions and crack wallet modal`

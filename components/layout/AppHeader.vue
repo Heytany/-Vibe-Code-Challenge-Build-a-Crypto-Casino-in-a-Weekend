@@ -9,7 +9,6 @@
       </NuxtLink>
 
       <div class="flex flex-wrap items-center gap-3">
-        <LayoutThemeToggle />
         <LayoutLocaleSwitcher />
         <WalletConnectButton />
       </div>

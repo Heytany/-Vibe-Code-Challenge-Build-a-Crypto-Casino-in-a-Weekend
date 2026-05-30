@@ -8,8 +8,6 @@ export default defineNuxtConfig({
   // https://github.com/nuxt/nuxt/issues/35114
   experimental: {
     viteEnvironmentApi: true,
-    // Silence dev-only "#app-manifest" pre-transform noise (Nuxt 3.21 + Vite 7)
-    appManifest: false,
   },
 
   modules: [
@@ -56,18 +54,7 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap',
         },
       ],
-      script: [
-        {
-          key: 'bw-theme-init',
-          innerHTML: `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)wibe_theme=([^;]*)/);var t=m&&decodeURIComponent(m[1])==='day'?'day':'night';document.documentElement.setAttribute('data-bw-theme',t)}catch(e){document.documentElement.setAttribute('data-bw-theme','night')}})();`,
-          tagPosition: 'head',
-        },
-      ],
     },
-  },
-
-  nitro: {
-    preset: 'static',
   },
 
   // Nuxt auto-maps NUXT_PUBLIC_* from .env — do not use process.env here
