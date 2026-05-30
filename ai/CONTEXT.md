@@ -1,8 +1,12 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-30 — iteration 2 in progress (not committed yet)  
+**Last updated:** 2026-05-30 — iteration 2 handoff to Claude  
 **Project name:** Brutal wibe  
 **Current iteration:** 2 → [`iterations/02-gsap-motion-base.md`](../iterations/02-gsap-motion-base.md)
+
+## Handoff note (PO)
+
+Iteration 2 scoped in Cursor. **PO switches to Claude (Cloud)** — standard Cursor included limit (**$20**) reached; **~$10** and **~45 min PO** spent on iteration 2. Cloud continues from [`HANDOFF.md`](HANDOFF.md).
 
 ## Roles (Spark model)
 
@@ -27,9 +31,11 @@ pnpm dev          # http://localhost:3000
 - [x] GSAP matrix route + crack wallet modal
 - [x] Jagged crack geometry + desktop 3D modal
 - [x] Day/night theme + Lucide icons (`lucide-vue-next`)
-- [x] Locale slug animation (EN/RU/UK buttons only)
+- [x] Locale motion — slug glitch + `UiLocaleText` stagger
 - [x] Deploy configs + CI + [`iterations/help.md`](../iterations/help.md)
-- [ ] PO review → single commit `feat: iteration 2 — …`
+- [ ] PO final commit `feat: iteration 2 — …` (может сделать Claude после pull)
+
+**PO metrics (it.2):** ~45 min · **$10 Cursor** · handoff reason: **$20 limit hit**
 
 ## Cloud — after iteration 2 commit
 
