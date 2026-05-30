@@ -43,24 +43,50 @@ export function useBrutalMotion() {
     await motionStore.startCrack(options.connect)
   }
 
-  /** @todo iteration 3 — slot/dice win burst */
-  function playWinBurst(_target: HTMLElement | null) {
-    if (prefersReducedMotion.value || !_target) {
-      return gsap.timeline()
-    }
-    return gsap
-      .timeline()
-      .to(_target, { scale: 1.05, duration: 0.15, yoyo: true, repeat: 1 })
+  /**
+   * Win celebration — brutal glitch pop: accent flash + scale punch + jitter shake.
+   * Safe to call on every win; returns the timeline so callers can await/chain.
+   */
+  function playWinBurst(target: HTMLElement | null) {
+    const tl = gsap.timeline()
+    if (prefersReducedMotion.value || !target) return tl
+
+    tl.set(target, { transformOrigin: 'center center' })
+      .to(target, { scale: 1.08, duration: 0.12, ease: 'power3.out' })
+      .to(target, {
+        keyframes: {
+          x: [0, -5, 4, -3, 2, 0],
+          rotate: [0, -0.8, 0.6, -0.4, 0],
+        },
+        duration: 0.32,
+        ease: 'steps(5)',
+      })
+      .fromTo(
+        target,
+        { boxShadow: '0 0 0 rgba(var(--bw-scanline-rgb), 0.9)' },
+        { boxShadow: '0 0 32px rgba(var(--bw-scanline-rgb), 0.9)', duration: 0.18, yoyo: true, repeat: 1 },
+        '<',
+      )
+      .to(target, { scale: 1, duration: 0.16, ease: 'power2.inOut', clearProps: 'transform,boxShadow' })
+    return tl
   }
 
-  /** @todo iteration 3 — deposit SPL pulse */
-  function playDepositPulse(_target: HTMLElement | null) {
-    if (prefersReducedMotion.value || !_target) {
-      return gsap.timeline()
-    }
-    return gsap
-      .timeline()
-      .fromTo(_target, { boxShadow: '0 0 0 var(--bw-accent)' }, { boxShadow: '0 0 24px var(--bw-accent)', duration: 0.4 })
+  /** Deposit confirmation — accent shadow swells then settles, signalling tokens landed. */
+  function playDepositPulse(target: HTMLElement | null) {
+    const tl = gsap.timeline()
+    if (prefersReducedMotion.value || !target) return tl
+
+    tl.fromTo(
+      target,
+      { boxShadow: '0 0 0 rgba(var(--bw-scanline-rgb), 0.0)' },
+      { boxShadow: '0 0 26px rgba(var(--bw-scanline-rgb), 0.85)', duration: 0.4, ease: 'power2.out' },
+    ).to(target, {
+      boxShadow: '0 0 0 rgba(var(--bw-scanline-rgb), 0.0)',
+      duration: 0.5,
+      ease: 'power2.in',
+      clearProps: 'boxShadow',
+    })
+    return tl
   }
 
   function playGameEnter(el: HTMLElement | null) {

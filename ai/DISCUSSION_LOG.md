@@ -38,3 +38,17 @@
 **Decision:** `iterations/` — RU reports with infographics; 1 iteration = 1 commit (ADR-010).
 
 **Reminder:** Architect prompts PO to review report before commit. Claude reads latest iteration + `ai/specs/iterations-workflow.md`.
+
+---
+
+## 2026-05-30 — Iteration 3: lobby monster hero
+
+**Participants:** Human (PO), Claude (Cloud operator)
+
+**Decision:** Lobby leads with a pixel-art monster holding the two game panels in its
+paws (ADR-013). Idle motion stays in the **CSS flat layer** (`bw-mon-*`); GSAP remains
+reserved for route/wallet/win scenes. New `components/lobby/` dir. Responsive: arms land
+at 25%/75%, panel grid `1fr 1fr`, `clamp()` sizing, fits viewport at 320px → desktop.
+
+**Open questions:** monster art is hard-coded to exactly two panels — revisit if a third
+game is added.

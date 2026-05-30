@@ -15,8 +15,8 @@
 | `playCrackModal({ connect })` | Wallet connect |
 | `playLocaleSwitch(apply, btn)` | Slug btn glitch + stagger on all `.bw-locale-text` |
 | `playThemeSwitch('sun' \| 'moon', apply)` | Day/night — full-screen Lucide flash |
-| `playWinBurst(el)` | @todo Cloud — win |
-| `playDepositPulse(el)` | @todo Cloud — deposit |
+| `playWinBurst(el)` | ✅ win — accent flash + scale punch + jitter shake |
+| `playDepositPulse(el)` | ✅ deposit — accent shadow swell + settle |
 | `playGameEnter(el)` | Game page mount |
 
 ## Components

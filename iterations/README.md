@@ -53,6 +53,7 @@ iterations/NN-kratkoe-nazvanie.md
 |----------|--------|-------|------|
 | 1 | `feat: iteration 1 — skeleton, architecture, ai handoff` | [01-kostyak-i-arhitektura.md](./01-kostyak-i-arhitektura.md) | 30.05.2026 15:00–~17:30 МСК · $6 |
 | 2 | feat: iteration 2 — GSAP motion (WIP, не закоммичено) | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 · **45 мин PO · $10** · handoff → Claude (лимит Cursor $20) |
+| 3 | feat: iteration 3 — lobby pixel-art monster (ожидает коммита) | [03-monster-lobby.md](./03-monster-lobby.md) | 30.05.2026 · Claude (Cloud), первый проход оператора |
 
 **QA / PO:** [help.md](./help.md) — тестовый кошелёк Phantom на devnet
 

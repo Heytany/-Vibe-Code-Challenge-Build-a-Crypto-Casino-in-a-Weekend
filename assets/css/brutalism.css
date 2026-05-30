@@ -213,10 +213,202 @@ body.bw-motion-lock {
   pointer-events: none;
 }
 
+/* ── Lobby monster hero ───────────────────────────────────────────────── */
+
+.bw-monster-stage {
+  position: relative;
+  width: min(720px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bw-monster-figure {
+  width: 100%;
+  line-height: 0;
+  pointer-events: none;
+}
+
+.bw-monster-figure svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.bw-monster-hands {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 3vw, 30px);
+  /* tuck the panel tops up under the paws so the monster appears to grip them */
+  margin-top: clamp(-36px, -4.5vw, -16px);
+}
+
+.bw-paw-mount {
+  display: flex;
+}
+
+.bw-paw-mount > * {
+  width: 100%;
+}
+
+@keyframes bw-mon-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes bw-mon-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  93%, 96% { transform: scaleY(0.08); }
+}
+
+@keyframes bw-mon-arm-l {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(2.5deg); }
+}
+
+@keyframes bw-mon-arm-r {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-2.5deg); }
+}
+
+@keyframes bw-mon-antenna {
+  0%, 100% { opacity: 0.35; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
+}
+
+@keyframes bw-mon-slice {
+  0%, 82%, 100% { opacity: 0; transform: translateX(0); }
+  84% { opacity: 0.9; transform: translateX(-6px); }
+  88% { opacity: 0.7; transform: translateX(5px); }
+  92% { opacity: 0; }
+}
+
+@keyframes bw-mon-hold-l {
+  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+  50% { transform: translateY(3px) rotate(-0.5deg); }
+}
+
+@keyframes bw-mon-hold-r {
+  0%, 100% { transform: translateY(0) rotate(0.7deg); }
+  50% { transform: translateY(3px) rotate(0.7deg); }
+}
+
+@keyframes bw-mon-twitch-a {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(4deg); }
+  30% { transform: rotate(-3deg); }
+  45% { transform: rotate(5deg); }
+  62% { transform: rotate(-2deg); }
+  80% { transform: rotate(2.5deg); }
+}
+
+@keyframes bw-mon-twitch-b {
+  0%, 100% { transform: rotate(0deg); }
+  18% { transform: rotate(-4deg); }
+  34% { transform: rotate(3deg); }
+  50% { transform: rotate(-5deg); }
+  68% { transform: rotate(2deg); }
+  84% { transform: rotate(-2.5deg); }
+}
+
+.bw-mon-figure {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: bw-mon-breathe 3.8s ease-in-out infinite;
+}
+
+.bw-mon-tentacle {
+  transform-box: fill-box;
+}
+
+/* left tentacles pivot at their body attachment (right end) */
+.bw-mon-tentacle--la,
+.bw-mon-tentacle--lb,
+.bw-mon-tentacle--lc,
+.bw-mon-tentacle--ld {
+  transform-origin: 100% 50%;
+}
+
+/* right tentacles pivot at their body attachment (left end) */
+.bw-mon-tentacle--ra,
+.bw-mon-tentacle--rb,
+.bw-mon-tentacle--rc,
+.bw-mon-tentacle--rd {
+  transform-origin: 0% 50%;
+}
+
+.bw-mon-tentacle--la { animation: bw-mon-twitch-a 1.3s ease-in-out infinite; }
+.bw-mon-tentacle--lb { animation: bw-mon-twitch-b 1.7s ease-in-out infinite; }
+.bw-mon-tentacle--lc { animation: bw-mon-twitch-a 2.1s ease-in-out infinite; }
+.bw-mon-tentacle--ld { animation: bw-mon-twitch-b 0.9s ease-in-out infinite; }
+.bw-mon-tentacle--ra { animation: bw-mon-twitch-b 1.5s ease-in-out infinite; }
+.bw-mon-tentacle--rb { animation: bw-mon-twitch-a 1.9s ease-in-out infinite; }
+.bw-mon-tentacle--rc { animation: bw-mon-twitch-b 1.1s ease-in-out infinite; }
+.bw-mon-tentacle--rd { animation: bw-mon-twitch-a 2.3s ease-in-out infinite; }
+
+.bw-mon-pupil {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bw-mon-blink 5.2s steps(1, end) infinite;
+  filter: drop-shadow(0 0 4px var(--bw-accent));
+}
+
+.bw-mon-arm--l {
+  transform-box: fill-box;
+  transform-origin: 90% 0%;
+  animation: bw-mon-arm-l 3.2s ease-in-out infinite;
+}
+
+.bw-mon-arm--r {
+  transform-box: fill-box;
+  transform-origin: 10% 0%;
+  animation: bw-mon-arm-r 3.2s ease-in-out infinite;
+}
+
+.bw-mon-antenna {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bw-mon-antenna 1.6s steps(2, end) infinite;
+}
+
+.bw-mon-slice {
+  transform-box: fill-box;
+  animation: bw-mon-slice 4.4s steps(1, end) infinite;
+}
+
+.bw-paw-mount--left {
+  animation: bw-mon-hold-l 3.2s ease-in-out infinite;
+}
+
+.bw-paw-mount--right {
+  animation: bw-mon-hold-r 3.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bw-glitch,
   .bw-shake,
-  .bw-corrupt-bar {
+  .bw-corrupt-bar,
+  .bw-mon-figure,
+  .bw-mon-pupil,
+  .bw-mon-arm--l,
+  .bw-mon-arm--r,
+  .bw-mon-tentacle--la,
+  .bw-mon-tentacle--lb,
+  .bw-mon-tentacle--lc,
+  .bw-mon-tentacle--ld,
+  .bw-mon-tentacle--ra,
+  .bw-mon-tentacle--rb,
+  .bw-mon-tentacle--rc,
+  .bw-mon-tentacle--rd,
+  .bw-mon-antenna,
+  .bw-mon-slice,
+  .bw-paw-mount--left,
+  .bw-paw-mount--right {
     animation: none !important;
   }
 }

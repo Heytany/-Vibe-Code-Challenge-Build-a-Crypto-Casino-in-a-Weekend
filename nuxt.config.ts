@@ -43,14 +43,42 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Brutal wibe',
+      title: 'Brutal wibe — broken on-chain casino',
+      htmlAttrs: { lang: 'en' },
       meta: [
         {
           name: 'description',
-          content: 'Brutal wibe — a broken brutalist on-chain crypto casino on Solana devnet.',
+          content:
+            'Brutal wibe — a corrupted brutalist on-chain crypto casino on Solana devnet. Deposit devnet tokens, play Glitch Roll & Corrupted Reels, verify every roll on Solana Explorer.',
         },
+        { name: 'theme-color', content: '#0a0a0a' },
+        { name: 'keywords', content: 'Solana, devnet, casino, on-chain, crypto, dice, slot, brutalist, web3, Phantom' },
+        // Open Graph
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Brutal wibe' },
+        { property: 'og:title', content: 'Brutal wibe — broken on-chain casino' },
+        {
+          property: 'og:description',
+          content:
+            'A corrupted on-chain casino on Solana devnet. Deposit devnet tokens, play broken games, verify every roll on Solana Explorer.',
+        },
+        { property: 'og:image', content: '/og-image.png' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: 'Brutal wibe — pixel-art monster holding two glitch games' },
+        // Twitter
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'Brutal wibe — broken on-chain casino' },
+        {
+          name: 'twitter:description',
+          content: 'A corrupted on-chain casino on Solana devnet. Verify every roll on Solana Explorer.',
+        },
+        { name: 'twitter:image', content: '/og-image.png' },
       ],
       link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap',

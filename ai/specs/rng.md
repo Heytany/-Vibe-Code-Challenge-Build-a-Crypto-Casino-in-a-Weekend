@@ -24,4 +24,6 @@ Domain bytes: `b"dice"` or `b"slot" + reel_index`.
 
 ## TODO
 
-- Expose verify helper in frontend `shared/rng-verify.ts` for UI "verify roll" link
+- ~~Expose verify helper in frontend `shared/rng-verify.ts` for UI "verify roll" link~~
+  ✅ done (iteration 3): `shared/rng-verify.ts` + `tests/rng-verify.test.ts`, includes
+  `base58Decode`, `computeRoll/computeSymbol/computeReels`, `verifyDice/verifySlot`, payout helpers.

@@ -4,7 +4,8 @@
     "subtitle": "Повреждённое on-chain казино. Депозит devnet-токенов, сломанные игры, проверка каждого броска в Solana Explorer.",
     "status": {
       "wip": "[скелет]"
-    }
+    },
+    "tagline": "// выбери сломанную игру — монстр держит обе"
   },
   "common": {
     "back": "← Лobby"
@@ -28,14 +29,40 @@
       "subtitle": "// dice.exe — corrupted",
       "desc": "Roll under/over. Исход on-chain из blockhash + ваш seed.",
       "placeholder": "Логика игры ещё не подключена.",
-      "roll": "Бросить"
+      "roll": "Бросить",
+      "target": "Цель",
+      "rollUnder": "Меньше",
+      "rollOver": "Больше",
+      "youRolled": "Выпало",
+      "chance": "Шанс"
     },
     "slot": {
       "title": "Corrupted Reels",
       "subtitle": "// slot.dll — unstable",
       "desc": "Три барабана. Пары и тройки платят — house edge on-chain.",
       "placeholder": "Барабаны пока только визуально.",
-      "spin": "Крутить [broken]"
+      "spin": "Крутить [broken]",
+      "spinAgain": "Крутить ещё",
+      "reels": "Барабаны"
+    },
+    "common": {
+      "bet": "Ставка",
+      "deposit": "Депозит",
+      "withdraw": "Вывод",
+      "max": "Макс",
+      "balance": "Баланс казино",
+      "verifyRoll": "Проверить в Explorer",
+      "verifiedOk": "Проверено — совпадает on-chain",
+      "verifiedFail": "Расхождение — не доверяй",
+      "lastResult": "Последний результат",
+      "win": "ВЫИГРЫШ",
+      "lose": "МИМО",
+      "payout": "Выплата",
+      "nonce": "Nonce",
+      "seed": "Seed",
+      "playAgain": "Ещё раз",
+      "connectFirst": "Подключи Phantom для игры",
+      "insufficient": "Недостаточно баланса — сделай депозит"
     }
   },
   "footer": {
@@ -64,5 +91,16 @@
   },
   "errors": {
     "ENV_INVALID": "Ошибка окружения. Скопируйте .env.example в .env."
+  },
+  "seo": {
+    "lobby": {
+      "description": "Повреждённое on-chain казино на Solana devnet. Выбери сломанную игру — Glitch Roll или Corrupted Reels — и проверь каждый бросок в Solana Explorer."
+    },
+    "dice": {
+      "description": "Glitch Roll — бросок под/над целью. Исход считается on-chain из недавнего blockhash и твоего seed, проверяемо в Solana Explorer."
+    },
+    "slot": {
+      "description": "Corrupted Reels — три смещённых барабана, пары и тройки дают выплату. House edge применяется on-chain. Каждый спин проверяем на Solana devnet."
+    }
   }
 }

@@ -4,7 +4,8 @@
     "subtitle": "A corrupted on-chain casino. Deposit devnet tokens, play broken games, verify every roll on Solana Explorer.",
     "status": {
       "wip": "[skeleton]"
-    }
+    },
+    "tagline": "// pick a broken game — the monster is holding both"
   },
   "common": {
     "back": "← Lobby"
@@ -28,14 +29,40 @@
       "subtitle": "// dice.exe — corrupted",
       "desc": "Roll under or over a target. Outcome computed on-chain from blockhash + your seed.",
       "placeholder": "Game logic not wired yet. Connect wallet and wait for the next agent pass.",
-      "roll": "Roll dice"
+      "roll": "Roll dice",
+      "target": "Target",
+      "rollUnder": "Roll under",
+      "rollOver": "Roll over",
+      "youRolled": "You rolled",
+      "chance": "Win chance"
     },
     "slot": {
       "title": "Corrupted Reels",
       "subtitle": "// slot.dll — unstable",
       "desc": "Three misaligned reels. Pairs and triples pay out — house edge applied on-chain.",
       "placeholder": "Reels are visual-only in skeleton. On-chain play_slot coming next.",
-      "spin": "Spin [broken]"
+      "spin": "Spin [broken]",
+      "spinAgain": "Spin again",
+      "reels": "Reels"
+    },
+    "common": {
+      "bet": "Bet",
+      "deposit": "Deposit",
+      "withdraw": "Withdraw",
+      "max": "Max",
+      "balance": "Casino balance",
+      "verifyRoll": "Verify on Explorer",
+      "verifiedOk": "Verified — matches on-chain",
+      "verifiedFail": "Mismatch — do not trust",
+      "lastResult": "Last result",
+      "win": "WIN",
+      "lose": "BUST",
+      "payout": "Payout",
+      "nonce": "Nonce",
+      "seed": "Seed",
+      "playAgain": "Play again",
+      "connectFirst": "Connect Phantom to play",
+      "insufficient": "Not enough balance — deposit first"
     }
   },
   "footer": {
@@ -64,5 +91,16 @@
   },
   "errors": {
     "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values."
+  },
+  "seo": {
+    "lobby": {
+      "description": "A corrupted on-chain casino on Solana devnet. Pick a broken game — Glitch Roll or Corrupted Reels — and verify every roll on Solana Explorer."
+    },
+    "dice": {
+      "description": "Glitch Roll — roll under or over a target. The outcome is computed on-chain from the recent blockhash and your seed, verifiable on Solana Explorer."
+    },
+    "slot": {
+      "description": "Corrupted Reels — three misaligned reels, pairs and triples pay out. House edge applied on-chain. Every spin is verifiable on Solana devnet."
+    }
   }
 }
