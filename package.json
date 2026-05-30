@@ -1,0 +1,42 @@
+{
+  "name": "brutal-wibe",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --open --port 3000",
+    "dev:preview": "nuxt build && nuxt preview --port 3000 --open",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxt typecheck",
+    "test:env": "vitest run tests/env-contract.test.ts",
+    "test:e2e": "playwright test",
+    "copy-idl": "node scripts/copy-idl.mjs"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
+    "@nuxtjs/i18n": "^9.3.1",
+    "@pinia/nuxt": "^0.9.0",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-phantom": "^0.9.24",
+    "@solana/wallet-adapter-wallets": "^0.19.32",
+    "@solana/web3.js": "^1.98.0",
+    "nuxt": "^3.16.0",
+    "pinia": "^2.3.1",
+    "reka-ui": "^2.9.8",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.13.4",
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "vue-tsc": "^2.2.8"
+  },
+  "packageManager": "pnpm@10.6.5"
+}

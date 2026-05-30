@@ -1,0 +1,46 @@
+{
+  "lobby": {
+    "title": "Brutal wibe",
+    "subtitle": "Повреждённое on-chain казино. Депозит devnet-токенов, сломанные игры, проверка каждого броска в Solana Explorer.",
+    "status": {
+      "wip": "[скелет]"
+    }
+  },
+  "common": {
+    "back": "← Лobby"
+  },
+  "wallet": {
+    "connect": "Подключить Phantom",
+    "connecting": "Подключение…",
+    "casinoBalance": "Баланс казино"
+  },
+  "games": {
+    "dice": {
+      "title": "Glitch Roll",
+      "subtitle": "// dice.exe — corrupted",
+      "desc": "Roll under/over. Исход on-chain из blockhash + ваш seed.",
+      "placeholder": "Логика игры ещё не подключена.",
+      "roll": "Бросить"
+    },
+    "slot": {
+      "title": "Corrupted Reels",
+      "subtitle": "// slot.dll — unstable",
+      "desc": "Три барабана. Пары и тройки платят — house edge on-chain.",
+      "placeholder": "Барабаны пока только визуально.",
+      "spin": "Крутить [broken]"
+    }
+  },
+  "footer": {
+    "tagline": "Сноски — прочитайте прежде чем винить UI",
+    "disclaimer": "Только testnet. Без реальных денег.",
+    "notes": {
+      "broken": "Глитчи и наклоны — задуманный брутализм, приложение остаётся удобным.",
+      "onchain": "Каждая ставка — в программе wibe_casino. Проверяйте в Solana Explorer.",
+      "houseEdge": "Это казино. House edge задан on-chain в basis points.",
+      "hacker": "Вы не эксплуатируете баг — вы играете в игру в стиле эксплойта."
+    }
+  },
+  "errors": {
+    "ENV_INVALID": "Ошибка окружения. Скопируйте .env.example в .env."
+  }
+}

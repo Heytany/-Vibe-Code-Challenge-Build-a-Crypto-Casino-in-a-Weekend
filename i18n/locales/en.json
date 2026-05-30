@@ -1,0 +1,46 @@
+{
+  "lobby": {
+    "title": "Brutal wibe",
+    "subtitle": "A corrupted on-chain casino. Deposit devnet tokens, play broken games, verify every roll on Solana Explorer.",
+    "status": {
+      "wip": "[skeleton]"
+    }
+  },
+  "common": {
+    "back": "← Lobby"
+  },
+  "wallet": {
+    "connect": "Connect Phantom",
+    "connecting": "Connecting…",
+    "casinoBalance": "Casino balance"
+  },
+  "games": {
+    "dice": {
+      "title": "Glitch Roll",
+      "subtitle": "// dice.exe — corrupted",
+      "desc": "Roll under or over a target. Outcome computed on-chain from blockhash + your seed.",
+      "placeholder": "Game logic not wired yet. Connect wallet and wait for the next agent pass.",
+      "roll": "Roll dice"
+    },
+    "slot": {
+      "title": "Corrupted Reels",
+      "subtitle": "// slot.dll — unstable",
+      "desc": "Three misaligned reels. Pairs and triples pay out — house edge applied on-chain.",
+      "placeholder": "Reels are visual-only in skeleton. On-chain play_slot coming next.",
+      "spin": "Spin [broken]"
+    }
+  },
+  "footer": {
+    "tagline": "Footnotes — read before you blame the UI",
+    "disclaimer": "Testnet only. No real money.",
+    "notes": {
+      "broken": "The glitches, tilts, and jitter are intentional brutalist design — the app remains usable on purpose.",
+      "onchain": "Every bet settles in the wibe_casino Anchor program. Verify transactions on Solana Explorer.",
+      "houseEdge": "This is a casino, not a charity. House edge is configured on-chain in basis points.",
+      "hacker": "You are not exploiting a bug — you are playing a game styled like a exploit. The chain is the source of truth."
+    }
+  },
+  "errors": {
+    "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values."
+  }
+}
