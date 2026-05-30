@@ -50,9 +50,20 @@
       "subtitle": "// slot.dll — unstable",
       "desc": "Три барабани. Пари та потрійки платять — house edge on-chain.",
       "placeholder": "Барабани поки лише візуально.",
-      "spin": "Крутити [broken]",
+      "spin": "Крутити",
       "spinAgain": "Крутити ще",
-      "reels": "Барабани"
+      "reels": "Барабани",
+      "tabPlay": "Гра",
+      "tabRules": "Як грати",
+      "youSpun": "Випало",
+      "payoutHint": "Пара ×2 · потрійка ×10 (до house edge). Символи: 7 X # ? ! 0",
+      "rulesIntro": "Ставка і важіль під панеллю — три барабани зупиняються на glitch-символах.",
+      "rulesStep1": "Три однакових — потрійка (×10 gross).",
+      "rulesStep2": "Два однакових — пара (×2 gross).",
+      "rulesStep3": "Немає збігів — програш ставки.",
+      "rulesStep4": "FUN — та сама FNV-1a, що on-chain; віртуальні кредити.",
+      "rulesRng": "// live: кожен барабан = hash(blockhash ‖ seed ‖ nonce ‖ \"slot\"+index) mod 6",
+      "superWin": "// ТРІЙКА — усі барабани збіглися"
     },
     "common": {
       "bet": "Ставка",

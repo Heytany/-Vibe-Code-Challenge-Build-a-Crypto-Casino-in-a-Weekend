@@ -4,13 +4,18 @@
     class="bw-btn"
     :class="[broken ? 'bw-broken-tilt' : '', variantClass]"
     :disabled="disabled || loading"
+    :aria-busy="loading || undefined"
     v-bind="$attrs"
   >
-    <span v-if="loading" class="block w-full">
-      <span class="bw-corrupt-bar block mb-2" />
-      {{ loadingLabel }}
+    <span class="bw-btn__stack">
+      <span class="bw-btn__face" :class="{ 'bw-btn__face--ghost': loading }">
+        <slot />
+      </span>
+      <span v-if="loading" class="bw-btn__face bw-btn__face--load">
+        <span class="bw-corrupt-bar bw-corrupt-bar--btn" aria-hidden="true" />
+        <span>{{ loadingLabel }}</span>
+      </span>
     </span>
-    <span v-else><slot /></span>
   </button>
 </template>
 

@@ -127,6 +127,31 @@ body {
   cursor: not-allowed;
 }
 
+.bw-btn__stack {
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.bw-btn__face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.bw-btn__face--ghost {
+  visibility: hidden;
+}
+
+.bw-corrupt-bar--btn {
+  width: 2.75rem;
+  margin: 0;
+}
+
 .bw-accent {
   color: var(--bw-accent);
 }
@@ -222,12 +247,97 @@ body.bw-motion-lock {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: clamp(220px, 50vw, 340px);
 }
 
 .bw-monster-figure {
+  position: relative;
   width: 100%;
   line-height: 0;
   pointer-events: none;
+}
+
+.bw-monster-head-slot {
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  transform: translateX(-50%);
+  width: min(42%, 10.5rem);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.bw-monster-head-slot > * {
+  pointer-events: auto;
+}
+
+/* ── Reels mascot (bandit head + sub-eye) ───────────────────────────────── */
+
+.bw-mon-reels-head-slot {
+  position: absolute;
+  left: 50%;
+  top: 6.5%;
+  transform: translateX(-50%);
+  width: min(46%, 11rem);
+  aspect-ratio: 76 / 54;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.bw-mon-reels-eye {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--bw-bg);
+}
+
+.bw-mon-reels-eye__pupil {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 18%;
+  bottom: 12%;
+  background: var(--bw-accent);
+  opacity: 0.5;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--bw-accent) 55%, transparent);
+}
+
+.bw-mon-reels-head-slot__reels {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10% 8% 14%;
+  box-sizing: border-box;
+}
+
+.bw-mon-reels-head-slot__reels > * {
+  width: 100%;
+  pointer-events: auto;
+}
+
+.bw-mon-reels-pupil {
+  transform-origin: center;
+  animation: bw-mon-reels-blink 5.5s steps(1, end) infinite;
+}
+
+@keyframes bw-mon-reels-blink {
+  0%, 88%, 100% { transform: scaleY(1); opacity: 0.5; }
+  91%, 94% { transform: scaleY(0.12); opacity: 0.35; }
+}
+
+.bw-mon-reels-stage.is-rolling .bw-mon-reels-pupil {
+  animation: bw-mon-reels-pupil-spin 0.18s steps(2) infinite;
+  opacity: 0.72;
+}
+
+@keyframes bw-mon-reels-pupil-spin {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
 }
 
 .bw-monster-figure svg {
@@ -376,6 +486,52 @@ body.bw-motion-lock {
   animation: bw-mon-antenna 1.6s steps(2, end) infinite;
 }
 
+.bw-mon-antenna--l,
+.bw-mon-antenna--r {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: bw-mon-antenna 1.6s steps(2, end) infinite;
+}
+
+.bw-mon-antenna-stem--l,
+.bw-mon-antenna-stem--r {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+@keyframes bw-mon-antenna-pull-l {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-24deg) translateY(2px); }
+  50% { transform: rotate(18deg) translateY(-1px); }
+  75% { transform: rotate(-12deg) translateY(1px); }
+}
+
+@keyframes bw-mon-antenna-pull-r {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(24deg) translateY(2px); }
+  50% { transform: rotate(-18deg) translateY(-1px); }
+  75% { transform: rotate(12deg) translateY(1px); }
+}
+
+.bw-mon-reels-stage.is-rolling .bw-mon-antenna--l,
+.bw-mon-reels-stage.is-rolling .bw-mon-antenna-stem--l {
+  animation: bw-mon-antenna-pull-l 0.13s steps(2) infinite;
+}
+
+.bw-mon-reels-stage.is-rolling .bw-mon-antenna--r,
+.bw-mon-reels-stage.is-rolling .bw-mon-antenna-stem--r {
+  animation: bw-mon-antenna-pull-r 0.13s steps(2) infinite;
+}
+
+.bw-mon-reels-stage.is-rolling .bw-mon-arm--l,
+.bw-mon-reels-stage.is-rolling .bw-mon-arm--r {
+  animation: none;
+}
+
+.bw-mon-reels-stage.is-rolling .bw-paw-mount--center {
+  animation: none;
+}
+
 .bw-mon-slice {
   transform-box: fill-box;
   animation: bw-mon-slice 4.4s steps(1, end) infinite;
@@ -389,12 +545,19 @@ body.bw-motion-lock {
   animation: bw-mon-hold-r 3.2s ease-in-out infinite;
 }
 
-/* Dice game — single center paw + rolling die */
+/* Dice — single center paw */
 .bw-monster-hands--dice {
   grid-template-columns: 1fr;
   justify-items: center;
-  max-width: min(220px, 58vw);
+  max-width: min(260px, 62vw);
   margin-top: clamp(-42px, -5vw, -20px);
+}
+
+.bw-mon-reels-hands {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  max-width: min(11rem, 48vw);
+  margin-top: clamp(-26px, -3.2vw, -10px);
 }
 
 .bw-paw-mount--center {
@@ -406,19 +569,22 @@ body.bw-motion-lock {
   50% { transform: translateY(5px) rotate(0.3deg); }
 }
 
-.bw-monster-stage.is-rolling .bw-mon-arm--l {
+.bw-monster-stage--dice.is-rolling .bw-mon-arm--l,
+.bw-monster-stage:not(.bw-mon-reels-stage).is-rolling .bw-mon-arm--l {
   animation: bw-mon-arm-roll-l 0.12s steps(2) infinite;
 }
 
-.bw-monster-stage.is-rolling .bw-mon-arm--r {
+.bw-monster-stage--dice.is-rolling .bw-mon-arm--r,
+.bw-monster-stage:not(.bw-mon-reels-stage).is-rolling .bw-mon-arm--r {
   animation: bw-mon-arm-roll-r 0.12s steps(2) infinite;
 }
 
-.bw-monster-stage.is-rolling .bw-paw-mount--center {
+.bw-monster-stage--dice.is-rolling .bw-paw-mount--center,
+.bw-monster-stage:not(.bw-mon-reels-stage).is-rolling .bw-paw-mount--center {
   animation: bw-mon-shake-center 0.1s steps(3) infinite;
 }
 
-.bw-monster-stage.is-rolling .bw-mon-pupil {
+.bw-monster-stage--dice.is-rolling .bw-mon-pupil {
   animation: bw-mon-pupil-roll 0.15s steps(2) infinite;
 }
 
@@ -686,6 +852,7 @@ body.bw-motion-lock {
   position: relative;
   z-index: 2;
   overflow: hidden;
+  min-height: clamp(240px, 54vw, 360px);
 }
 
 .bw-dice-hero-center {
@@ -696,7 +863,8 @@ body.bw-motion-lock {
   width: 100%;
 }
 
-.bw-dice-roll-btn {
+.bw-dice-roll-btn,
+.bw-slot-spin-btn {
   width: 100%;
   max-width: 12rem;
 }
@@ -738,10 +906,36 @@ body.bw-motion-lock {
 }
 
 .bw-dice-result {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
   padding: 1rem;
   border: 3px solid var(--bw-border);
   text-align: center;
+  width: 100%;
+}
+
+.bw-game-result-slot {
+  min-height: 8.75rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: stretch;
+}
+
+.bw-game-result-slot .bw-dice-result {
+  flex: 1;
+}
+
+.bw-game-tabpanels {
+  display: grid;
+}
+
+.bw-game-tabpanel {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.bw-game-tabpanel.is-inactive {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .bw-dice-result.is-win {
@@ -768,6 +962,237 @@ body.bw-motion-lock {
   margin-top: 0.5rem;
 }
 
+/* ── Slot bandit (one-armed bandit in monster paws) ───────────────────── */
+
+.bw-slot-bandit {
+  width: 100%;
+  max-width: 15rem;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare {
+  width: 100%;
+  height: 100%;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__reels--bare {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  align-items: stretch;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__reel {
+  aspect-ratio: auto;
+  min-height: 2.5rem;
+  height: 100%;
+  border: 2px solid var(--bw-fg);
+  background: color-mix(in srgb, var(--bw-bg) 78%, transparent);
+  backdrop-filter: none;
+  transform: none;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__reel-scene {
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+  height: auto;
+  perspective: 180px;
+  overflow: hidden;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__reel-flip {
+  --bw-slot-reel-half: 0.5px;
+  position: absolute;
+  inset: 0;
+  min-height: 0;
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__reel-face {
+  background: color-mix(in srgb, var(--bw-bg) 78%, transparent);
+}
+
+.bw-mon-reels-head-slot .bw-slot-bandit--bare .bw-slot-bandit__symbol {
+  font-size: clamp(0.95rem, 4.2vw, 1.35rem);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--bw-accent) 40%, transparent);
+}
+
+.bw-slot-bandit--bare .bw-slot-bandit__reel--1,
+.bw-slot-bandit--bare .bw-slot-bandit__reel--2,
+.bw-slot-bandit--bare .bw-slot-bandit__reel--3 {
+  transform: none !important;
+}
+
+.bw-slot-bandit--bare.is-spinning .bw-slot-bandit__reel {
+  border-color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-bg) 55%, transparent);
+}
+
+.bw-slot-bandit--bare.is-spinning .bw-slot-bandit__reel-face {
+  background: color-mix(in srgb, var(--bw-bg) 55%, transparent);
+}
+
+.bw-slot-bandit--bare.is-win .bw-slot-bandit__reel {
+  border-color: var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-bg) 50%, var(--bw-accent) 12%);
+}
+
+.bw-slot-bandit--bare.is-settled .bw-slot-bandit__reels--bare {
+  animation: none;
+}
+
+.bw-slot-bandit--bare.is-lose .bw-slot-bandit__reel {
+  opacity: 0.88;
+}
+
+.bw-slot-bandit__cabinet {
+  position: relative;
+  padding: 0.65rem 0.75rem 0.75rem;
+  border: 4px solid var(--bw-border);
+  background: var(--bw-bg);
+  box-shadow: 5px 5px 0 var(--bw-fg);
+}
+
+.bw-slot-bandit__label {
+  margin: 0 0 0.4rem;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  font-family: var(--bw-font);
+  color: var(--bw-muted);
+  text-align: center;
+}
+
+.bw-slot-bandit__reels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.bw-slot-bandit__reel {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--bw-border);
+  background: color-mix(in srgb, var(--bw-fg) 5%, var(--bw-bg));
+  transform: none;
+  min-height: 3rem;
+}
+
+.bw-slot-bandit__reel-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  perspective: 340px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;
+}
+
+.bw-slot-bandit__reel-flip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg);
+  transform-origin: center center;
+  --bw-slot-reel-half: 0.5px;
+  will-change: auto;
+}
+
+.bw-slot-bandit:not(.is-spinning) .bw-slot-bandit__reel-flip {
+  transition: transform 0.12s ease-out;
+}
+
+.bw-slot-bandit__reel-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: inherit;
+}
+
+.bw-slot-bandit__reel-face--front {
+  transform: rotateX(0deg) translateZ(var(--bw-slot-reel-half));
+}
+
+.bw-slot-bandit__reel-face--back {
+  transform: rotateX(180deg) translateZ(var(--bw-slot-reel-half));
+}
+
+.bw-slot-bandit:not(.bw-slot-bandit--bare).is-settled .bw-slot-bandit__reel--1 { transform: rotate(-1.2deg); }
+.bw-slot-bandit:not(.bw-slot-bandit--bare).is-settled .bw-slot-bandit__reel--2 { transform: rotate(0.6deg) translateY(1px); }
+.bw-slot-bandit:not(.bw-slot-bandit--bare).is-settled .bw-slot-bandit__reel--3 { transform: rotate(-0.8deg); }
+
+.bw-slot-bandit.is-spinning .bw-slot-bandit__reel--1 .bw-slot-bandit__reel-flip {
+  animation: bw-slot-reel-flip 0.3s ease-in-out infinite alternate;
+  animation-delay: 0s;
+  animation-fill-mode: backwards;
+}
+
+.bw-slot-bandit.is-spinning .bw-slot-bandit__reel--2 .bw-slot-bandit__reel-flip {
+  animation: bw-slot-reel-flip 0.34s ease-in-out infinite alternate;
+  animation-delay: 0.05s;
+  animation-fill-mode: backwards;
+}
+
+.bw-slot-bandit.is-spinning .bw-slot-bandit__reel--3 .bw-slot-bandit__reel-flip {
+  animation: bw-slot-reel-flip 0.32s ease-in-out infinite alternate;
+  animation-delay: 0.1s;
+  animation-fill-mode: backwards;
+}
+
+@keyframes bw-slot-reel-flip {
+  from { transform: rotateX(0deg); }
+  to { transform: rotateX(180deg); }
+}
+
+.bw-slot-bandit.is-spinning .bw-slot-bandit__reel-flip {
+  transition: none;
+}
+
+.bw-slot-bandit.is-spinning .bw-slot-bandit__reel {
+  border-color: var(--bw-accent);
+}
+
+.bw-slot-bandit__symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15em;
+  min-height: 1em;
+  font-size: clamp(1.35rem, 6vw, 1.85rem);
+  line-height: 1;
+  color: var(--bw-accent);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.bw-slot-bandit.is-settled .bw-slot-bandit__cabinet {
+  animation: bw-slot-settle 2.4s ease-in-out infinite;
+}
+
+@keyframes bw-slot-settle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+.bw-slot-bandit.is-win .bw-slot-bandit__cabinet {
+  border-color: var(--bw-accent);
+  box-shadow: 5px 5px 0 var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 8%, var(--bw-bg));
+}
+
+.bw-slot-bandit.is-lose .bw-slot-bandit__cabinet {
+  opacity: 0.9;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bw-glitch,
   .bw-shake,
@@ -785,16 +1210,31 @@ body.bw-motion-lock {
   .bw-mon-tentacle--rc,
   .bw-mon-tentacle--rd,
   .bw-mon-antenna,
+  .bw-mon-antenna--l,
+  .bw-mon-antenna--r,
+  .bw-mon-antenna-stem--l,
+  .bw-mon-antenna-stem--r,
+  .bw-mon-reels-pupil,
+  .bw-mon-reels-stage.is-rolling .bw-mon-antenna--l,
+  .bw-mon-reels-stage.is-rolling .bw-mon-antenna--r,
+  .bw-mon-reels-stage.is-rolling .bw-mon-antenna-stem--l,
+  .bw-mon-reels-stage.is-rolling .bw-mon-antenna-stem--r,
   .bw-mon-slice,
   .bw-paw-mount--left,
   .bw-paw-mount--right,
   .bw-paw-mount--center,
-  .bw-monster-stage.is-rolling .bw-mon-arm--l,
-  .bw-monster-stage.is-rolling .bw-mon-arm--r,
+  .bw-monster-stage--dice.is-rolling .bw-mon-arm--l,
+  .bw-monster-stage:not(.bw-mon-reels-stage).is-rolling .bw-mon-arm--r,
   .bw-monster-stage.is-rolling .bw-paw-mount--center,
   .bw-monster-stage.is-rolling .bw-mon-pupil,
   .bw-dice-cube.is-rolling .bw-dice-cube__shadow,
   .bw-dice-cube__body.bw-dice-cube__body--front {
+    animation: none !important;
+  }
+
+  .bw-slot-bandit.is-settled .bw-slot-bandit__cabinet,
+  .bw-slot-bandit.is-settled.bw-slot-bandit--bare .bw-slot-bandit__reels--bare,
+  .bw-slot-bandit.is-spinning .bw-slot-bandit__reel-flip {
     animation: none !important;
   }
 

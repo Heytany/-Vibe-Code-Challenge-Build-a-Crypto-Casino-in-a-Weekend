@@ -50,9 +50,20 @@
       "subtitle": "// slot.dll — unstable",
       "desc": "Three misaligned reels. Pairs and triples pay out — house edge applied on-chain.",
       "placeholder": "Reels are visual-only in skeleton. On-chain play_slot coming next.",
-      "spin": "Spin [broken]",
+      "spin": "Spin",
       "spinAgain": "Spin again",
-      "reels": "Reels"
+      "reels": "Reels",
+      "tabPlay": "Play",
+      "tabRules": "How it works",
+      "youSpun": "You spun",
+      "payoutHint": "Pair ×2 · triple ×10 (before house edge). Symbols: 7 X # ? ! 0",
+      "rulesIntro": "Set your bet and pull the lever under the bandit panel. Three corrupted reels stop on glitch symbols.",
+      "rulesStep1": "All three symbols match — triple payout (×10 gross).",
+      "rulesStep2": "Any two symbols match — pair payout (×2 gross).",
+      "rulesStep3": "No match — you lose the bet.",
+      "rulesStep4": "FUN mode uses the same FNV-1a RNG as on-chain — virtual credits only.",
+      "rulesRng": "// live: each reel = hash(blockhash ‖ seed ‖ nonce ‖ \"slot\"+index) mod 6",
+      "superWin": "// TRIPLE — all reels match"
     },
     "common": {
       "bet": "Bet",

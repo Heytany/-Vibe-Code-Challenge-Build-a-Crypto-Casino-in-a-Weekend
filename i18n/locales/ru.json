@@ -50,9 +50,20 @@
       "subtitle": "// slot.dll — unstable",
       "desc": "Три барабана. Пары и тройки платят — house edge on-chain.",
       "placeholder": "Барабаны пока только визуально.",
-      "spin": "Крутить [broken]",
+      "spin": "Крутить",
       "spinAgain": "Крутить ещё",
-      "reels": "Барабаны"
+      "reels": "Барабаны",
+      "tabPlay": "Игра",
+      "tabRules": "Как играть",
+      "youSpun": "Выпало",
+      "payoutHint": "Пара ×2 · тройка ×10 (до house edge). Символы: 7 X # ? ! 0",
+      "rulesIntro": "Ставка и рычаг под панелью — три барабана останавливаются на glitch-символах.",
+      "rulesStep1": "Три одинаковых — тройка (×10 gross).",
+      "rulesStep2": "Два одинаковых — пара (×2 gross).",
+      "rulesStep3": "Нет совпадений — проигрыш ставки.",
+      "rulesStep4": "FUN — та же FNV-1a, что on-chain; виртуальные кредиты.",
+      "rulesRng": "// live: каждый барабан = hash(blockhash ‖ seed ‖ nonce ‖ \"slot\"+index) mod 6",
+      "superWin": "// ТРОЙКА — все барабаны совпали"
     },
     "common": {
       "bet": "Ставка",

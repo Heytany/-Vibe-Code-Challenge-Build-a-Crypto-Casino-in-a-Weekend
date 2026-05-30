@@ -55,9 +55,10 @@ iterations/NN-kratkoe-nazvanie.md
 | 2 | GSAP motion, theme, locale, deploy configs | [02-gsap-motion-base.md](./02-gsap-motion-base.md) | 30.05.2026 · ~45 мин PO · $10 |
 | 3 | `48e7de2` — monster lobby (Claude) | [03-monster-lobby.md](./03-monster-lobby.md) | 30.05.2026 · ~1 ч PO · ~75% лимита Cloud |
 | 4 | _(вошло в it.5)_ fun mode ADR-014 | [04-fun-mode.md](./04-fun-mode.md) | — |
-| 5 | feat: iteration 5 — glitch roll dice (ожидает коммита) | [05-dice-glitch-roll.md](./05-dice-glitch-roll.md) · live: [04-plan-dice-game.md](./04-plan-dice-game.md) | 30.05.2026 · **~1 ч PO · $20 Cursor** · Cloud недоступен |
+| 5 | `ca5fae0` — glitch roll dice + fun mode (Claude/Cursor) | [05-dice-glitch-roll.md](./05-dice-glitch-roll.md) | 30.05.2026 · **~1 ч PO · $20 Cursor** |
+| 6 | `14a3555` — corrupted reels slot + layout polish | [06-slot-corrupted-reels.md](./06-slot-corrupted-reels.md) | 30.05.2026 · **~15 мин PO** финал + slot hero |
 
-**QA / PO:** [help.md](./help.md) — FUN dice: `/games/dice` без Phantom; LIVE — после deploy
+**QA:** FUN — `/games/dice`, `/games/slot` без Phantom
 
 ---
 

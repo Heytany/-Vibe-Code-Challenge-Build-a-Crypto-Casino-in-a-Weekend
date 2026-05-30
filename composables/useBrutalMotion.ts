@@ -151,6 +151,16 @@ export function useBrutalMotion() {
     })
   }
 
+  /** Slot spin — timing only; reel flips + antenna twitch are CSS on the mascot */
+  function playSlotSpin(_target: HTMLElement | null): Promise<void> {
+    if (prefersReducedMotion.value) {
+      return Promise.resolve()
+    }
+    return new Promise((resolve) => {
+      gsap.delayedCall(0.85, resolve)
+    })
+  }
+
   const themeFlashJob = useState<ThemeFlashJob | null>('bw-theme-flash', () => null)
 
   /** Button glitch + stagger on all `.bw-locale-text` copy (slugs + page strings) */
@@ -238,6 +248,7 @@ export function useBrutalMotion() {
     playDepositPulse,
     playGameEnter,
     playDiceTumble,
+    playSlotSpin,
     playLocaleSwitch,
     playThemeSwitch,
   }

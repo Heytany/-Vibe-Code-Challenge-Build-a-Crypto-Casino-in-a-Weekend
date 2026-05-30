@@ -62,48 +62,55 @@
           </button>
         </div>
 
-        <div v-show="activeTab === 'play'" role="tabpanel">
-          <p
-            v-if="isFun"
-            class="bw-fun-banner text-xs font-mono uppercase mb-4 px-3 py-2 border-2 border-[var(--bw-accent)] text-[var(--bw-accent)]"
-          >
-            <UiLocaleText path="games.common.funBanner" tag="span" />
-          </p>
-
+        <div class="bw-game-tabpanels">
           <div
-            v-if="lastRoll !== null && won !== null && !playing"
-            class="bw-dice-result"
-            :class="{
-              'is-win': won,
-              'is-lose': !won,
-              'is-super': isSuperWin,
-            }"
+            role="tabpanel"
+            class="bw-game-tabpanel"
+            :class="{ 'is-inactive': activeTab !== 'play' }"
           >
-            <p class="text-xs uppercase text-[var(--bw-muted)] mb-1">
-              <UiLocaleText path="games.dice.youRolled" tag="span" />
-            </p>
-            <p class="text-3xl font-bold bw-accent mb-2">{{ lastRoll }}</p>
-            <p class="font-bold uppercase">
-              <UiLocaleText
-                :path="won ? 'games.common.win' : 'games.common.lose'"
-                tag="span"
-              />
-              <span
-                v-if="won && lastPayoutDelta !== null"
-                class="text-[var(--bw-muted)] font-mono text-sm normal-case ml-2"
-              >
-                (+{{ lastPayoutDelta }})
-              </span>
-            </p>
             <p
-              v-if="isSuperWin"
-              class="mt-2 text-xs font-bold uppercase bw-accent"
+              v-if="isFun"
+              class="bw-fun-banner text-xs font-mono uppercase mb-4 px-3 py-2 border-2 border-[var(--bw-accent)] text-[var(--bw-accent)]"
             >
-              <UiLocaleText path="games.dice.superWin" tag="span" />
+              <UiLocaleText path="games.common.funBanner" tag="span" />
             </p>
-          </div>
 
-          <div class="grid gap-4 sm:grid-cols-2 mb-6">
+            <div class="bw-game-result-slot">
+              <div
+                v-show="lastRoll !== null && won !== null && !playing"
+                class="bw-dice-result"
+                :class="{
+                  'is-win': won,
+                  'is-lose': !won,
+                  'is-super': isSuperWin,
+                }"
+              >
+                <p class="text-xs uppercase text-[var(--bw-muted)] mb-1">
+                  <UiLocaleText path="games.dice.youRolled" tag="span" />
+                </p>
+                <p class="text-3xl font-bold bw-accent mb-2">{{ lastRoll }}</p>
+                <p class="font-bold uppercase">
+                  <UiLocaleText
+                    :path="won ? 'games.common.win' : 'games.common.lose'"
+                    tag="span"
+                  />
+                  <span
+                    v-if="won && lastPayoutDelta !== null"
+                    class="text-[var(--bw-muted)] font-mono text-sm normal-case ml-2"
+                  >
+                    (+{{ lastPayoutDelta }})
+                  </span>
+                </p>
+                <p
+                  v-show="isSuperWin"
+                  class="mt-2 text-xs font-bold uppercase bw-accent"
+                >
+                  <UiLocaleText path="games.dice.superWin" tag="span" />
+                </p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2 mb-6">
             <label class="block space-y-2">
               <span class="text-xs uppercase font-bold">
                 <UiLocaleText path="games.common.bet" tag="span" />
@@ -181,21 +188,26 @@
               <UiLocaleText path="games.common.resetFun" tag="span" />
             </button>
           </div>
-        </div>
+          </div>
 
-        <div v-show="activeTab === 'rules'" role="tabpanel" class="bw-dice-rules">
-          <p class="whitespace-normal mb-4">
-            <UiLocaleText path="games.dice.rulesIntro" tag="span" />
-          </p>
-          <ol>
-            <li><UiLocaleText path="games.dice.rulesStep1" tag="span" /></li>
-            <li><UiLocaleText path="games.dice.rulesStep2" tag="span" /></li>
-            <li><UiLocaleText path="games.dice.rulesStep3" tag="span" /></li>
-            <li><UiLocaleText path="games.dice.rulesStep4" tag="span" /></li>
-          </ol>
-          <p class="mt-4 text-xs text-[var(--bw-muted)] font-mono whitespace-normal">
-            <UiLocaleText path="games.dice.rulesRng" tag="span" />
-          </p>
+          <div
+            role="tabpanel"
+            class="bw-game-tabpanel bw-dice-rules"
+            :class="{ 'is-inactive': activeTab !== 'rules' }"
+          >
+            <p class="whitespace-normal mb-4">
+              <UiLocaleText path="games.dice.rulesIntro" tag="span" />
+            </p>
+            <ol>
+              <li><UiLocaleText path="games.dice.rulesStep1" tag="span" /></li>
+              <li><UiLocaleText path="games.dice.rulesStep2" tag="span" /></li>
+              <li><UiLocaleText path="games.dice.rulesStep3" tag="span" /></li>
+              <li><UiLocaleText path="games.dice.rulesStep4" tag="span" /></li>
+            </ol>
+            <p class="mt-4 text-xs text-[var(--bw-muted)] font-mono whitespace-normal">
+              <UiLocaleText path="games.dice.rulesRng" tag="span" />
+            </p>
+          </div>
         </div>
       </UiBrokenPanel>
     </div>
