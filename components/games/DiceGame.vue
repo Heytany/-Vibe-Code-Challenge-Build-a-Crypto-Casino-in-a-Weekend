@@ -130,6 +130,7 @@
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
               @blur-bet="markBetTouched"
+              @refill="topUpFunBalance"
             />
             <GamesGameLiveBet
               v-else
@@ -256,6 +257,7 @@ const {
   lastMeta,
   roll,
   resetFunBalance,
+  topUpFunBalance,
 } = useGameDice()
 
 const activeTab = ref<'play' | 'rules' | 'fair'>('play')

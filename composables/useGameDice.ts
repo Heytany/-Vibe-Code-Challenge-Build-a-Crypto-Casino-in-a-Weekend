@@ -199,6 +199,10 @@ export function useGameDice() {
     lastMeta.value = null
   }
 
+  function topUpFunBalance() {
+    funBalance.value += FUN_MODE_START_BALANCE
+  }
+
   return {
     mode,
     isFun,
@@ -216,5 +220,6 @@ export function useGameDice() {
     lastPayoutDelta,
     roll,
     resetFunBalance,
+    topUpFunBalance,
   }
 }

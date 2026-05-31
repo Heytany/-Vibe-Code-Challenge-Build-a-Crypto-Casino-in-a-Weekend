@@ -92,6 +92,7 @@
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
               @blur-bet="markBetTouched"
+              @refill="topUpFunBalance"
             />
             <GamesGameLiveBet
               v-else
@@ -217,6 +218,7 @@ const {
   lastMeta,
   spin,
   resetFunBalance,
+  topUpFunBalance,
   slotSymbolChar,
 } = useGameSlot()
 

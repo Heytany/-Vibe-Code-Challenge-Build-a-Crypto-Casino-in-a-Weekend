@@ -4,8 +4,8 @@
       <UiLocaleText path="games.common.funBanner" tag="span" />
     </p>
 
-    <div class="grid gap-4 sm:grid-cols-2 items-center">
-      <div class="font-mono space-y-1 text-center sm:text-left">
+    <div class="grid gap-4 sm:grid-cols-2 items-end">
+      <div class="font-mono space-y-2 text-center sm:text-left">
         <span class="text-xs uppercase font-bold block">
           <UiLocaleText path="games.common.funBalanceLabel" tag="span" />
         </span>
@@ -13,6 +13,14 @@
           {{ formattedBalance }}
           <span class="text-[var(--bw-muted)] text-xs ml-1">{{ funUnit }}</span>
         </span>
+        <button
+          type="button"
+          class="bw-btn text-sm min-h-[44px] w-full sm:w-auto"
+          :disabled="disabled"
+          @click="emit('refill')"
+        >
+          <UiLocaleText path="games.common.refillFun" tag="span" />
+        </button>
       </div>
 
       <label class="block space-y-2 text-center sm:text-right">
@@ -37,7 +45,7 @@
 
 <script setup lang="ts">
 /**
- * @agent-context FUN-only funds on game pages — virtual credits, no WIBE / deposit.
+ * @agent-context FUN-only funds on game pages — virtual credits + refill, no WIBE / deposit.
  */
 import { formatTokenAmount } from '~/shared/format-tokens'
 
@@ -52,6 +60,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:bet': [value: number]
   'blur-bet': []
+  refill: []
 }>()
 
 const { t } = useI18n()

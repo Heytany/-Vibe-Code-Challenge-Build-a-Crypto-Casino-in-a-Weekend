@@ -84,6 +84,14 @@ function mapAnchorError(err: unknown): WibeError {
   if (/User rejected|rejected/i.test(msg)) {
     return new WibeError(WibeErrorCode.WalletRejected)
   }
+  if (/AccountNotFound|account not found|does not exist/i.test(msg)) {
+    if (/UserBalance|user_balance|user balance/i.test(msg)) {
+      return new WibeError(WibeErrorCode.DepositRequired)
+    }
+    if (/CasinoConfig|casino_config/i.test(msg)) {
+      return new WibeError(WibeErrorCode.CasinoNotInitialized)
+    }
+  }
   return new WibeError(WibeErrorCode.TransactionFailed, msg)
 }
 
@@ -235,6 +243,22 @@ export function useCasinoProgram() {
     }
   }
 
+  async function assertCasinoReady(program: Program) {
+    const { casinoConfig } = getAccounts()
+    const info = await program.provider.connection.getAccountInfo(casinoConfig)
+    if (!info) {
+      throw new WibeError(WibeErrorCode.CasinoNotInitialized)
+    }
+  }
+
+  async function assertUserBalanceExists(program: Program) {
+    const { userBalance } = getAccounts()
+    const info = await program.provider.connection.getAccountInfo(userBalance)
+    if (!info) {
+      throw new WibeError(WibeErrorCode.DepositRequired)
+    }
+  }
+
   async function deposit(amount: number) {
     assertConfigured()
     if (amount <= 0) throw new WibeError(WibeErrorCode.InvalidBet)
@@ -242,6 +266,7 @@ export function useCasinoProgram() {
     try {
       await ensureTokenDecimals()
       const program = getProgram()
+      await assertCasinoReady(program)
       const conn = connection.value!
       const { mint, user, casinoConfig, casinoVault, userBalance } = getAccounts()
       const userAta = getAssociatedTokenAddressSync(mint, user)
@@ -251,6 +276,8 @@ export function useCasinoProgram() {
       const preInstructions = ataInfo
         ? []
         : [createAssociatedTokenAccountInstruction(user, userAta, user, mint)]
+
+      const userBalanceExists = !!(await conn.getAccountInfo(userBalance))
 
       await program.methods
         .deposit(baseAmount)
@@ -264,7 +291,7 @@ export function useCasinoProgram() {
           tokenProgram: TOKEN_PROGRAM_ID,
         })
         .preInstructions(preInstructions)
-        .rpc()
+        .rpc(userBalanceExists ? undefined : { skipPreflight: true })
 
       await refreshBalance()
     } catch (err) {
@@ -322,6 +349,8 @@ export function useCasinoProgram() {
     try {
       await ensureTokenDecimals()
       const program = getProgram()
+      await assertCasinoReady(program)
+      await assertUserBalanceExists(program)
       const { programId, user, casinoConfig, userBalance } = getAccounts()
       const userSeedBn = params.userSeed !== undefined
         ? new BN(params.userSeed.toString())
@@ -387,6 +416,8 @@ export function useCasinoProgram() {
     try {
       await ensureTokenDecimals()
       const program = getProgram()
+      await assertCasinoReady(program)
+      await assertUserBalanceExists(program)
       const { programId, user, casinoConfig, userBalance } = getAccounts()
       const userSeedBn = params.userSeed !== undefined
         ? new BN(params.userSeed.toString())

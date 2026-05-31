@@ -122,6 +122,7 @@
       "liveModeHint": "Реальные devnet-токены через Phantom",
       "liveModeLocked": "LIVE: нужны Phantom и задеплоенная программа",
       "resetFun": "Сбросить fun-кредиты",
+      "refillFun": "+ Пополнить fun-кредиты",
       "modeExplainFun": "// fun-режим — без кошелька, виртуальные кредиты, математика как on-chain",
       "modeExplainLive": "// live-режим — Phantom на devnet, реальные ставки on-chain, проверка в эксплорере",
       "showResult": "Показывать результат"
@@ -238,6 +239,14 @@
       "ENV_INVALID": {
         "title": "Env повреждён",
         "message": "Конфигурация окружения некорректна."
+      },
+      "DEPOSIT_REQUIRED": {
+        "title": "Сначала депозит",
+        "message": "Нажми Deposit в блоке кошелька выше — первый перевод создаёт баланс казино."
+      },
+      "CASINO_NOT_INITIALIZED": {
+        "title": "Казино не готово",
+        "message": "Для этого mint нет казино на devnet. Запусти pnpm devnet:setup или проверь .env."
       }
     }
   },

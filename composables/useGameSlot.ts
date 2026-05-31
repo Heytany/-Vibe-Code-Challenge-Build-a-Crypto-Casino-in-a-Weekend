@@ -185,6 +185,10 @@ export function useGameSlot() {
     lastMeta.value = null
   }
 
+  function topUpFunBalance() {
+    funBalance.value += FUN_MODE_START_BALANCE
+  }
+
   return {
     isFun,
     bet,
@@ -199,6 +203,7 @@ export function useGameSlot() {
     lastMultiplier,
     spin,
     resetFunBalance,
+    topUpFunBalance,
     slotSymbolChar,
   }
 }

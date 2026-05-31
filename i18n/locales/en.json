@@ -126,6 +126,7 @@
       "liveModeHint": "Real devnet tokens via Phantom",
       "liveModeLocked": "Connect Phantom + deployed program for live mode",
       "resetFun": "Reset fun credits",
+      "refillFun": "+ Refill fun credits",
       "modeExplainFun": "// fun mode — no wallet, virtual credits, identical to on-chain math",
       "modeExplainLive": "// live mode — Phantom on devnet, real on-chain bets, verifiable in the explorer",
       "showResult": "Show result details"
@@ -242,6 +243,14 @@
       "ENV_INVALID": {
         "title": "Env corrupt",
         "message": "Environment configuration is invalid."
+      },
+      "DEPOSIT_REQUIRED": {
+        "title": "Deposit first",
+        "message": "Use Deposit in the wallet block above — first transfer creates your casino balance."
+      },
+      "CASINO_NOT_INITIALIZED": {
+        "title": "Casino not ready",
+        "message": "This token mint has no casino on devnet. Run pnpm devnet:setup or check .env."
       }
     }
   },

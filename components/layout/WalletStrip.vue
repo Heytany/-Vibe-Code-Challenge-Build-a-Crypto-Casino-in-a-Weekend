@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Global LIVE wallet strip — all pages, under header. Hidden in FUN mode.
+ * @agent-context Global LIVE wallet block — under header, not sticky. Hidden in FUN mode.
  */
 import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
 
@@ -61,11 +61,3 @@ const needsDeposit = computed(() =>
   casinoBalance.value !== null && casinoBalance.value <= 0,
 )
 </script>
-
-<style scoped>
-.bw-wallet-strip {
-  position: sticky;
-  top: calc(var(--bw-header-height, 3.5rem));
-  z-index: 40;
-}
-</style>

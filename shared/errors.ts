@@ -12,6 +12,8 @@ export enum WibeErrorCode {
   InvalidBet = 'INVALID_BET',
   TransactionFailed = 'TRANSACTION_FAILED',
   EnvInvalid = 'ENV_INVALID',
+  DepositRequired = 'DEPOSIT_REQUIRED',
+  CasinoNotInitialized = 'CASINO_NOT_INITIALIZED',
 }
 
 export const WIBE_ERROR_MESSAGES: Record<WibeErrorCode, string> = {
@@ -23,6 +25,8 @@ export const WIBE_ERROR_MESSAGES: Record<WibeErrorCode, string> = {
   [WibeErrorCode.InvalidBet]: 'Bet amount or game parameters are invalid.',
   [WibeErrorCode.TransactionFailed]: 'On-chain transaction failed.',
   [WibeErrorCode.EnvInvalid]: 'Environment configuration is invalid.',
+  [WibeErrorCode.DepositRequired]: 'Deposit WIBE first — your casino balance account does not exist yet.',
+  [WibeErrorCode.CasinoNotInitialized]: 'Casino not initialized for this token mint. Check devnet setup.',
 }
 
 export class WibeError extends Error {

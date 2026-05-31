@@ -121,6 +121,7 @@
       "liveModeHint": "Справжні devnet-токени через Phantom",
       "liveModeLocked": "LIVE: потрібні Phantom і задеплоєна програма",
       "resetFun": "Скинути fun-кредити",
+      "refillFun": "+ Поповнити fun-кредити",
       "modeExplainFun": "// fun-режим — без гаманця, віртуальні кредити, математика як on-chain",
       "modeExplainLive": "// live-режим — Phantom на devnet, реальні ставки on-chain, перевірка в експлорері",
       "showResult": "Показувати результат"
@@ -237,6 +238,14 @@
       "ENV_INVALID": {
         "title": "Env пошкоджено",
         "message": "Конфігурація оточення некоректна."
+      },
+      "DEPOSIT_REQUIRED": {
+        "title": "Спочатку депозит",
+        "message": "Натисни Deposit у блоці гаманця вище — перший переказ створює баланс казино."
+      },
+      "CASINO_NOT_INITIALIZED": {
+        "title": "Казино не готове",
+        "message": "Для цього mint немає казино на devnet. Запусти pnpm devnet:setup або перевір .env."
       }
     }
   },
