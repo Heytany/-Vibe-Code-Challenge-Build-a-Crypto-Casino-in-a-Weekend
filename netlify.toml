@@ -9,3 +9,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Public devnet config — baked into Nuxt at build time (not secrets)
+  NUXT_PUBLIC_SOLANA_NETWORK = "devnet"
+  NUXT_PUBLIC_SOLANA_RPC_URL = "https://api.devnet.solana.com"
+  NUXT_PUBLIC_CASINO_PROGRAM_ID = "BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw"
+  NUXT_PUBLIC_CASINO_TOKEN_MINT = "He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox"

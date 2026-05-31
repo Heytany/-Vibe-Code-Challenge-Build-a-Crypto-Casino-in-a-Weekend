@@ -34,7 +34,7 @@ pnpm build            # → .output/public (static SPA)
 | **Trigger** | Push to GitHub → Netlify build |
 | **Build** | `pnpm build` ([`netlify.toml`](netlify.toml)) |
 | **Publish** | `.output/public` |
-| **Env** | 4× `NUXT_PUBLIC_*` in Netlify dashboard — see [`.env.example`](.env.example) |
+| **Env** | In [`netlify.toml`](netlify.toml) (devnet ids) or override in Netlify dashboard |
 
 FUN works without env; LIVE needs devnet program id + token mint. Details: [`ai/specs/deploy.md`](ai/specs/deploy.md).
 

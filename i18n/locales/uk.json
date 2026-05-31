@@ -184,7 +184,7 @@
       "title": "LIVE заблоковано",
       "dismiss": "Залишитись у FUN",
       "noWallet": "Підключіть Phantom на devnet для LIVE.",
-      "noProgram": "Програму ще не задеплоєно. Вкажи NUXT_PUBLIC_CASINO_PROGRAM_ID після anchor deploy.",
+      "noProgram": "На хості немає LIVE env. Задай усі 4 NUXT_PUBLIC_* в Netlify і перезбери (див. netlify.toml).",
       "generic": "Для LIVE потрібен підключений гаманець і задеплоєна програма."
     },
     "ENV_INVALID": "Помилка оточення. Скопіюйте .env.example у .env.",
