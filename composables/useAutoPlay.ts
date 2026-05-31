@@ -64,6 +64,11 @@ export function useAutoPlay() {
               break
             }
           }
+          if (cancelled) {
+            reason = 'cancelled'
+            break
+          }
+          await new Promise(r => setTimeout(r, Math.max(delayMs, 500)))
           continue
         }
         consecutiveSkips = 0

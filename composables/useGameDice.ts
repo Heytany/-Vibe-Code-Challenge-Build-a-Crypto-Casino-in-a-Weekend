@@ -17,6 +17,7 @@ import {
 } from '~/shared/fun-mode'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
 import { createPlayGeneration, raceLiveSigning } from '~/shared/live-play-signing'
+import { enqueueLivePlay, resetStaleUiLocks } from '~/shared/live-play-mutex'
 
 const dicePlayGen = createPlayGeneration()
 let diceSigningCancel: ((reason?: 'user' | 'timeout') => void) | null = null
@@ -145,6 +146,10 @@ export function useGameDice() {
   }
 
   async function rollLive(diceEl?: HTMLElement | null) {
+    return enqueueLivePlay(() => rollLiveOnce(diceEl))
+  }
+
+  async function rollLiveOnce(diceEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
     won.value = null
@@ -174,7 +179,10 @@ export function useGameDice() {
     try {
       res = await race.promise
     } catch (err) {
-      if (err instanceof WibeError && err.code === WibeErrorCode.PlayCancelled) {
+      if (err instanceof WibeError && (
+        err.code === WibeErrorCode.PlayCancelled
+        || err.code === WibeErrorCode.WalletRejected
+      )) {
         return null
       }
       if (!dicePlayGen.isCurrent(gen)) return null
@@ -223,6 +231,7 @@ export function useGameDice() {
     diceSigningCancel = null
     signing.value = false
     playing.value = false
+    resetStaleUiLocks()
   }
 
   async function roll(diceEl?: HTMLElement | null) {

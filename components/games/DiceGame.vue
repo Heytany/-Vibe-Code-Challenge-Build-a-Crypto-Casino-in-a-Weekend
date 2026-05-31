@@ -189,7 +189,12 @@
             </RadioGroupRoot>
           </div>
 
-          <GamesGameAutoFsBar v-model:bet="bet" :play="() => playOnce({ auto: true })" :disabled="busy" />
+          <GamesGameAutoFsBar
+            v-model:bet="bet"
+            :play="() => playOnce({ auto: true })"
+            :cancel-play="cancelPlay"
+            :disabled="busy"
+          />
 
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">

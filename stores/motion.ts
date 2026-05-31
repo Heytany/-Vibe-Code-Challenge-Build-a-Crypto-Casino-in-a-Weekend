@@ -35,6 +35,7 @@ export const useMotionStore = defineStore('motion', () => {
     activeOverlay.value = null
     if (import.meta.client) {
       document.body.classList.remove('bw-motion-lock')
+      document.body.classList.remove('bw-alert-open')
     }
     clearLockFailsafe()
   }

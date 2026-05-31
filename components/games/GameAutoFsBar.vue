@@ -112,9 +112,13 @@
  */
 import type { AutoPlayActionResult } from '~/composables/useAutoPlay'
 import { Infinity } from 'lucide-vue-next'
+import { resetStaleUiLocks } from '~/shared/live-play-mutex'
+
+const SKIP_PROMPT_TIMEOUT_MS = 20_000
 
 const props = defineProps<{
   play: () => Promise<AutoPlayActionResult>
+  cancelPlay?: () => void
   disabled?: boolean
 }>()
 
@@ -134,16 +138,29 @@ const skipPromptOpen = ref(false)
 const skipPromptCount = ref(0)
 
 let skipPromptResolver: ((choice: 'continue' | 'stop') => void) | null = null
+let skipPromptTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearSkipPromptTimer() {
+  if (skipPromptTimer) {
+    clearTimeout(skipPromptTimer)
+    skipPromptTimer = null
+  }
+}
 
 function promptAfterSkips(count: number): Promise<'continue' | 'stop'> {
   skipPromptCount.value = count
   skipPromptOpen.value = true
+  clearSkipPromptTimer()
   return new Promise((resolve) => {
     skipPromptResolver = resolve
+    skipPromptTimer = setTimeout(() => {
+      resolveSkipPrompt('stop')
+    }, SKIP_PROMPT_TIMEOUT_MS)
   })
 }
 
 function resolveSkipPrompt(choice: 'continue' | 'stop') {
+  clearSkipPromptTimer()
   skipPromptOpen.value = false
   skipPromptResolver?.(choice)
   skipPromptResolver = null
@@ -151,6 +168,8 @@ function resolveSkipPrompt(choice: 'continue' | 'stop') {
 
 function stopAutoRoll() {
   if (skipPromptResolver) resolveSkipPrompt('stop')
+  props.cancelPlay?.()
+  resetStaleUiLocks()
   stop()
 }
 
@@ -177,6 +196,13 @@ async function onToggleAuto() {
   // Report why auto-roll stopped (win toasts are already shown per round).
   if (summary.reason === 'error') {
     if (summary.error) showError(summary.error)
+    props.cancelPlay?.()
+    resetStaleUiLocks()
+    return
+  }
+  if (summary.reason === 'cancelled') {
+    props.cancelPlay?.()
+    resetStaleUiLocks()
     return
   }
   if (summary.reason === 'rounds') {
@@ -191,7 +217,10 @@ async function onToggleAuto() {
 // restore normal speed when leaving the game
 onUnmounted(() => {
   setMotionSpeed(1)
+  clearSkipPromptTimer()
   if (skipPromptResolver) resolveSkipPrompt('stop')
+  props.cancelPlay?.()
+  resetStaleUiLocks()
 })
 </script>
 

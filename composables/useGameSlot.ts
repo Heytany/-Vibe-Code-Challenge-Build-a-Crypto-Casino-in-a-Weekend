@@ -15,6 +15,7 @@ import {
 import { isSlotSuperWin } from '~/shared/slot-super-win'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
 import { createPlayGeneration, raceLiveSigning } from '~/shared/live-play-signing'
+import { enqueueLivePlay, resetStaleUiLocks } from '~/shared/live-play-mutex'
 
 const slotPlayGen = createPlayGeneration()
 let slotSigningCancel: ((reason?: 'user' | 'timeout') => void) | null = null
@@ -138,6 +139,10 @@ export function useGameSlot() {
   }
 
   async function spinLive(banditEl?: HTMLElement | null) {
+    return enqueueLivePlay(() => spinLiveOnce(banditEl))
+  }
+
+  async function spinLiveOnce(banditEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
     won.value = null
@@ -159,7 +164,10 @@ export function useGameSlot() {
     try {
       res = await race.promise
     } catch (err) {
-      if (err instanceof WibeError && err.code === WibeErrorCode.PlayCancelled) {
+      if (err instanceof WibeError && (
+        err.code === WibeErrorCode.PlayCancelled
+        || err.code === WibeErrorCode.WalletRejected
+      )) {
         return null
       }
       if (!slotPlayGen.isCurrent(gen)) return null
@@ -207,6 +215,7 @@ export function useGameSlot() {
     slotSigningCancel = null
     signing.value = false
     spinning.value = false
+    resetStaleUiLocks()
   }
 
   async function spin(banditEl?: HTMLElement | null) {
