@@ -29,11 +29,17 @@
             <UiBrutalButton
               class="bw-slot-spin-btn"
               variant="accent"
-              :loading="spinning"
+              :loading="busy"
               @click="onSpin"
             >
               <UiLocaleText path="games.slot.spin" tag="span" />
             </UiBrutalButton>
+            <p
+              v-if="signing && !isFun"
+              class="text-xs font-mono text-[var(--bw-muted)] text-center mt-2 whitespace-normal"
+            >
+              <UiLocaleText path="games.common.confirmInPhantom" tag="span" />
+            </p>
           </template>
         </LobbyMonsterReelsHero>
       </div>
@@ -87,7 +93,7 @@
             <GamesGameBetInput
               v-model:bet="bet"
               :is-fun="isFun"
-              :disabled="spinning"
+              :disabled="busy"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
               @blur-bet="markBetTouched"
@@ -100,7 +106,7 @@
 
             <div v-if="showResult" class="bw-game-result-slot">
               <div
-                v-show="reels !== null && won !== null && !spinning"
+                v-show="reels !== null && won !== null && !busy"
                 class="bw-dice-result"
                 :class="{
                   'is-win': won,
@@ -140,7 +146,7 @@
               <UiLocaleText path="games.slot.payoutHint" tag="span" />
             </p>
 
-          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="spinning" />
+          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="busy" />
 
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
@@ -192,6 +198,8 @@ const {
   reels,
   won,
   spinning,
+  signing,
+  busy,
   effectiveBalance,
   isSuperWin,
   lastPayoutDelta,
@@ -210,7 +218,8 @@ const matrixBackdropRef = ref<{
   playSplit: (segments: number, intense?: boolean) => Promise<void>
 } | null>(null)
 const { touched: betTouched, invalid: betInvalid, markTouched: markBetTouched, validateBetOrToast } = useBetField(bet)
-const { showWin, showError } = useBrutalToast()
+const { showWin, showError, show } = useBrutalToast()
+const { t } = useI18n()
 
 onMounted(() => {
   playGameEnter(panelRef.value)
@@ -229,10 +238,12 @@ async function playOnce(): Promise<boolean> {
   if (!validateBetOrToast()) throw new Error('invalid-bet')
   const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
   await spin(el)
+  if (!isFun.value) showResult.value = true
   if (won.value) {
     showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
-    // split the code-transition across N bands by matched lines (2 → normal+invert, 3 → normal+invert+normal)
     await matrixBackdropRef.value?.playSplit(winSegments(), isSuperWin.value)
+  } else if (won.value === false && !isFun.value) {
+    show(t('games.common.lose'), t('games.common.loseLive'), 'default')
   }
   return Boolean(won.value)
 }

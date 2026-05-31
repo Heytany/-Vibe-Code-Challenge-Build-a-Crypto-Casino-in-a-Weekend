@@ -65,6 +65,7 @@ export function useGameDice() {
   const won = ref<boolean | null>(null)
   const lastMeta = ref<DiceRollMeta>(null)
   const playing = ref(false)
+  const signing = ref(false)
 
   const winChance = computed(() => {
     if (direction.value === 'under') return target.value - 1
@@ -142,20 +143,28 @@ export function useGameDice() {
   async function rollLive(diceEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
-    playing.value = true
     won.value = null
-    try {
-      const { playDice } = useCasinoProgram()
-      const userSeed = randomU64()
-      const rollUnder = direction.value === 'under'
+    lastRoll.value = null
 
-      const res = await playDice({
+    const { playDice } = useCasinoProgram()
+    const userSeed = randomU64()
+    const rollUnder = direction.value === 'under'
+
+    signing.value = true
+    let res: Awaited<ReturnType<typeof playDice>>
+    try {
+      res = await playDice({
         bet: bet.value,
         target: target.value,
         rollUnder,
         userSeed,
       })
+    } finally {
+      signing.value = false
+    }
 
+    playing.value = true
+    try {
       await playDiceTumble(diceEl ?? null)
 
       lastRoll.value = res.roll
@@ -200,6 +209,8 @@ export function useGameDice() {
     won: readonly(won),
     lastMeta: readonly(lastMeta),
     playing: readonly(playing),
+    signing: readonly(signing),
+    busy: computed(() => playing.value || signing.value),
     winChance,
     effectiveBalance,
     isSuperWin,

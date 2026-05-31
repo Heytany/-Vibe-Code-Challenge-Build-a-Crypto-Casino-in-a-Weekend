@@ -28,8 +28,9 @@
 |------|-----------|
 | `types/idl/wibe_casino.json` | правильные discriminators для `play_dice`, `play_slot` |
 | `tests/idl-discriminators.test.ts` | guard: `pnpm test:idl` |
-| `useGameDice.ts` / `useGameSlot.ts` | LIVE: `playDice`/`playSlot` **до** анимации |
-| `useCasinoProgram.ts` | map error 101 → понятное сообщение |
+| `useGameDice.ts` / `useGameSlot.ts` | `signing` (Phantom) → `playing`/`spinning` (анимация); не параллельно |
+| `useCasinoProgram.ts` | parse `dicePlayed`/`slotPlayed` (camelCase); RNG fallback; blockhash до tx |
+| `DiceGame.vue` / `SlotGame.vue` | hint «Confirm in Phantom»; win/lose toast; auto-show result в LIVE |
 | `CasinoActions.vue` | убрана кнопка Max |
 | `i18n/locales/*.json` | toast LIVE win → «на баланс казино»; удалён `games.common.max` |
 
@@ -43,15 +44,15 @@ sequenceDiagram
   participant Program
 
   User->>UI: Roll/Spin LIVE
-  UI->>Phantom: play_dice / play_slot
-  Phantom->>Program: correct discriminator
+  UI->>Phantom: play tx (signing — без анимации)
+  Phantom->>Program: play_dice / play_slot
   Program-->>UI: DicePlayed / SlotPlayed + UserBalance update
-  UI->>UI: animation with real result
-  Note over UI: casino balance refresh via refreshBalanceAfterTx
+  UI->>UI: анимация + результат + toast
 ```
 
 - **Одна** Phantom tx на раунд — ставка + исход в `UserBalance` PDA.
 - В Phantom wallet WIBE меняются только при **deposit** / **withdraw**.
+- Пока ждём Phantom — кубик/барабаны **не крутятся** (только loading на кнопке).
 
 ## QA (PO)
 

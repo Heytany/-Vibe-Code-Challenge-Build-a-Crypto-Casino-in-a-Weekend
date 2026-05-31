@@ -62,6 +62,7 @@ export function useGameSlot() {
   const won = ref<boolean | null>(null)
   const lastMeta = ref<SlotSpinMeta>(null)
   const spinning = ref(false)
+  const signing = ref(false)
 
   const effectiveBalance = computed(() =>
     isFun.value ? funBalance.value : (casinoBalance.value ?? 0),
@@ -135,14 +136,22 @@ export function useGameSlot() {
   async function spinLive(banditEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
-    spinning.value = true
     won.value = null
+    reels.value = null
+
+    const { playSlot } = useCasinoProgram()
+    const userSeed = randomU64()
+
+    signing.value = true
+    let res: Awaited<ReturnType<typeof playSlot>>
     try {
-      const { playSlot } = useCasinoProgram()
-      const userSeed = randomU64()
+      res = await playSlot({ bet: bet.value, userSeed })
+    } finally {
+      signing.value = false
+    }
 
-      const res = await playSlot({ bet: bet.value, userSeed })
-
+    spinning.value = true
+    try {
       await playSlotSpin(banditEl ?? null)
 
       reels.value = res.reels
@@ -183,6 +192,8 @@ export function useGameSlot() {
     won: readonly(won),
     lastMeta: readonly(lastMeta),
     spinning: readonly(spinning),
+    signing: readonly(signing),
+    busy: computed(() => spinning.value || signing.value),
     effectiveBalance,
     isSuperWin,
     lastPayoutDelta,

@@ -26,11 +26,17 @@
               />
               <UiBrutalButton
                 class="bw-dice-roll-btn"
-                :loading="playing"
+                :loading="busy"
                 @click="onRoll"
               >
                 <UiLocaleText path="games.dice.roll" tag="span" />
               </UiBrutalButton>
+              <p
+                v-if="signing && !isFun"
+                class="text-xs font-mono text-[var(--bw-muted)] text-center mt-2 whitespace-normal"
+              >
+                <UiLocaleText path="games.common.confirmInPhantom" tag="span" />
+              </p>
             </div>
           </template>
         </LobbyMonsterHero>
@@ -89,7 +95,7 @@
 
             <div v-if="showResult" class="bw-game-result-slot">
               <div
-                v-show="lastRoll !== null && won !== null && !playing"
+                v-show="lastRoll !== null && won !== null && !busy"
                 class="bw-dice-result"
                 :class="{
                   'is-win': won,
@@ -125,7 +131,7 @@
             <GamesGameBetInput
               v-model:bet="bet"
               :is-fun="isFun"
-              :disabled="playing"
+              :disabled="busy"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
               @blur-bet="markBetTouched"
@@ -143,7 +149,7 @@
                 :min="2"
                 :max="98"
                 :step="1"
-                :disabled="playing"
+                :disabled="busy"
                 aria-label="target"
                 @update:model-value="(v) => { if (v) target = v[0] }"
               >
@@ -156,7 +162,7 @@
             <p class="text-xs text-[var(--bw-muted)] font-mono">
               <UiLocaleText path="games.dice.chance" tag="span" />: {{ winChance }}%
             </p>
-            <RadioGroupRoot v-model="direction" class="flex flex-wrap gap-2" :disabled="playing">
+            <RadioGroupRoot v-model="direction" class="flex flex-wrap gap-2" :disabled="busy">
               <RadioGroupItem
                 value="under"
                 class="bw-btn text-sm min-h-[44px]"
@@ -174,7 +180,7 @@
             </RadioGroupRoot>
           </div>
 
-          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="playing" />
+          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="busy" />
 
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
@@ -231,6 +237,8 @@ const {
   lastRoll,
   won,
   playing,
+  signing,
+  busy,
   winChance,
   effectiveBalance,
   isSuperWin,
@@ -245,7 +253,8 @@ const panelRef = ref<HTMLElement | null>(null)
 const diceCubeRef = ref<ComponentPublicInstance | null>(null)
 const matrixBackdropRef = ref<{ play: (intense?: boolean) => Promise<void> } | null>(null)
 const { touched: betTouched, invalid: betInvalid, markTouched: markBetTouched, validateBetOrToast } = useBetField(bet)
-const { showWin, showError } = useBrutalToast()
+const { showWin, showError, show } = useBrutalToast()
+const { t } = useI18n()
 
 onMounted(() => {
   playGameEnter(panelRef.value)
@@ -256,9 +265,12 @@ async function playOnce(): Promise<boolean> {
   if (!validateBetOrToast()) throw new Error('invalid-bet')
   const el = (diceCubeRef.value?.$el as HTMLElement | undefined) ?? null
   await roll(el)
+  if (!isFun.value) showResult.value = true
   if (won.value) {
     showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
     await matrixBackdropRef.value?.play(isSuperWin.value)
+  } else if (won.value === false && !isFun.value) {
+    show(t('games.common.lose'), t('games.common.loseLive'), 'default')
   }
   return Boolean(won.value)
 }

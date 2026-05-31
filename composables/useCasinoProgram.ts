@@ -26,7 +26,7 @@ import {
   findCasinoVaultPda,
   findUserBalancePda,
 } from '~/shared/casino-pdas'
-import { base58Encode } from '~/shared/rng-verify'
+import { base58Encode, computeReels, computeRoll, diceWon, slotPayoutMultiplier } from '~/shared/rng-verify'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
 
 const casinoBalance = ref<number | null>(null)
@@ -34,6 +34,10 @@ const walletTokenBalance = ref<number | null>(null)
 const loading = ref(false)
 const tokenDecimals = ref<number>(0)
 let balanceWatchRegistered = false
+
+function isAnchorEvent(name: string, expected: string): boolean {
+  return name.toLowerCase() === expected.toLowerCase()
+}
 
 export interface PlayDiceParams {
   bet: number
@@ -437,6 +441,10 @@ export function useCasinoProgram() {
 
       const before = await fetchUserBalanceAccount(program, userBalance)
       const nonceUsed = before ? BigInt(before.gameNonce.toString()) : 0n
+      const userSeed = BigInt(userSeedBn.toString())
+
+      const blockhashBytes = await fetchRngBlockhashBytes()
+      const blockhashBase58 = base58Encode(blockhashBytes)
 
       const signature = await program.methods
         .playDice(toBaseUnits(bet), rollUnder, target, userSeedBn)
@@ -448,9 +456,6 @@ export function useCasinoProgram() {
         })
         .rpc()
 
-      const blockhashBytes = await fetchRngBlockhashBytes()
-      const blockhashBase58 = base58Encode(blockhashBytes)
-
       const tx = await connection.value!.getTransaction(signature, {
         commitment: 'confirmed',
         maxSupportedTransactionVersion: 0,
@@ -459,13 +464,20 @@ export function useCasinoProgram() {
       const parser = new EventParser(programId, program.coder)
       let roll = 0
       let won = false
+      let parsed = false
 
       for (const ev of parser.parseLogs(logs)) {
-        if (ev.name === 'DicePlayed') {
+        if (isAnchorEvent(ev.name, 'dicePlayed')) {
           const data = ev.data as { roll: number, won: boolean }
           roll = data.roll
           won = data.won
+          parsed = true
         }
+      }
+
+      if (!parsed) {
+        roll = computeRoll(blockhashBytes, userSeed, nonceUsed)
+        won = diceWon(roll, rollUnder, target)
       }
 
       await refreshBalanceAfterTx(signature)
@@ -474,7 +486,7 @@ export function useCasinoProgram() {
         signature,
         roll,
         won,
-        userSeed: BigInt(userSeedBn.toString()),
+        userSeed,
         nonce: nonceUsed,
         blockhash: blockhashBytes,
         blockhashBase58,
@@ -504,6 +516,10 @@ export function useCasinoProgram() {
 
       const before = await fetchUserBalanceAccount(program, userBalance)
       const nonceUsed = before ? BigInt(before.gameNonce.toString()) : 0n
+      const userSeed = BigInt(userSeedBn.toString())
+
+      const blockhashBytes = await fetchRngBlockhashBytes()
+      const blockhashBase58 = base58Encode(blockhashBytes)
 
       const signature = await program.methods
         .playSlot(toBaseUnits(bet), userSeedBn)
@@ -515,9 +531,6 @@ export function useCasinoProgram() {
         })
         .rpc()
 
-      const blockhashBytes = await fetchRngBlockhashBytes()
-      const blockhashBase58 = base58Encode(blockhashBytes)
-
       const tx = await connection.value!.getTransaction(signature, {
         commitment: 'confirmed',
         maxSupportedTransactionVersion: 0,
@@ -527,9 +540,10 @@ export function useCasinoProgram() {
       let reels: [number, number, number] = [0, 0, 0]
       let multiplier = 0
       let won = false
+      let parsed = false
 
       for (const ev of parser.parseLogs(logs)) {
-        if (ev.name === 'SlotPlayed') {
+        if (isAnchorEvent(ev.name, 'slotPlayed')) {
           const data = ev.data as {
             reel1: number
             reel2: number
@@ -540,7 +554,14 @@ export function useCasinoProgram() {
           reels = [data.reel1, data.reel2, data.reel3]
           multiplier = data.payoutMultiplier
           won = data.won
+          parsed = true
         }
+      }
+
+      if (!parsed) {
+        reels = computeReels(blockhashBytes, userSeed, nonceUsed)
+        multiplier = slotPayoutMultiplier(reels[0], reels[1], reels[2])
+        won = multiplier > 0
       }
 
       await refreshBalanceAfterTx(signature)
@@ -550,7 +571,7 @@ export function useCasinoProgram() {
         reels,
         multiplier,
         won,
-        userSeed: BigInt(userSeedBn.toString()),
+        userSeed,
         nonce: nonceUsed,
         blockhash: blockhashBytes,
         blockhashBase58,

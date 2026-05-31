@@ -100,6 +100,8 @@
       "lastResult": "Last result",
       "win": "WIN",
       "lose": "BUST",
+      "loseLive": "Bet settled on casino balance — check the strip above.",
+      "confirmInPhantom": "Confirm in Phantom — animation starts after approval.",
       "payout": "Payout",
       "nonce": "Nonce",
       "seed": "Seed",

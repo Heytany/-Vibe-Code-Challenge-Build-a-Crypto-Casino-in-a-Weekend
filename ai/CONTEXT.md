@@ -7,7 +7,9 @@
 ## Iteration 16 — done ✅
 
 - [x] Fix IDL discriminators `play_dice` / `play_slot` (101 InstructionFallbackNotFound)
-- [x] LIVE flow: on-chain tx before animation (Dice + Slot)
+- [x] Event parse fix (`dicePlayed` camelCase) + RNG fallback
+- [x] LIVE: `signing` then animation — не параллельно
+- [x] Win/lose toast + auto-show result panel in LIVE
 - [x] Removed confusing Max withdraw button
 - [x] `pnpm test:idl` guard + build OK
 
