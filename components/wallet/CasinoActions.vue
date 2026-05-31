@@ -17,6 +17,7 @@
           min="1"
           class="bw-input w-full text-center"
           :disabled="busy"
+          @blur="normalizeAmount"
         >
       </label>
 
@@ -52,7 +53,7 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Deposit / withdraw controls — used from global LayoutWalletStrip.
+ * @agent-context Deposit / withdraw controls — used from GameFundsBar in LIVE mode.
  */
 import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
 
@@ -60,33 +61,47 @@ const props = defineProps<{
   panelEl?: HTMLElement | null
 }>()
 
+const { t } = useI18n()
 const { connected } = useWallet()
 const { casinoBalance, deposit, withdraw, isConfigured } = useCasinoProgram()
 const { playDepositPulse } = useBrutalMotion()
-const { showError } = useBrutalToast()
+const { showError, showSuccess } = useBrutalToast()
 
 const amount = ref(100)
 const busy = ref(false)
 
 const showPanel = computed(() => connected.value && isConfigured.value)
 
-const formattedBalance = computed(() => formatTokenAmount(casinoBalance.value))
-
 const maxWithdraw = computed(() => casinoBalance.value ?? 0)
-const canDeposit = computed(() => amount.value > 0 && !busy.value)
+const canDeposit = computed(() => validAmount.value > 0 && !busy.value)
 const canWithdraw = computed(() =>
-  amount.value > 0
-  && casinoBalance.value !== null
-  && amount.value <= casinoBalance.value
+  validAmount.value > 0
+  && (casinoBalance.value ?? 0) >= validAmount.value
   && !busy.value,
 )
+
+const validAmount = computed(() => {
+  const n = amount.value
+  return Number.isFinite(n) && n > 0 ? n : 0
+})
+
+function normalizeAmount() {
+  if (!Number.isFinite(amount.value) || amount.value <= 0) {
+    amount.value = 100
+  }
+}
 
 async function onDeposit() {
   if (!canDeposit.value) return
   busy.value = true
   try {
-    await deposit(amount.value)
+    const n = validAmount.value
+    await deposit(n)
     playDepositPulse(props.panelEl ?? null)
+    showSuccess(
+      t('games.common.depositSuccessTitle'),
+      t('games.common.depositSuccessMessage', { amount: formatTokenAmount(n), symbol: TOKEN_SYMBOL }),
+    )
   } catch (e) {
     showError(e)
   } finally {
@@ -98,7 +113,12 @@ async function onWithdraw() {
   if (!canWithdraw.value) return
   busy.value = true
   try {
-    await withdraw(amount.value)
+    const n = validAmount.value
+    await withdraw(n)
+    showSuccess(
+      t('games.common.withdrawSuccessTitle'),
+      t('games.common.withdrawSuccessMessage', { amount: formatTokenAmount(n), symbol: TOKEN_SYMBOL }),
+    )
   } catch (e) {
     showError(e)
   } finally {

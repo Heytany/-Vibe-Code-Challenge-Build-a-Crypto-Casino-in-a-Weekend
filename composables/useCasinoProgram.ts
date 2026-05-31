@@ -17,6 +17,7 @@ import {
   PublicKey,
   SystemProgram,
   SYSVAR_RECENT_BLOCKHASHES_PUBKEY,
+  type Connection,
 } from '@solana/web3.js'
 import idlJson from '~/types/idl/wibe_casino.json'
 import { isRealChainConfig } from '~/shared/casino-env'
@@ -32,6 +33,7 @@ const casinoBalance = ref<number | null>(null)
 const walletTokenBalance = ref<number | null>(null)
 const loading = ref(false)
 const tokenDecimals = ref<number>(0)
+let balanceWatchRegistered = false
 
 export interface PlayDiceParams {
   bet: number
@@ -102,13 +104,41 @@ function decodeUserBalance(
   return program.coder.accounts.decode('UserBalance', data) as { amount: BN, gameNonce: BN }
 }
 
+/** Raw read — fallback when Anchor decode fails (IDL / discriminator mismatch). */
+function readUserBalanceAmountRaw(data: Uint8Array): BN | null {
+  if (data.length < 16) return null
+  return new BN(Buffer.from(data.subarray(8, 16)), 'le')
+}
+
 async function fetchUserBalanceAccount(
   program: Program,
   userBalancePda: PublicKey,
 ): Promise<{ amount: BN, gameNonce: BN } | null> {
   const info = await program.provider.connection.getAccountInfo(userBalancePda)
   if (!info?.data) return null
-  return decodeUserBalance(program, Buffer.from(info.data))
+  const buf = Buffer.from(info.data)
+  try {
+    return decodeUserBalance(program, buf)
+  } catch {
+    const amount = readUserBalanceAmountRaw(info.data)
+    if (!amount) return null
+    const gameNonce = info.data.length >= 24
+      ? new BN(Buffer.from(info.data.subarray(16, 24)), 'le')
+      : new BN(0)
+    return { amount, gameNonce }
+  }
+}
+
+async function sleep(ms: number) {
+  await new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function confirmSignature(conn: Connection, signature: string) {
+  const latest = await conn.getLatestBlockhash('confirmed')
+  await conn.confirmTransaction(
+    { signature, ...latest },
+    'confirmed',
+  )
 }
 
 function randomU64Bn(): BN {
@@ -202,7 +232,10 @@ export function useCasinoProgram() {
     }
 
     const conn = connection.value
-    if (!conn) return
+    if (!conn) {
+      walletTokenBalance.value = 0
+      return
+    }
 
     try {
       await ensureTokenDecimals()
@@ -212,6 +245,21 @@ export function useCasinoProgram() {
       walletTokenBalance.value = fromBaseUnits(new BN(acc.amount.toString()))
     } catch {
       walletTokenBalance.value = 0
+    }
+  }
+
+  async function fetchCasinoBalanceSafe(): Promise<number> {
+    if (!connected.value || !publicKey.value || !isConfigured.value) {
+      return 0
+    }
+    try {
+      await ensureTokenDecimals()
+      const program = getProgram()
+      const { userBalance } = getAccounts()
+      const acc = await fetchUserBalanceAccount(program, userBalance)
+      return acc ? fromBaseUnits(acc.amount) : 0
+    } catch {
+      return 0
     }
   }
 
@@ -230,16 +278,30 @@ export function useCasinoProgram() {
 
     loading.value = true
     try {
-      await ensureTokenDecimals()
-      const program = getProgram()
-      const { userBalance } = getAccounts()
-      const acc = await fetchUserBalanceAccount(program, userBalance)
-      casinoBalance.value = acc ? fromBaseUnits(acc.amount) : 0
+      casinoBalance.value = await fetchCasinoBalanceSafe()
       await refreshWalletBalance()
     } catch (err) {
-      throw mapAnchorError(err)
+      casinoBalance.value = 0
+      walletTokenBalance.value = 0
+      console.warn('[useCasinoProgram] refreshBalance failed', err)
     } finally {
       loading.value = false
+    }
+  }
+
+  async function refreshBalanceAfterTx(signature?: string) {
+    const conn = connection.value
+    if (signature && conn) {
+      try {
+        await confirmSignature(conn, signature)
+      } catch (err) {
+        console.warn('[useCasinoProgram] confirmTransaction', err)
+      }
+    }
+
+    for (const delay of [0, 300, 600, 1200]) {
+      if (delay > 0) await sleep(delay)
+      await refreshBalance()
     }
   }
 
@@ -279,7 +341,7 @@ export function useCasinoProgram() {
 
       const userBalanceExists = !!(await conn.getAccountInfo(userBalance))
 
-      await program.methods
+      const builder = program.methods
         .deposit(baseAmount)
         .accountsStrict({
           user,
@@ -291,9 +353,18 @@ export function useCasinoProgram() {
           tokenProgram: TOKEN_PROGRAM_ID,
         })
         .preInstructions(preInstructions)
-        .rpc(userBalanceExists ? undefined : { skipPreflight: true })
 
-      await refreshBalance()
+      let signature: string
+      try {
+        signature = await builder.rpc()
+      } catch (firstErr) {
+        if (userBalanceExists) throw firstErr
+        console.warn('[useCasinoProgram] deposit preflight failed, retry skipPreflight', firstErr)
+        signature = await builder.rpc({ skipPreflight: true })
+      }
+
+      await refreshBalanceAfterTx(signature)
+      return signature
     } catch (err) {
       throw mapAnchorError(err)
     }
@@ -306,11 +377,12 @@ export function useCasinoProgram() {
     try {
       await ensureTokenDecimals()
       const program = getProgram()
+      await assertUserBalanceExists(program)
       const { mint, user, casinoConfig, casinoVault, userBalance } = getAccounts()
       const userAta = getAssociatedTokenAddressSync(mint, user)
       const baseAmount = toBaseUnits(amount)
 
-      await program.methods
+      const signature = await program.methods
         .withdraw(baseAmount)
         .accountsStrict({
           user,
@@ -322,7 +394,8 @@ export function useCasinoProgram() {
         })
         .rpc()
 
-      await refreshBalance()
+      await refreshBalanceAfterTx(signature)
+      return signature
     } catch (err) {
       throw mapAnchorError(err)
     }
@@ -389,7 +462,7 @@ export function useCasinoProgram() {
         }
       }
 
-      await refreshBalance()
+      await refreshBalanceAfterTx(signature)
 
       return {
         signature,
@@ -464,7 +537,7 @@ export function useCasinoProgram() {
         }
       }
 
-      await refreshBalance()
+      await refreshBalanceAfterTx(signature)
 
       return {
         signature,
@@ -482,14 +555,21 @@ export function useCasinoProgram() {
     }
   }
 
-  watch([connected, publicKey, isConfigured], () => {
-    if (connected.value && isConfigured.value) {
-      refreshBalance().catch(() => {})
-    } else {
-      casinoBalance.value = null
-      walletTokenBalance.value = null
-    }
-  })
+  if (import.meta.client && !balanceWatchRegistered) {
+    watch([connected, publicKey, isConfigured], () => {
+      if (connected.value && isConfigured.value) {
+        refreshBalance().catch((err) => {
+          console.warn('[useCasinoProgram] balance sync failed', err)
+          casinoBalance.value = 0
+          walletTokenBalance.value = 0
+        })
+      } else {
+        casinoBalance.value = null
+        walletTokenBalance.value = null
+      }
+    }, { immediate: true })
+    balanceWatchRegistered = true
+  }
 
   return {
     programId: programIdStr,

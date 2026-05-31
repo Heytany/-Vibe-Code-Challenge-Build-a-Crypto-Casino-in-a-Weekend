@@ -107,6 +107,24 @@ Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4Xobv
 
 Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify env: [`ai/specs/deploy.md`](../ai/specs/deploy.md)
 
+### Funds bar (it.15) — где балансы и deposit
+
+| Страница | FUN | LIVE |
+|----------|-----|------|
+| `/games/dice`, `/games/slot` | Fun balance + **Refill** (блок под шапкой) | Casino WIBE + Phantom WIBE + Deposit/Withdraw |
+| Lobby `/` | Блок **скрыт** | Блок deposit (если Phantom + env) |
+
+В панели игры (Play tab) — **только поле ставки**. Балансы не дублируются.
+
+### «Списалось из Phantom, а в UI —»
+
+| Симптом | Что делать |
+|---------|------------|
+| Casino / Phantom показывают **—** | Нажми **↻** в LIVE-блоке или переподключи Phantom. Должно быть **0** или число, не прочерк. |
+| После Deposit toast ошибки, но WIBE ушли | Транзакция могла пройти — нажми ↻; проверь tx в [Solana Explorer](https://explorer.solana.com/?cluster=devnet). |
+| Deposit disabled | Введи сумму ≥ 1 в поле (пустое поле = кнопка серая). |
+| Roll/Spin LIVE без deposit | Сначала Deposit — создаётся on-chain **UserBalance** PDA. |
+
 ---
 
 ## 4. Мобилка — чеклист

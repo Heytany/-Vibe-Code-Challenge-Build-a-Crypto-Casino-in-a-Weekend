@@ -127,6 +127,11 @@
       "liveModeLocked": "Connect Phantom + deployed program for live mode",
       "resetFun": "Reset fun credits",
       "refillFun": "+ Refill fun credits",
+      "refreshBalances": "Refresh balances",
+      "depositSuccessTitle": "Deposited",
+      "depositSuccessMessage": "{amount} {symbol} moved to casino balance",
+      "withdrawSuccessTitle": "Withdrawn",
+      "withdrawSuccessMessage": "{amount} {symbol} sent to Phantom wallet",
       "modeExplainFun": "// fun mode — no wallet, virtual credits, identical to on-chain math",
       "modeExplainLive": "// live mode — Phantom on devnet, real on-chain bets, verifiable in the explorer",
       "showResult": "Show result details"

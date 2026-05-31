@@ -9,7 +9,6 @@ import {
 } from '~/shared/rng-verify'
 import {
   FUN_MODE_HOUSE_EDGE_BPS,
-  FUN_MODE_START_BALANCE,
   randomBlockhash32,
   randomU64,
 } from '~/shared/fun-mode'
@@ -53,8 +52,9 @@ export function slotSymbolChar(index: number): string {
 
 export function useGameSlot() {
   const { connected } = useWallet()
-  const { casinoBalance } = useCasinoProgram()
+  const { casinoBalance, loading: balanceLoading } = useCasinoProgram()
   const { isFun } = useGameMode()
+  const { balance: funBalance, nextNonce, applyDelta } = useFunBalance()
   const { playWinBurst, playSlotSpin } = useBrutalMotion()
 
   const bet = ref(10)
@@ -62,11 +62,9 @@ export function useGameSlot() {
   const won = ref<boolean | null>(null)
   const lastMeta = ref<SlotSpinMeta>(null)
   const spinning = ref(false)
-  const funBalance = ref(FUN_MODE_START_BALANCE)
-  let funNonce = 0n
 
   const effectiveBalance = computed(() =>
-    isFun.value ? funBalance.value : casinoBalance.value,
+    isFun.value ? funBalance.value : (casinoBalance.value ?? 0),
   )
 
   const isSuperWin = computed(() => {
@@ -86,8 +84,10 @@ export function useGameSlot() {
 
   function validateBet() {
     if (bet.value <= 0) throw new WibeError(WibeErrorCode.InvalidBet)
-    const bal = effectiveBalance.value
-    if (bal !== null && bal < bet.value) {
+    if (!isFun.value && balanceLoading.value) {
+      throw new WibeError(WibeErrorCode.TransactionFailed, 'Balance still loading')
+    }
+    if (effectiveBalance.value < bet.value) {
       throw new WibeError(WibeErrorCode.InsufficientBalance)
     }
   }
@@ -99,8 +99,7 @@ export function useGameSlot() {
     try {
       const userSeed = randomU64()
       const blockhash = randomBlockhash32()
-      const nonce = funNonce
-      funNonce += 1n
+      const nonce = nextNonce()
 
       const nextReels = computeReels(blockhash, userSeed, nonce)
       const multiplier = slotPayoutMultiplier(nextReels[0], nextReels[1], nextReels[2])
@@ -110,7 +109,7 @@ export function useGameSlot() {
 
       await playSlotSpin(banditEl ?? null)
 
-      funBalance.value = Math.max(0, funBalance.value + Number(delta))
+      applyDelta(Number(delta))
       reels.value = nextReels
       won.value = didWin
       lastMeta.value = {
@@ -177,18 +176,6 @@ export function useGameSlot() {
     return spinLive(banditEl)
   }
 
-  function resetFunBalance() {
-    funBalance.value = FUN_MODE_START_BALANCE
-    funNonce = 0n
-    reels.value = null
-    won.value = null
-    lastMeta.value = null
-  }
-
-  function topUpFunBalance() {
-    funBalance.value += FUN_MODE_START_BALANCE
-  }
-
   return {
     isFun,
     bet,
@@ -197,13 +184,10 @@ export function useGameSlot() {
     lastMeta: readonly(lastMeta),
     spinning: readonly(spinning),
     effectiveBalance,
-    funBalance: readonly(funBalance),
     isSuperWin,
     lastPayoutDelta,
     lastMultiplier,
     spin,
-    resetFunBalance,
-    topUpFunBalance,
     slotSymbolChar,
   }
 }

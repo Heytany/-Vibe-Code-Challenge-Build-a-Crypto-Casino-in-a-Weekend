@@ -123,6 +123,11 @@
       "liveModeLocked": "LIVE: нужны Phantom и задеплоенная программа",
       "resetFun": "Сбросить fun-кредиты",
       "refillFun": "+ Пополнить fun-кредиты",
+      "refreshBalances": "Обновить балансы",
+      "depositSuccessTitle": "Депозит принят",
+      "depositSuccessMessage": "{amount} {symbol} на балансе казино",
+      "withdrawSuccessTitle": "Вывод выполнен",
+      "withdrawSuccessMessage": "{amount} {symbol} отправлено в Phantom",
       "modeExplainFun": "// fun-режим — без кошелька, виртуальные кредиты, математика как on-chain",
       "modeExplainLive": "// live-режим — Phantom на devnet, реальные ставки on-chain, проверка в эксплорере",
       "showResult": "Показывать результат"

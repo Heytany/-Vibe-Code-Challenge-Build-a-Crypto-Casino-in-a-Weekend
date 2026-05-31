@@ -122,19 +122,9 @@
               </div>
             </div>
 
-            <GamesGamePlayFunds
-              v-if="isFun"
+            <GamesGameBetInput
               v-model:bet="bet"
-              :balance="effectiveBalance"
-              :disabled="playing"
-              :bet-invalid="betInvalid"
-              :bet-touched="betTouched"
-              @blur-bet="markBetTouched"
-              @refill="topUpFunBalance"
-            />
-            <GamesGameLiveBet
-              v-else
-              v-model:bet="bet"
+              :is-fun="isFun"
               :disabled="playing"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
@@ -189,15 +179,6 @@
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
               <UiLocaleText path="common.back" tag="span" />
-            </button>
-            <button
-              v-if="isFun"
-              type="button"
-              class="bw-btn text-sm"
-              :disabled="playing"
-              @click="resetFunBalance"
-            >
-              <UiLocaleText path="games.common.resetFun" tag="span" />
             </button>
           </div>
           </div>
@@ -256,8 +237,6 @@ const {
   lastPayoutDelta,
   lastMeta,
   roll,
-  resetFunBalance,
-  topUpFunBalance,
 } = useGameDice()
 
 const activeTab = ref<'play' | 'rules' | 'fair'>('play')

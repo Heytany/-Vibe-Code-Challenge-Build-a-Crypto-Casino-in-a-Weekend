@@ -7,6 +7,7 @@ import type { GameMode } from '~/shared/fun-mode'
 import { canUseLiveMode } from '~/shared/fun-mode'
 
 const mode = ref<GameMode>('fun')
+let modeWatchRegistered = false
 
 export function useGameMode() {
   const { connected } = useWallet()
@@ -14,11 +15,14 @@ export function useGameMode() {
 
   const canLive = computed(() => canUseLiveMode(connected.value, isConfigured.value))
 
-  watch(canLive, (ok) => {
-    if (!ok && mode.value === 'live') {
-      mode.value = 'fun'
-    }
-  })
+  if (import.meta.client && !modeWatchRegistered) {
+    watch(canLive, (ok) => {
+      if (!ok && mode.value === 'live') {
+        mode.value = 'fun'
+      }
+    })
+    modeWatchRegistered = true
+  }
 
   function setMode(next: GameMode) {
     if (next === 'live' && !canLive.value) return

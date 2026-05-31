@@ -61,7 +61,7 @@ pnpm copy-idl
 
 ### Status
 
-**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). Sprint context: [`ai/CONTEXT.md`](ai/CONTEXT.md).
+**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). FUN (no wallet) + LIVE (deposit → play → withdraw). Sprint context: [`ai/CONTEXT.md`](ai/CONTEXT.md) · QA: [`iterations/help.md`](iterations/help.md).
 
 ---
 

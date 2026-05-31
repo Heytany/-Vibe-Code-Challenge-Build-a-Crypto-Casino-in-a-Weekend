@@ -84,19 +84,9 @@
             class="bw-game-tabpanel"
             :class="{ 'is-inactive': activeTab !== 'play' }"
           >
-            <GamesGamePlayFunds
-              v-if="isFun"
+            <GamesGameBetInput
               v-model:bet="bet"
-              :balance="effectiveBalance"
-              :disabled="spinning"
-              :bet-invalid="betInvalid"
-              :bet-touched="betTouched"
-              @blur-bet="markBetTouched"
-              @refill="topUpFunBalance"
-            />
-            <GamesGameLiveBet
-              v-else
-              v-model:bet="bet"
+              :is-fun="isFun"
               :disabled="spinning"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
@@ -156,15 +146,6 @@
             <button type="button" class="bw-btn" @click="goLobby">
               <UiLocaleText path="common.back" tag="span" />
             </button>
-            <button
-              v-if="isFun"
-              type="button"
-              class="bw-btn text-sm"
-              :disabled="spinning"
-              @click="resetFunBalance"
-            >
-              <UiLocaleText path="games.common.resetFun" tag="span" />
-            </button>
           </div>
           </div>
 
@@ -217,8 +198,6 @@ const {
   lastMultiplier,
   lastMeta,
   spin,
-  resetFunBalance,
-  topUpFunBalance,
   slotSymbolChar,
 } = useGameSlot()
 

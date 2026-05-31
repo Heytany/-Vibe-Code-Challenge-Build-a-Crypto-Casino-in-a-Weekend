@@ -25,6 +25,14 @@ test.describe('lobby', () => {
   })
 })
 
+test.describe('games', () => {
+  test('dice shows fun funds bar by default', async ({ page }) => {
+    await page.goto('/games/dice')
+    await expect(page.getByText(/fun credits|fun-кредит/i).first()).toBeVisible()
+    await expect(page.getByRole('button', { name: /Refill|Пополнить|Поповнити/i })).toBeVisible()
+  })
+})
+
 test.describe('i18n', () => {
   test('locale switcher changes UI language', async ({ page }) => {
     await page.goto('/')

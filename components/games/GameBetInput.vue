@@ -3,7 +3,7 @@
     <label class="block space-y-2 max-w-xs mx-auto sm:mx-0 sm:ml-auto sm:text-right">
       <span class="text-xs uppercase font-bold block">
         <UiLocaleText path="games.common.bet" tag="span" />
-        <span class="text-[var(--bw-muted)] normal-case ml-1">({{ TOKEN_SYMBOL }})</span>
+        <span class="text-[var(--bw-muted)] normal-case ml-1">({{ unitLabel }})</span>
       </span>
       <input
         :value="bet"
@@ -15,7 +15,7 @@
         @input="onBetInput"
         @blur="emit('blur-bet')"
       >
-      <p class="text-[0.65rem] text-[var(--bw-muted)] font-mono whitespace-normal">
+      <p v-if="!isFun" class="text-[0.65rem] text-[var(--bw-muted)] font-mono whitespace-normal">
         <UiLocaleText path="games.common.liveBetHint" tag="span" />
       </p>
     </label>
@@ -24,12 +24,13 @@
 
 <script setup lang="ts">
 /**
- * @agent-context LIVE bet only on game pages — balances/deposit live in LayoutWalletStrip.
+ * @agent-context Bet input only — balances live in GameFundsBar.
  */
 import { TOKEN_SYMBOL } from '~/shared/format-tokens'
 
-defineProps<{
+const props = defineProps<{
   bet: number
+  isFun: boolean
   disabled?: boolean
   betInvalid?: boolean
   betTouched?: boolean
@@ -39,6 +40,11 @@ const emit = defineEmits<{
   'update:bet': [value: number]
   'blur-bet': []
 }>()
+
+const { t } = useI18n()
+const unitLabel = computed(() =>
+  props.isFun ? t('games.common.funUnit') : TOKEN_SYMBOL,
+)
 
 function onBetInput(e: Event) {
   const raw = (e.target as HTMLInputElement).value

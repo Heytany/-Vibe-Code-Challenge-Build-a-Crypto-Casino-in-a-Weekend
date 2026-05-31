@@ -1,58 +1,66 @@
 # Brutal wibe — agent handoff (read first)
 
-**Project:** Brutal wibe — brutalist on-chain crypto casino  
-**Phase:** Iteration 4 — **fun mode done**; live Dice wire-up next (host with Anchor + Phantom)
+**Project:** Brutal wibe — brutalist on-chain crypto casino on Solana devnet  
+**Phase:** **Submission-ready** — FUN + LIVE wired, deployed on Netlify
 
 ## Roles
 
 | Who | Role |
 |-----|------|
-| Human (PO) | Product owner, UI tester — [`iterations/help.md`](../iterations/help.md) |
-| **Cursor** | **Primary now** — fun mode, live wire-up on macOS host |
-| Claude (Cloud) | Operator when available — it.3 lobby; blocked on deploy/sign in sandbox |
+| Human (PO) | Product owner, final QA, git commits — [`iterations/help.md`](../iterations/help.md) |
+| **Cursor** | Primary implementer — it.12–15 LIVE wire, funds UX |
+| Claude (Cloud) | Earlier iterations (lobby, slot, polish) |
 
 ## Mandatory: Fun mode (ADR-014)
 
 Every game **must** work without wallet:
 
-- Default mode: **`fun`** — virtual balance, client RNG (`shared/rng-verify.ts`)
-- Toggle: `GameModeToggle` + `useGameMode()`
-- **Live** only when Phantom connected + `NUXT_PUBLIC_CASINO_PROGRAM_ID` set
+- Default mode: **`fun`** — virtual balance (`useFunBalance`), client RNG (`shared/rng-verify.ts`)
+- Toggle: `GameModeToggle` + `useGameMode()` (shared module state)
+- **Live** only when user selects LIVE + Phantom connected + real `NUXT_PUBLIC_*`
 
-Test: `/games/dice`, `/games/slot` with no wallet → roll/spin works.
+Test: `/games/dice`, `/games/slot` with no wallet → roll/spin works; `GameFundsBar` shows fun + Refill.
+
+## LIVE flow (it.15)
+
+1. Connect Phantom (devnet)  
+2. Toggle **LIVE** on game page  
+3. `GameFundsBar` → Deposit WIBE → casino balance updates  
+4. Bet in Play tab → Roll/Spin on-chain  
+5. Withdraw → Phantom  
+6. Fair tab → verify + Explorer link  
+
+Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox`
 
 ## Read order
 
 1. This file  
 2. [`CONTEXT.md`](CONTEXT.md)  
-3. Latest [`iterations/`](../iterations/) — [`04-fun-mode.md`](../iterations/04-fun-mode.md)  
-4. Live Dice plan: [`iterations/04-plan-dice-game.md`](../iterations/04-plan-dice-game.md)
+3. Latest [`iterations/`](../iterations/) — [`15-deposit-funds-bar-fix.md`](../iterations/15-deposit-funds-bar-fix.md)
 
-## Current priorities (host)
+## Key files
 
-1. `anchor build/deploy` → `NUXT_PUBLIC_CASINO_PROGRAM_ID` + `pnpm copy-idl`  
-2. Wire `useCasinoProgram` (deposit, withdraw, playDice)  
-3. `useGameDice.rollLive()` + verify UI in `DiceGame.vue`  
-4. Copy pattern to Slot live  
-5. PO commit + deploy frontend URL
-
-## Stack (fixed)
-
-- Solana devnet + Anchor 0.30 (`programs/wibe-casino`)
-- Nuxt 3 SPA, GSAP via `useBrutalMotion` only
-- Phantom via `useWallet.ts` (needs `signTransaction` for live)
+| Area | Path |
+|------|------|
+| Chain client | `composables/useCasinoProgram.ts` |
+| Funds UI | `components/layout/GameFundsBar.vue` |
+| Fun credits | `composables/useFunBalance.ts` |
+| Game mode | `composables/useGameMode.ts` |
+| Dice / Slot | `composables/useGameDice.ts`, `useGameSlot.ts` |
+| Provably fair | `components/games/ProvablyFair.vue`, `shared/rng-verify.ts` |
 
 ## Commands
 
 ```bash
 pnpm dev
-pnpm test:motion    # includes fun-mode tests
+pnpm test:env && pnpm test:motion
 pnpm build
-anchor build && pnpm copy-idl
+pnpm exec playwright test
 ```
 
 ## Rules
 
 - **Fun mode never blocks on wallet** for default path  
-- 1 iteration = 1 commit + RU report in [`iterations/`](../iterations/)  
-- Update [`CONTEXT.md`](CONTEXT.md) after your task
+- 1 iteration = 1 commit + RU report in [`iterations/`](../iterations/) — **PO commits**  
+- Update [`CONTEXT.md`](CONTEXT.md) after your task  
+- Do not edit committed plan files in `.cursor/plans/`

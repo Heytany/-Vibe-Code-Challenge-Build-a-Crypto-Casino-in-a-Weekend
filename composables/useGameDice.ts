@@ -12,7 +12,6 @@ import {
 import { isDiceSuperWin } from '~/shared/dice-super-win'
 import {
   FUN_MODE_HOUSE_EDGE_BPS,
-  FUN_MODE_START_BALANCE,
   randomBlockhash32,
   randomU64,
 } from '~/shared/fun-mode'
@@ -54,8 +53,9 @@ export type DiceRollMeta = DiceFunRollMeta | DiceLiveRollMeta | null
 
 export function useGameDice() {
   const { connected } = useWallet()
-  const { casinoBalance } = useCasinoProgram()
+  const { casinoBalance, loading: balanceLoading } = useCasinoProgram()
   const { mode, isFun } = useGameMode()
+  const { balance: funBalance, nextNonce, applyDelta } = useFunBalance()
   const { playWinBurst, playDiceTumble } = useBrutalMotion()
 
   const bet = ref(10)
@@ -65,8 +65,6 @@ export function useGameDice() {
   const won = ref<boolean | null>(null)
   const lastMeta = ref<DiceRollMeta>(null)
   const playing = ref(false)
-  const funBalance = ref(FUN_MODE_START_BALANCE)
-  let funNonce = 0n
 
   const winChance = computed(() => {
     if (direction.value === 'under') return target.value - 1
@@ -74,7 +72,7 @@ export function useGameDice() {
   })
 
   const effectiveBalance = computed(() =>
-    isFun.value ? funBalance.value : casinoBalance.value,
+    isFun.value ? funBalance.value : (casinoBalance.value ?? 0),
   )
 
   const isSuperWin = computed(() => {
@@ -90,8 +88,10 @@ export function useGameDice() {
     if (bet.value <= 0 || target.value < DICE_TARGET_MIN || target.value > DICE_TARGET_MAX) {
       throw new WibeError(WibeErrorCode.InvalidBet)
     }
-    const bal = effectiveBalance.value
-    if (bal !== null && bal < bet.value) {
+    if (!isFun.value && balanceLoading.value) {
+      throw new WibeError(WibeErrorCode.TransactionFailed, 'Balance still loading')
+    }
+    if (effectiveBalance.value < bet.value) {
       throw new WibeError(WibeErrorCode.InsufficientBalance)
     }
   }
@@ -103,8 +103,7 @@ export function useGameDice() {
     try {
       const userSeed = randomU64()
       const blockhash = randomBlockhash32()
-      const nonce = funNonce
-      funNonce += 1n
+      const nonce = nextNonce()
 
       const roll = computeRoll(blockhash, userSeed, nonce)
       const rollUnder = direction.value === 'under'
@@ -115,7 +114,7 @@ export function useGameDice() {
 
       await playDiceTumble(diceEl ?? null)
 
-      funBalance.value = Math.max(0, funBalance.value + Number(delta))
+      applyDelta(Number(delta))
       lastRoll.value = roll
       won.value = didWin
       lastMeta.value = {
@@ -191,18 +190,6 @@ export function useGameDice() {
     return rollLive(diceEl)
   }
 
-  function resetFunBalance() {
-    funBalance.value = FUN_MODE_START_BALANCE
-    funNonce = 0n
-    lastRoll.value = null
-    won.value = null
-    lastMeta.value = null
-  }
-
-  function topUpFunBalance() {
-    funBalance.value += FUN_MODE_START_BALANCE
-  }
-
   return {
     mode,
     isFun,
@@ -215,11 +202,8 @@ export function useGameDice() {
     playing: readonly(playing),
     winChance,
     effectiveBalance,
-    funBalance: readonly(funBalance),
     isSuperWin,
     lastPayoutDelta,
     roll,
-    resetFunBalance,
-    topUpFunBalance,
   }
 }
