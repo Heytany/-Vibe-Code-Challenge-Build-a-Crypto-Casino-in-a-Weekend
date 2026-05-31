@@ -9,103 +9,323 @@
   "instructions": [
     {
       "name": "initialize",
-      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
-      "accounts": [
-        { "name": "authority", "writable": true, "signer": true },
-        { "name": "mint" },
-        { "name": "casino_config", "writable": true },
-        { "name": "casino_vault", "writable": true },
-        { "name": "system_program", "address": "11111111111111111111111111111111" },
-        { "name": "token_program", "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
-        { "name": "rent", "address": "SysvarRent111111111111111111111111111111111" }
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
       ],
-      "args": [{ "name": "house_edge_bps", "type": "u16" }]
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "casino_config",
+          "writable": true
+        },
+        {
+          "name": "casino_vault",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "house_edge_bps",
+          "type": "u16"
+        }
+      ]
     },
     {
       "name": "deposit",
-      "discriminator": [242, 35, 198, 137, 82, 225, 242, 182],
-      "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "casino_config" },
-        { "name": "casino_vault", "writable": true },
-        { "name": "user_token_account", "writable": true },
-        { "name": "user_balance", "writable": true },
-        { "name": "system_program", "address": "11111111111111111111111111111111" },
-        { "name": "token_program", "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" }
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
       ],
-      "args": [{ "name": "amount", "type": "u64" }]
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "casino_config"
+        },
+        {
+          "name": "casino_vault",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_balance",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "withdraw",
-      "discriminator": [183, 18, 70, 156, 148, 109, 161, 34],
-      "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "casino_config" },
-        { "name": "casino_vault", "writable": true },
-        { "name": "user_token_account", "writable": true },
-        { "name": "user_balance", "writable": true },
-        { "name": "token_program", "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" }
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
       ],
-      "args": [{ "name": "amount", "type": "u64" }]
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "casino_config"
+        },
+        {
+          "name": "casino_vault",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_balance",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "play_dice",
-      "discriminator": [4, 49, 129, 117, 102, 35, 222, 130],
+      "discriminator": [
+        4,
+        49,
+        129,
+        117,
+        102,
+        35,
+        222,
+        130
+      ],
       "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "casino_config" },
-        { "name": "user_balance", "writable": true },
-        { "name": "recent_blockhashes" }
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "casino_config"
+        },
+        {
+          "name": "user_balance",
+          "writable": true
+        },
+        {
+          "name": "recent_blockhashes"
+        }
       ],
       "args": [
-        { "name": "bet", "type": "u64" },
-        { "name": "roll_under", "type": "bool" },
-        { "name": "target", "type": "u8" },
-        { "name": "user_seed", "type": "u64" }
+        {
+          "name": "bet",
+          "type": "u64"
+        },
+        {
+          "name": "roll_under",
+          "type": "bool"
+        },
+        {
+          "name": "target",
+          "type": "u8"
+        },
+        {
+          "name": "user_seed",
+          "type": "u64"
+        }
       ]
     },
     {
       "name": "play_slot",
-      "discriminator": [52, 64, 201, 153, 122, 20, 200, 116],
+      "discriminator": [
+        52,
+        64,
+        201,
+        153,
+        122,
+        20,
+        200,
+        116
+      ],
       "accounts": [
-        { "name": "user", "writable": true, "signer": true },
-        { "name": "casino_config" },
-        { "name": "user_balance", "writable": true },
-        { "name": "recent_blockhashes" }
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "casino_config"
+        },
+        {
+          "name": "user_balance",
+          "writable": true
+        },
+        {
+          "name": "recent_blockhashes"
+        }
       ],
       "args": [
-        { "name": "bet", "type": "u64" },
-        { "name": "user_seed", "type": "u64" }
+        {
+          "name": "bet",
+          "type": "u64"
+        },
+        {
+          "name": "user_seed",
+          "type": "u64"
+        }
       ]
     }
   ],
   "accounts": [
     {
       "name": "CasinoConfig",
-      "discriminator": [206, 200, 186, 228, 174, 67, 117, 29]
+      "discriminator": [
+        206,
+        200,
+        186,
+        228,
+        174,
+        67,
+        117,
+        29
+      ]
     },
     {
       "name": "UserBalance",
-      "discriminator": [187, 237, 208, 146, 86, 132, 29, 191]
+      "discriminator": [
+        187,
+        237,
+        208,
+        146,
+        86,
+        132,
+        29,
+        191
+      ]
     }
   ],
   "events": [
     {
       "name": "DicePlayed",
-      "discriminator": [187, 224, 224, 114, 34, 255, 107, 58]
+      "discriminator": [
+        187,
+        224,
+        224,
+        114,
+        34,
+        255,
+        107,
+        58
+      ]
     },
     {
       "name": "SlotPlayed",
-      "discriminator": [14, 127, 154, 143, 236, 233, 121, 143]
+      "discriminator": [
+        14,
+        127,
+        154,
+        143,
+        236,
+        233,
+        121,
+        143
+      ]
     }
   ],
   "errors": [
-    { "code": 6000, "name": "InvalidBet", "msg": "Invalid bet amount or parameters" },
-    { "code": 6001, "name": "InsufficientBalance", "msg": "Insufficient casino balance" },
-    { "code": 6002, "name": "InvalidAmount", "msg": "Invalid amount" },
-    { "code": 6003, "name": "MathOverflow", "msg": "Math overflow" },
-    { "code": 6004, "name": "InvalidHouseEdge", "msg": "Invalid house edge" },
-    { "code": 6005, "name": "InvalidBlockhash", "msg": "Invalid blockhash data" }
+    {
+      "code": 6000,
+      "name": "InvalidBet",
+      "msg": "Invalid bet amount or parameters"
+    },
+    {
+      "code": 6001,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient casino balance"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount"
+    },
+    {
+      "code": 6003,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidHouseEdge",
+      "msg": "Invalid house edge"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidBlockhash",
+      "msg": "Invalid blockhash data"
+    }
   ],
   "types": [
     {
@@ -113,11 +333,26 @@
       "type": {
         "kind": "struct",
         "fields": [
-          { "name": "authority", "type": "pubkey" },
-          { "name": "mint", "type": "pubkey" },
-          { "name": "house_edge_bps", "type": "u16" },
-          { "name": "bump", "type": "u8" },
-          { "name": "vault_bump", "type": "u8" }
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "house_edge_bps",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          }
         ]
       }
     },
@@ -126,8 +361,14 @@
       "type": {
         "kind": "struct",
         "fields": [
-          { "name": "amount", "type": "u64" },
-          { "name": "game_nonce", "type": "u64" }
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "game_nonce",
+            "type": "u64"
+          }
         ]
       }
     },
@@ -136,12 +377,39 @@
       "type": {
         "kind": "struct",
         "fields": [
-          { "name": "player", "type": "pubkey" },
-          { "name": "bet", "type": "u64" },
-          { "name": "roll", "type": "u8" },
-          { "name": "target", "type": "u8" },
-          { "name": "roll_under", "type": "bool" },
-          { "name": "won", "type": "bool" }
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "bet",
+            "type": "u64"
+          },
+          {
+            "name": "roll",
+            "type": "u8"
+          },
+          {
+            "name": "target",
+            "type": "u8"
+          },
+          {
+            "name": "roll_under",
+            "type": "bool"
+          },
+          {
+            "name": "won",
+            "type": "bool"
+          },
+          {
+            "name": "blockhash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
         ]
       }
     },
@@ -150,13 +418,43 @@
       "type": {
         "kind": "struct",
         "fields": [
-          { "name": "player", "type": "pubkey" },
-          { "name": "bet", "type": "u64" },
-          { "name": "reel1", "type": "u8" },
-          { "name": "reel2", "type": "u8" },
-          { "name": "reel3", "type": "u8" },
-          { "name": "payout_multiplier", "type": "u16" },
-          { "name": "won", "type": "bool" }
+          {
+            "name": "player",
+            "type": "pubkey"
+          },
+          {
+            "name": "bet",
+            "type": "u64"
+          },
+          {
+            "name": "reel1",
+            "type": "u8"
+          },
+          {
+            "name": "reel2",
+            "type": "u8"
+          },
+          {
+            "name": "reel3",
+            "type": "u8"
+          },
+          {
+            "name": "payout_multiplier",
+            "type": "u16"
+          },
+          {
+            "name": "won",
+            "type": "bool"
+          },
+          {
+            "name": "blockhash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
         ]
       }
     }
