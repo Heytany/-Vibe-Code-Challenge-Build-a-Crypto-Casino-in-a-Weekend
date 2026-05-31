@@ -123,14 +123,20 @@
             </div>
 
             <GamesGamePlayFunds
+              v-if="isFun"
               v-model:bet="bet"
-              :is-fun="isFun"
-              :casino-balance="effectiveBalance"
-              :wallet-balance="walletTokenBalance"
+              :balance="effectiveBalance"
               :disabled="playing"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
-              :panel-el="panelRef"
+              @blur-bet="markBetTouched"
+            />
+            <GamesGameLiveBet
+              v-else
+              v-model:bet="bet"
+              :disabled="playing"
+              :bet-invalid="betInvalid"
+              :bet-touched="betTouched"
               @blur-bet="markBetTouched"
             />
 
@@ -234,7 +240,6 @@
  */
 import { RadioGroupItem, RadioGroupRoot, SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 
-const { walletTokenBalance } = useCasinoProgram()
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const {
   isFun,

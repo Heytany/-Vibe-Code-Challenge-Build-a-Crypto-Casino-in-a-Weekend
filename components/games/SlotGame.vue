@@ -85,14 +85,20 @@
             :class="{ 'is-inactive': activeTab !== 'play' }"
           >
             <GamesGamePlayFunds
+              v-if="isFun"
               v-model:bet="bet"
-              :is-fun="isFun"
-              :casino-balance="effectiveBalance"
-              :wallet-balance="walletTokenBalance"
+              :balance="effectiveBalance"
               :disabled="spinning"
               :bet-invalid="betInvalid"
               :bet-touched="betTouched"
-              :panel-el="panelRef"
+              @blur-bet="markBetTouched"
+            />
+            <GamesGameLiveBet
+              v-else
+              v-model:bet="bet"
+              :disabled="spinning"
+              :bet-invalid="betInvalid"
+              :bet-touched="betTouched"
               @blur-bet="markBetTouched"
             />
 
@@ -197,7 +203,6 @@
 /**
  * @agent-context Slot UI — monster holds bandit panel; spin under reels.
  */
-const { walletTokenBalance } = useCasinoProgram()
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const {
   isFun,

@@ -35,9 +35,10 @@
  */
 const { t } = useI18n()
 const { connected, connecting, publicKey, connect, disconnect } = useWallet()
+const { isConfigured } = useCasinoProgram()
 const { playCrackModal } = useBrutalMotion()
 const motionStore = useMotionStore()
-const { showError } = useBrutalToast()
+const { showError, showSuccess } = useBrutalToast()
 
 const disconnectOpen = ref(false)
 
@@ -66,6 +67,9 @@ async function onClick() {
         await connect()
       },
     })
+    if (isConfigured.value) {
+      showSuccess(t('wallet.connectedLive.title'), t('wallet.connectedLive.description'))
+    }
   } catch (error) {
     showError(error)
   }

@@ -38,6 +38,10 @@
       "description": "Phantom will be unlinked from Brutal wibe. You can reconnect anytime.",
       "confirm": "Disconnect",
       "cancel": "Stay linked"
+    },
+    "connectedLive": {
+      "title": "Phantom linked",
+      "description": "LIVE mode on. Open Dice/Slot → Play tab → Deposit WIBE, then bet from casino balance."
     }
   },
   "games": {
@@ -90,6 +94,7 @@
       "withdraw": "Withdraw",
       "max": "Max",
       "balance": "Casino balance",
+      "casinoBalanceLabel": "Casino balance (for bets)",
       "verifyRoll": "Verify on Explorer",
       "verifiedOk": "Verified — matches on-chain",
       "verifiedFail": "Mismatch — do not trust",
@@ -107,10 +112,14 @@
       "funMode": "FUN",
       "liveMode": "LIVE",
       "funBanner": "// fun mode — no wallet, virtual credits, identical to on-chain math",
+      "funBalanceLabel": "Fun balance",
       "funUnit": "fun credits",
       "walletBalance": "Phantom wallet",
-      "liveBanner": "// live — deposit WIBE from Phantom first. Wallet balance ≠ casino balance.",
-      "liveNeedDeposit": "Casino balance is 0 — use Deposit below before betting.",
+      "liveBanner": "// LIVE — deposit WIBE in the strip above first, then bet from casino balance.",
+      "liveNeedDeposit": "Deposit WIBE here first — casino balance is 0.",
+      "liveBetHint": "Bets use casino balance from the strip above.",
+      "depositSteps": "Enter amount → Deposit → approve in Phantom → casino balance updates → Roll/Spin.",
+      "depositWithdrawTitle": "Deposit / Withdraw WIBE",
       "minBetHint": "On-chain uses integer tokens: bet 1 can win but net profit may round to 0. Try ≥ 2 WIBE.",
       "phantomTokenHint": "Phantom may show Unknown Token — that is devnet WIBE (mint below). Wins stay in casino balance until Withdraw; 10k in wallet is demo mint from setup, not a win payout.",
       "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",

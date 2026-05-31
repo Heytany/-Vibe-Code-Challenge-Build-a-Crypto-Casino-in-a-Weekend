@@ -11,9 +11,6 @@
       <p class="text-[var(--bw-muted)] text-sm md:text-base mx-auto max-w-xl whitespace-normal">
         <UiLocaleText path="lobby.tagline" tag="span" />
       </p>
-      <div class="flex justify-center">
-        <WalletBalanceDisplay />
-      </div>
     </section>
 
     <LobbyMonsterHero>

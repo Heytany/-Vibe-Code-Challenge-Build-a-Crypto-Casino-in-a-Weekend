@@ -1,8 +1,7 @@
 <template>
-  <div v-if="showPanel" class="bw-casino-actions space-y-2">
-    <p class="text-xs uppercase font-bold">
-      <UiLocaleText path="wallet.casinoBalance" tag="span" />
-      <span class="text-[var(--bw-accent)] ml-1">{{ formattedBalance }} {{ TOKEN_SYMBOL }}</span>
+  <div v-if="showPanel" class="bw-casino-actions bw-panel bw-panel--broken p-4 space-y-3">
+    <p class="text-sm font-bold uppercase">
+      <UiLocaleText path="games.common.depositWithdrawTitle" tag="span" />
     </p>
 
     <div class="flex flex-wrap gap-2 items-end">
@@ -53,7 +52,7 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Deposit / withdraw controls for LIVE mode on game pages.
+ * @agent-context Deposit / withdraw controls — used from global LayoutWalletStrip.
  */
 import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
 
@@ -61,7 +60,6 @@ const props = defineProps<{
   panelEl?: HTMLElement | null
 }>()
 
-const { isFun } = useGameMode()
 const { connected } = useWallet()
 const { casinoBalance, deposit, withdraw, isConfigured } = useCasinoProgram()
 const { playDepositPulse } = useBrutalMotion()
@@ -70,7 +68,7 @@ const { showError } = useBrutalToast()
 const amount = ref(100)
 const busy = ref(false)
 
-const showPanel = computed(() => !isFun.value && connected.value && isConfigured.value)
+const showPanel = computed(() => connected.value && isConfigured.value)
 
 const formattedBalance = computed(() => formatTokenAmount(casinoBalance.value))
 
