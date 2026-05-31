@@ -1,31 +1,50 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-30 — iteration 16 done  
-**Current iteration:** 16  
-**Report:** [`iterations/16-live-play-idl-fix.md`](../iterations/16-live-play-idl-fix.md)
+**Last updated:** 2026-05-31 — **final / it.19**  
+**Current iteration:** 19 (marathon close)  
+**Report:** [`iterations/19-final-marathon.md`](../iterations/19-final-marathon.md)
 
-## Iteration 16 — done ✅
+## Submission-ready ✅
 
-- [x] Fix IDL discriminators `play_dice` / `play_slot` (101 InstructionFallbackNotFound)
-- [x] Event parse fix (`dicePlayed` camelCase) + RNG fallback
-- [x] LIVE: `signing` then animation — не параллельно
-- [x] Win/lose toast + auto-show result panel in LIVE
-- [x] Cancel play + 90s signing timeout; LIVE default on wallet connect
-- [x] Lobby funds bar stays when FUN + connected (WIBE strip for deposit)
-- [x] Removed confusing Max withdraw button
-- [x] `pnpm test:idl` guard + build OK
+| Requirement | Status |
+|-------------|--------|
+| Testnet only | ✅ devnet |
+| Connect wallet | ✅ Phantom |
+| Deposit → play → withdraw | ✅ LIVE Dice + Slot |
+| Verifiable on-chain | ✅ Fair tab + blockhash in events (it.17) |
+| Public URL | ✅ [truebrutal.netlify.app](https://truebrutal.netlify.app) |
+| Casino edge | ✅ 200 bps on-chain |
+| Two games | ✅ Dice + Slot (+ Wheel faucet it.18) |
+| Polished UX | ✅ FUN/LIVE, funds bar, i18n, mobile, motion |
 
-## Iteration 15 — done ✅
+## Iteration 19 — final hotfixes ✅
 
-- [x] Deposit/refresh fix: immediate watch, raw UserBalance read, post-tx confirm + retry
-- [x] `GameFundsBar` — FUN (refill) / LIVE (WIBE + deposit/withdraw); games always, lobby LIVE+connected
-- [x] Game panel — `GameBetInput` bet only; shared `useFunBalance`
-- [x] Single module-level balance/mode watches (no duplicate refresh)
-- [x] Removed orphan `BalanceDisplay.vue`
-- [x] Tests: env + motion + rng 14/14, build OK
-- [x] **Live URL:** [truebrutal.netlify.app](https://truebrutal.netlify.app)
+- [x] `CasinoActions` — «Сумма (WIBE)», без дубля deposit label
+- [x] `GameAutoFsBar` — mobile autoroll, Lucide ∞, skip-prompt после 3 cancel
+- [x] `live-play-mutex` — очередь LIVE sign, fix Phantom freeze после reject
+- [x] `useWheel` — cancelSpin при скрытом popup
+- [x] Wheel page tabs: How it works + Trust (+ SOL rent note) — **commit pending PO**
 
-### Devnet env (local + Netlify)
+## Iteration 18 — WIBE Wheel ✅
+
+- [x] On-chain `init_faucet` / `spin_wheel`, skewed 1..1000, 24h cooldown
+- [x] `WheelBanner`, `/games/wheel`, `pnpm devnet:faucet`
+- [x] README wheel + trust narrative
+
+## Iteration 17 — verifiable RNG ✅
+
+- [x] Blockhash emitted in `DicePlayed` / `SlotPlayed` (and `WheelSpun`)
+- [x] Fair tab uses event blockhash
+- [x] Matrix route timing fix
+- [ ] **PO:** redeploy program if devnet still on pre-it.17 build
+
+## Iteration 16 — LIVE play IDL ✅
+
+- [x] Fix play_dice/play_slot discriminators (101)
+- [x] signing → animation order; cancel + auto-roll skip
+- [x] LIVE default on connect; GameFundsBar on lobby
+
+### Devnet env
 
 ```
 NUXT_PUBLIC_SOLANA_NETWORK=devnet
@@ -34,44 +53,31 @@ NUXT_PUBLIC_CASINO_PROGRAM_ID=BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw
 NUXT_PUBLIC_CASINO_TOKEN_MINT=He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox
 ```
 
----
-
-## Challenge README — status (submission-ready)
-
-| Requirement | Status |
-|-------------|--------|
-| Testnet only | ✅ devnet |
-| Connect wallet | ✅ Phantom |
-| Deposit → play → withdraw | ✅ LIVE Dice + Slot via `GameFundsBar` |
-| Verifiable on-chain | ✅ program + Fair tab + Explorer |
-| Public URL | ✅ [truebrutal.netlify.app](https://truebrutal.netlify.app) |
-| Casino edge | ✅ 200 bps on-chain |
-| Two games | ✅ Dice + Slot |
-| Polished UX | ✅ FUN/LIVE split, funds bar, i18n EN/RU/UK |
-
 ## Architecture (funds UX)
 
 | Surface | FUN | LIVE |
 |---------|-----|------|
-| `GameFundsBar` on `/games/*` | fun credits + Refill | casino + Phantom WIBE + deposit/withdraw |
-| Lobby `/` | hidden | visible when connected + LIVE |
-| Game Play tab | bet input only | bet input only |
+| `GameFundsBar` on `/games/*` | fun credits + Refill | casino + Phantom + deposit/withdraw |
+| Lobby `/` | hidden | WIBE strip when wallet + env |
+| `/games/wheel` | — | faucet spin → casino balance |
 
 ## Dev / QA
 
 ```bash
 pnpm dev
-pnpm test:env && pnpm test:idl && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts
-pnpm exec playwright test
+pnpm test:env && pnpm test:idl
+pnpm exec vitest run tests/rng-verify.test.ts tests/live-play-mutex.test.ts
+pnpm test:motion
 pnpm build
-pnpm devnet:token-meta   # Phantom WIBE label (once per mint)
+pnpm devnet:faucet   # after program deploy with wheel ix
 ```
 
-Tester: [`iterations/help.md`](../iterations/help.md)
+Tester: [`iterations/help.md`](../iterations/help.md) · Final: [`iterations/19-final-marathon.md`](../iterations/19-final-marathon.md)
 
 ## Roles
 
 | Agent | Role |
 |-------|------|
-| **Cursor** | it.16 LIVE play IDL fix |
-| **PO** | Netlify QA, submission commit |
+| **Claude (Cowork)** | it.3, 8–10, 17–18 — **4 Cloud session limits** |
+| **Cursor** | it.11–19 — **>$40 on-demand** (+ $26 overage it.12–15, $20 included earlier) |
+| **PO** | deploy, commits, Notion submission |

@@ -108,6 +108,20 @@ Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4Xobv
 
 Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify env: [`ai/specs/deploy.md`](../ai/specs/deploy.md)
 
+### WIBE Wheel (it.18) — бесплатный WIBE
+
+| Шаг | Действие |
+|-----|----------|
+| 1 | Phantom devnet + LIVE |
+| 2 | Лобби → баннер **WIBE Wheel** или `/games/wheel` |
+| 3 | Spin — платишь **SOL**, не WIBE. **Первый спин** с кошелька: +rent (~0.001–0.002 SOL) за создание PDA — это норма Solana, не комиссия казино |
+| 4 | Приз 1–1000 WIBE → **баланс казино** → играй dice/slot или Withdraw |
+| 5 | Кулдаун **24ч** на кошелёк; общий фонд на баннере |
+
+Вкладки на странице колеса: **Как работает** (skew, rent) · **Трастовость** (on-chain audit, scope vs Fair).
+
+Оператор: `pnpm devnet:faucet` после deploy программы с `spin_wheel`.
+
 ### Funds bar (it.15) — где балансы и deposit
 
 | Страница | FUN | LIVE |
@@ -137,6 +151,7 @@ Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify en
 | Шапка | 2 строки: лого+тема+язык / wallet на всю ширину |
 | Тосты | Win, auto-roll итог, offline — **внутри экрана**, не обрезаны справа |
 | Dice / Slot | 3 таба (Play / Rules / Fair), куб/барабаны, кнопка Roll/Spin |
+| Wheel | Spin, вкладки How/Trust, rent SOL на первом спине |
 | Auto-bar | Rounds, ∞, speed, fullscreen — без горизонтального scroll |
 | Crack modal | Connect — modal по центру, кнопки ≥44px |
 | Access denied | `/games/nope` — заголовок переносится, matrix не ломает layout |
@@ -170,7 +185,8 @@ Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify en
 | LIVE не включается | Нужны wallet + **реальные** program id и mint (не `Wibe1111…` / `Token1111…`) |
 | Тост обрезан | Обновите до it.11+; проверьте 320px |
 | Нет анимаций | Reduce motion — норма |
-| Баланс казино 0 | Контракт не задеплоен — [`ai/CONTEXT.md`](../ai/CONTEXT.md) |
+| Баланс казино 0 | Deposit или **Wheel** (`/games/wheel`) |
+| UI «залип» после reject Phantom | Нажми **Отмена** / **Stuck?** на wheel; autoroll — модалка после 3 cancel; иначе reload (it.19 mutex) |
 
 ---
 

@@ -118,7 +118,7 @@ pnpm copy-idl
 
 ### Status
 
-**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). FUN (no wallet) + LIVE (deposit → play → withdraw). Sprint context: [`ai/CONTEXT.md`](ai/CONTEXT.md) · QA: [`iterations/help.md`](iterations/help.md).
+**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). FUN + LIVE + WIBE Wheel. Final report: [`iterations/19-final-marathon.md`](iterations/19-final-marathon.md) · QA: [`iterations/help.md`](iterations/help.md).
 
 ---
 

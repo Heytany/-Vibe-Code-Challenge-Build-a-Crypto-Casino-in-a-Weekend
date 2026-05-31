@@ -3,7 +3,7 @@
     <header>
       <UiLocaleText path="games.wheel.title" tag="h1" class="text-2xl font-bold uppercase bw-accent" />
       <UiLocaleText path="games.wheel.slogan" tag="p" class="text-sm font-bold mt-1" />
-      <UiLocaleText path="games.wheel.notVerified" tag="p" class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal" />
+      <UiLocaleText path="games.wheel.tagline" tag="p" class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal" />
     </header>
 
     <div class="bw-wheel-stage">
@@ -55,7 +55,102 @@
       <UiLocaleText v-else-if="poolEmpty" path="games.wheel.poolEmpty" tag="p" class="text-xs text-[var(--bw-danger)]" />
       <p v-else-if="onCooldown" class="text-xs text-[var(--bw-muted)]">{{ cooldownLabel }}</p>
       <UiLocaleText v-else-if="!canSpin" path="games.wheel.connectFirst" tag="p" class="text-xs text-[var(--bw-muted)]" />
+    </div>
 
+    <UiBrokenPanel class="max-w-xl mx-auto w-full">
+      <div class="bw-dice-tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          class="bw-dice-tabs__btn"
+          :class="{ 'is-active': activeTab === 'rules' }"
+          :aria-selected="activeTab === 'rules'"
+          @click="activeTab = 'rules'"
+        >
+          <UiLocaleText path="games.wheel.tabRules" tag="span" />
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="bw-dice-tabs__btn"
+          :class="{ 'is-active': activeTab === 'trust' }"
+          :aria-selected="activeTab === 'trust'"
+          @click="activeTab = 'trust'"
+        >
+          <UiLocaleText path="games.wheel.tabTrust" tag="span" />
+        </button>
+      </div>
+
+      <div class="bw-game-tabpanels">
+        <div
+          role="tabpanel"
+          class="bw-game-tabpanel bw-dice-rules"
+          :class="{ 'is-inactive': activeTab !== 'rules' }"
+        >
+          <p class="whitespace-normal mb-4">
+            <UiLocaleText path="games.wheel.rulesIntro" tag="span" />
+          </p>
+          <ol>
+            <li><UiLocaleText path="games.wheel.rulesStep1" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesStep2" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesStep3" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesStep4" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesStep5" tag="span" /></li>
+          </ol>
+
+          <div class="bw-wheel-rent-note mt-4">
+            <p class="bw-wheel-rent-note__title">
+              <UiLocaleText path="games.wheel.rulesRentTitle" tag="span" />
+            </p>
+            <p class="bw-wheel-rent-note__body">
+              <UiLocaleText path="games.wheel.rulesRentBody" tag="span" />
+            </p>
+          </div>
+          <p class="mt-4 font-bold uppercase text-sm">
+            <UiLocaleText path="games.wheel.rulesSkewTitle" tag="span" />
+          </p>
+          <ul class="mt-2 space-y-1 text-sm whitespace-normal">
+            <li><UiLocaleText path="games.wheel.rulesSkew1" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesSkew2" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesSkew3" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesSkew4" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesSkew5" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.rulesSkew6" tag="span" /></li>
+          </ul>
+          <p class="mt-4 whitespace-normal text-sm">
+            <UiLocaleText path="games.wheel.rulesCommission" tag="span" />
+          </p>
+          <p class="mt-4 text-xs text-[var(--bw-muted)] font-mono whitespace-normal">
+            <UiLocaleText path="games.wheel.rulesRng" tag="span" />
+          </p>
+        </div>
+
+        <div
+          role="tabpanel"
+          class="bw-game-tabpanel bw-dice-rules"
+          :class="{ 'is-inactive': activeTab !== 'trust' }"
+        >
+          <p class="whitespace-normal mb-4">
+            <UiLocaleText path="games.wheel.trustIntro" tag="span" />
+          </p>
+          <ul class="space-y-2 whitespace-normal">
+            <li><UiLocaleText path="games.wheel.trust1" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.trust2" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.trust3" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.trust4" tag="span" /></li>
+            <li><UiLocaleText path="games.wheel.trust5" tag="span" /></li>
+          </ul>
+          <p class="mt-4 whitespace-normal text-sm text-[var(--bw-muted)]">
+            <UiLocaleText path="games.wheel.trustScope" tag="span" />
+          </p>
+          <p class="mt-4 text-xs font-mono whitespace-normal">
+            <UiLocaleText path="games.wheel.trustFormula" tag="span" />
+          </p>
+        </div>
+      </div>
+    </UiBrokenPanel>
+
+    <div class="text-center">
       <button type="button" class="bw-btn text-sm" @click="goLobby"><UiLocaleText path="games.wheel.back" /></button>
     </div>
   </div>
@@ -73,6 +168,8 @@ const {
   faucetRemaining, cooldownUntil, onCooldown, poolEmpty, canSpin, spinning, lastPrize, isConfigured,
   refreshFaucet, spin, cancelSpin,
 } = useWheel()
+
+const activeTab = ref<'rules' | 'trust'>('rules')
 
 const PRIZES = [1, 5, 25, 100, 300, 700, 1000, 50]
 const angle = ref(0)
@@ -176,5 +273,25 @@ function goLobby() {
 .bw-wheel__result {
   font-size: 1.8rem;
   font-weight: 700;
+}
+
+.bw-wheel-rent-note {
+  padding: 0.75rem;
+  border: 3px solid var(--bw-accent);
+  background: color-mix(in srgb, var(--bw-accent) 8%, var(--bw-bg));
+}
+
+.bw-wheel-rent-note__title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  color: var(--bw-accent);
+}
+
+.bw-wheel-rent-note__body {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  white-space: normal;
 }
 </style>

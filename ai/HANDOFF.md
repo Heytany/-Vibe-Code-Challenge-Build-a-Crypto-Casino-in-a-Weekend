@@ -1,7 +1,7 @@
 # Brutal wibe — agent handoff (read first)
 
 **Project:** Brutal wibe — brutalist on-chain crypto casino on Solana devnet  
-**Phase:** **Submission-ready** — FUN + LIVE wired, deployed on Netlify
+**Phase:** **Submission-ready (it.19 final)** — FUN + LIVE + Wheel faucet, [truebrutal.netlify.app](https://truebrutal.netlify.app)
 
 ## Roles
 
@@ -36,7 +36,7 @@ Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4Xobv
 
 1. This file  
 2. [`CONTEXT.md`](CONTEXT.md)  
-3. Latest [`iterations/`](../iterations/) — [`15-deposit-funds-bar-fix.md`](../iterations/15-deposit-funds-bar-fix.md)
+3. Latest [`iterations/`](../iterations/) — [`19-final-marathon.md`](../iterations/19-final-marathon.md)
 
 ## Key files
 
@@ -48,12 +48,16 @@ Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4Xobv
 | Game mode | `composables/useGameMode.ts` |
 | Dice / Slot | `composables/useGameDice.ts`, `useGameSlot.ts` |
 | Provably fair | `components/games/ProvablyFair.vue`, `shared/rng-verify.ts` |
+| Wheel faucet | `composables/useWheel.ts`, `components/games/WheelGame.vue` |
+| LIVE mutex | `shared/live-play-mutex.ts` |
 
 ## Commands
 
 ```bash
 pnpm dev
-pnpm test:env && pnpm test:motion
+pnpm test:env && pnpm test:idl
+pnpm exec vitest run tests/rng-verify.test.ts tests/live-play-mutex.test.ts
+pnpm test:motion
 pnpm build
 pnpm exec playwright test
 ```
