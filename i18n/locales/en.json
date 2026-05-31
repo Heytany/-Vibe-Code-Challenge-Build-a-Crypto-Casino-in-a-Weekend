@@ -122,6 +122,7 @@
       "liveBetHint": "Bets use casino balance from the strip above.",
       "depositSteps": "Enter amount → Deposit → approve in Phantom → casino balance updates → Roll/Spin.",
       "depositWithdrawTitle": "Deposit / Withdraw WIBE",
+      "transferAmountLabel": "Amount",
       "minBetHint": "On-chain uses integer tokens: bet 1 can win but net profit may round to 0. Try ≥ 2 WIBE.",
       "phantomTokenHint": "Phantom may show Unknown Token — that is devnet WIBE (mint below). Wins stay in casino balance until Withdraw; 10k in wallet is demo mint from setup, not a win payout.",
       "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",

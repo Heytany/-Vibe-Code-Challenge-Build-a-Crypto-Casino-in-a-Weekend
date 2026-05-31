@@ -115,6 +115,8 @@
       "walletBalance": "Гаманець Phantom",
       "liveBanner": "// LIVE — спочатку депозит WIBE (смуга вище), потім ставки з балансу казино.",
       "liveNeedDeposit": "Спочатку депозит WIBE тут — баланс казино 0.",
+      "depositWithdrawTitle": "Депозит / Вивід WIBE",
+      "transferAmountLabel": "Сума",
       "liveBetHint": "Ставки з балансу казино зі смуги вище.",
       "depositSteps": "Сума → Депозит → підтвердь у Phantom → оновиться баланс казино → Roll/Spin.",
       "minBetHint": "On-chain цілі токени: при ставці 1 виграш можливий, але чистий профіт може бути 0. Спробуй ≥ 2 WIBE.",

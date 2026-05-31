@@ -118,6 +118,7 @@
       "liveBetHint": "Ставки списываются с баланса казино из полоски выше.",
       "depositSteps": "Сумма → Депозит → подтверди в Phantom → обновится баланс казино → Roll/Spin.",
       "depositWithdrawTitle": "Депозит / Вывод WIBE",
+      "transferAmountLabel": "Сумма",
       "minBetHint": "On-chain целые токены: при ставке 1 выигрыш возможен, но чистый профит может быть 0. Попробуй ≥ 2 WIBE.",
       "phantomTokenHint": "Phantom может показать Unknown Token — это devnet WIBE (mint ниже). Выигрыш на балансе казино до Withdraw; 10k в кошельке — demo mint при setup, не выплата за win.",
       "funNote": "Играй сразу. Виртуальный баланс — для devnet подключи Phantom и LIVE.",

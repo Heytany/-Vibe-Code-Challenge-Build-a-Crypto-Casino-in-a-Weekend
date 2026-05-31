@@ -7,8 +7,7 @@
     <div class="flex flex-wrap gap-2 items-end">
       <label class="flex-1 min-w-[8rem] space-y-1">
         <span class="text-xs uppercase font-bold block">
-          <UiLocaleText path="games.common.deposit" tag="span" /> /
-          <UiLocaleText path="games.common.withdraw" tag="span" />
+          <UiLocaleText path="games.common.transferAmountLabel" tag="span" />
           ({{ TOKEN_SYMBOL }})
         </span>
         <input
