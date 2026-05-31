@@ -66,6 +66,7 @@ iterations/NN-kratkoe-nazvanie.md
 | 13 | `a161342` — LIVE UX WIBE, Phantom metadata, Fair fix, win toasts | [13-live-ux-wibe-token-fair-fix.md](./13-live-ux-wibe-token-fair-fix.md) | 31.05.2026 · Cursor |
 | 14 | _(PO коммитит)_ — wallet strip, FUN/LIVE split, shared game mode | [14-wallet-strip-fun-live-split.md](./14-wallet-strip-fun-live-split.md) | 30.05.2026 · Cursor |
 | 15 | _(PO коммитит)_ — deposit refresh fix, GameFundsBar, bet-only panel | [15-deposit-funds-bar-fix.md](./15-deposit-funds-bar-fix.md) | 30.05.2026 · Cursor · **+$26 over limit** |
+| 16 | _(PO коммитит)_ — LIVE play IDL fix, chain-before-animation, убрать Max | [16-live-play-idl-fix.md](./16-live-play-idl-fix.md) | 30.05.2026 · Cursor |
 
 **QA:** FUN — `/games/dice`, `/games/slot` · LIVE — GameFundsBar deposit → play → withdraw · [truebrutal.netlify.app](https://truebrutal.netlify.app)
 

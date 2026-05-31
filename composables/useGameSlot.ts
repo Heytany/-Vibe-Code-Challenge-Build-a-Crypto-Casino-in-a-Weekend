@@ -141,9 +141,9 @@ export function useGameSlot() {
       const { playSlot } = useCasinoProgram()
       const userSeed = randomU64()
 
-      await playSlotSpin(banditEl ?? null)
-
       const res = await playSlot({ bet: bet.value, userSeed })
+
+      await playSlotSpin(banditEl ?? null)
 
       reels.value = res.reels
       won.value = res.won

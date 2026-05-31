@@ -149,14 +149,14 @@ export function useGameDice() {
       const userSeed = randomU64()
       const rollUnder = direction.value === 'under'
 
-      await playDiceTumble(diceEl ?? null)
-
       const res = await playDice({
         bet: bet.value,
         target: target.value,
         rollUnder,
         userSeed,
       })
+
+      await playDiceTumble(diceEl ?? null)
 
       lastRoll.value = res.roll
       won.value = res.won

@@ -104,6 +104,7 @@ Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4Xobv
 | **10 000** токенов в кошельке | Demo mint при `pnpm devnet:setup` — **не** выплата за выигрыш |
 | **Unknown Token** + длинный mint | Нет Metaplex metadata — это **WIBE** (devnet). Имя в UI: `pnpm devnet:token-meta` |
 | Выигрыш в LIVE | Меняется **баланс казино**, не кошелёк. В Phantom — только после **Withdraw** |
+| `InstructionFallbackNotFound` (101) на roll/spin | Битый IDL play_* — it.16 fix; `pnpm test:idl` |
 
 Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify env: [`ai/specs/deploy.md`](../ai/specs/deploy.md)
 

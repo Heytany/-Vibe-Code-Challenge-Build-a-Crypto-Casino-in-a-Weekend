@@ -86,6 +86,12 @@ function mapAnchorError(err: unknown): WibeError {
   if (/User rejected|rejected/i.test(msg)) {
     return new WibeError(WibeErrorCode.WalletRejected)
   }
+  if (/InstructionFallbackNotFound|Fallback functions are not supported|Error Number: 101/i.test(msg)) {
+    return new WibeError(
+      WibeErrorCode.TransactionFailed,
+      'Play instruction rejected by program (IDL mismatch). Rebuild IDL: pnpm anchor:build && pnpm copy-idl.',
+    )
+  }
   if (/AccountNotFound|account not found|does not exist/i.test(msg)) {
     if (/UserBalance|user_balance|user balance/i.test(msg)) {
       return new WibeError(WibeErrorCode.DepositRequired)

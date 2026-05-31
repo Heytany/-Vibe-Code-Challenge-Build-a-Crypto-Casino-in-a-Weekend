@@ -1,8 +1,15 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-30 — iteration 15 done  
-**Current iteration:** 15  
-**Report:** [`iterations/15-deposit-funds-bar-fix.md`](../iterations/15-deposit-funds-bar-fix.md)
+**Last updated:** 2026-05-30 — iteration 16 done  
+**Current iteration:** 16  
+**Report:** [`iterations/16-live-play-idl-fix.md`](../iterations/16-live-play-idl-fix.md)
+
+## Iteration 16 — done ✅
+
+- [x] Fix IDL discriminators `play_dice` / `play_slot` (101 InstructionFallbackNotFound)
+- [x] LIVE flow: on-chain tx before animation (Dice + Slot)
+- [x] Removed confusing Max withdraw button
+- [x] `pnpm test:idl` guard + build OK
 
 ## Iteration 15 — done ✅
 
@@ -50,7 +57,7 @@ NUXT_PUBLIC_CASINO_TOKEN_MINT=He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox
 
 ```bash
 pnpm dev
-pnpm test:env && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts
+pnpm test:env && pnpm test:idl && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts
 pnpm exec playwright test
 pnpm build
 pnpm devnet:token-meta   # Phantom WIBE label (once per mint)
@@ -62,5 +69,5 @@ Tester: [`iterations/help.md`](../iterations/help.md)
 
 | Agent | Role |
 |-------|------|
-| **Cursor** | it.15 deposit + GameFundsBar + audit |
+| **Cursor** | it.16 LIVE play IDL fix |
 | **PO** | Netlify QA, submission commit |

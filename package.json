@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare",
     "typecheck": "nuxt typecheck",
     "test:env": "vitest run tests/env-contract.test.ts",
+    "test:idl": "vitest run tests/idl-discriminators.test.ts",
     "test:motion": "vitest run tests/motion/",
     "test:e2e": "playwright test",
     "copy-idl": "node scripts/copy-idl.mjs",

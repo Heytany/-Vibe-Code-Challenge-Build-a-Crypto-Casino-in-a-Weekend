@@ -15,7 +15,7 @@
       "title": "WIN",
       "message": "+{delta} credits",
       "super": "// JACKPOT — +{delta}",
-      "live": "+{delta} WIBE net",
+      "live": "+{delta} WIBE credited to casino balance",
       "breakEven": "Win — net +0 (bet too small for profit)",
       "breakEvenLive": "Win — net +0 WIBE (on-chain integer math — try bet ≥ 2)"
     }
@@ -92,7 +92,6 @@
       "bet": "Bet",
       "deposit": "Deposit",
       "withdraw": "Withdraw",
-      "max": "Max",
       "balance": "Casino balance",
       "casinoBalanceLabel": "Casino balance (for bets)",
       "verifyRoll": "Verify on Explorer",

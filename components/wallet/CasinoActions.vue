@@ -38,15 +38,6 @@
       >
         <UiLocaleText path="games.common.withdraw" tag="span" />
       </button>
-
-      <button
-        type="button"
-        class="bw-btn text-sm min-h-[44px]"
-        :disabled="busy || !maxWithdraw"
-        @click="onWithdrawMax"
-      >
-        <UiLocaleText path="games.common.max" tag="span" />
-      </button>
     </div>
   </div>
 </template>
@@ -72,7 +63,6 @@ const busy = ref(false)
 
 const showPanel = computed(() => connected.value && isConfigured.value)
 
-const maxWithdraw = computed(() => casinoBalance.value ?? 0)
 const canDeposit = computed(() => validAmount.value > 0 && !busy.value)
 const canWithdraw = computed(() =>
   validAmount.value > 0
@@ -126,11 +116,6 @@ async function onWithdraw() {
   }
 }
 
-async function onWithdrawMax() {
-  if (!maxWithdraw.value) return
-  amount.value = maxWithdraw.value
-  await onWithdraw()
-}
 </script>
 
 <style scoped>
