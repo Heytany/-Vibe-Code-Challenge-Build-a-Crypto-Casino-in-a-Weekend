@@ -192,6 +192,7 @@
       "connectFirst": "Connect Phantom (devnet) to spin",
       "won": "You won {prize} WIBE → casino balance",
       "notVerified": "// faucet — credits your casino balance, not provably-fair",
+      "stuck": "Closed the wallet popup? Tap to reset",
       "back": "← Lobby",
       "bannerCta": "Spin the Wheel",
       "bannerHint": "Free WIBE for your casino balance · 1/day"

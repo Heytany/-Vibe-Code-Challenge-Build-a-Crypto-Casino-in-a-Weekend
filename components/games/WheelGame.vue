@@ -1,9 +1,9 @@
 <template>
   <div class="bw-wheel-page max-w-xl mx-auto w-full space-y-6">
     <header>
-      <h1 class="text-2xl font-bold uppercase bw-accent">{{ t('games.wheel.title') }}</h1>
-      <p class="text-sm font-bold mt-1">{{ t('games.wheel.slogan') }}</p>
-      <p class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal">{{ t('games.wheel.notVerified') }}</p>
+      <UiLocaleText path="games.wheel.title" tag="h1" class="text-2xl font-bold uppercase bw-accent" />
+      <UiLocaleText path="games.wheel.slogan" tag="p" class="text-sm font-bold mt-1" />
+      <UiLocaleText path="games.wheel.notVerified" tag="p" class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal" />
     </header>
 
     <div class="bw-wheel-stage">
@@ -39,20 +39,24 @@
 
     <div class="space-y-3 text-center">
       <p class="text-xs font-mono">
-        <span class="uppercase font-bold">{{ t('games.wheel.prizeFund') }}:</span>
+        <span class="uppercase font-bold"><UiLocaleText path="games.wheel.prizeFund" />:</span>
         <span class="bw-accent ml-1">{{ faucetRemaining ?? '—' }} WIBE</span>
       </p>
 
       <UiBrutalButton class="w-full max-w-[14rem] mx-auto" variant="accent" :loading="spinning" :disabled="!canSpin" @click="onSpin">
-        {{ t('games.wheel.spin') }}
+        <UiLocaleText path="games.wheel.spin" />
       </UiBrutalButton>
 
-      <p v-if="!isConfigured" class="text-xs text-[var(--bw-muted)]">{{ t('errors.liveBlocked.noProgram') }}</p>
-      <p v-else-if="poolEmpty" class="text-xs text-[var(--bw-danger)]">{{ t('games.wheel.poolEmpty') }}</p>
-      <p v-else-if="onCooldown" class="text-xs text-[var(--bw-muted)]">{{ cooldownLabel }}</p>
-      <p v-else-if="!canSpin" class="text-xs text-[var(--bw-muted)]">{{ t('games.wheel.connectFirst') }}</p>
+      <button v-if="spinning" type="button" class="bw-wheel__abort text-xs underline" @click="cancelSpin">
+        <UiLocaleText path="games.wheel.stuck" />
+      </button>
 
-      <button type="button" class="bw-btn text-sm" @click="goLobby">{{ t('games.wheel.back') }}</button>
+      <UiLocaleText v-if="!isConfigured" path="errors.liveBlocked.noProgram" tag="p" class="text-xs text-[var(--bw-muted)]" />
+      <UiLocaleText v-else-if="poolEmpty" path="games.wheel.poolEmpty" tag="p" class="text-xs text-[var(--bw-danger)]" />
+      <p v-else-if="onCooldown" class="text-xs text-[var(--bw-muted)]">{{ cooldownLabel }}</p>
+      <UiLocaleText v-else-if="!canSpin" path="games.wheel.connectFirst" tag="p" class="text-xs text-[var(--bw-muted)]" />
+
+      <button type="button" class="bw-btn text-sm" @click="goLobby"><UiLocaleText path="games.wheel.back" /></button>
     </div>
   </div>
 </template>
@@ -67,7 +71,7 @@ const { playRouteTransition } = useBrutalMotion()
 const { showWin, showError } = useBrutalToast()
 const {
   faucetRemaining, cooldownUntil, onCooldown, poolEmpty, canSpin, spinning, lastPrize, isConfigured,
-  refreshFaucet, spin,
+  refreshFaucet, spin, cancelSpin,
 } = useWheel()
 
 const PRIZES = [1, 5, 25, 100, 300, 700, 1000, 50]
@@ -151,6 +155,17 @@ function goLobby() {
   margin: -8% auto 0;
   display: block;
   opacity: 0.85;
+}
+
+.bw-wheel__abort {
+  display: block;
+  margin: -0.25rem auto 0;
+  color: var(--bw-muted);
+  cursor: pointer;
+}
+
+.bw-wheel__abort:hover {
+  color: var(--bw-danger);
 }
 
 .bw-wheel__result-slot {

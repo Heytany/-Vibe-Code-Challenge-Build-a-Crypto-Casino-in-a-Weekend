@@ -16,6 +16,10 @@ const faucetRemaining = ref<number | null>(null)
 const lastClaim = ref<number | null>(null) // unix seconds, 0 = never
 const spinning = ref(false)
 const lastPrize = ref<number | null>(null)
+// Phantom fires no event when the user just *hides* the approve popup (neither approve
+// nor reject), so .rpc() hangs forever. This lets the UI abandon a pending sign and
+// un-stick the loading state — safe, because nothing is signed/sent until approval.
+let cancelPending: ((err: Error) => void) | null = null
 
 function randomU64Bn(): BN {
   const buf = new BigUint64Array(1)
@@ -88,21 +92,28 @@ export function useWheel() {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     spinning.value = true
     lastPrize.value = null
+    // resolved if the user gives up on a hidden popup; rejects the race so we stop waiting
+    const aborted = new Promise<never>((_, reject) => {
+      cancelPending = reject
+    })
     try {
       const program = getProgram()
       const { programId, user, casinoConfig, faucetConfig, faucetClaim, userBalance } = accounts()
-      const signature = await program.methods
-        .spinWheel(randomU64Bn())
-        .accountsStrict({
-          user,
-          casinoConfig,
-          faucetConfig,
-          faucetClaim,
-          userBalance,
-          recentBlockhashes: SYSVAR_RECENT_BLOCKHASHES_PUBKEY,
-          systemProgram: SystemProgram.programId,
-        })
-        .rpc()
+      const signature = (await Promise.race([
+        program.methods
+          .spinWheel(randomU64Bn())
+          .accountsStrict({
+            user,
+            casinoConfig,
+            faucetConfig,
+            faucetClaim,
+            userBalance,
+            recentBlockhashes: SYSVAR_RECENT_BLOCKHASHES_PUBKEY,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc(),
+        aborted,
+      ])) as string
 
       let prize = 0
       const tx = await connection.value!.getTransaction(signature, {
@@ -118,14 +129,25 @@ export function useWheel() {
       await refreshFaucet()
       return prize
     } catch (err) {
+      if (err instanceof WibeError) {
+        // a cancelled (abandoned) sign may still land if the user approved late — re-sync
+        if (err.code === WibeErrorCode.WalletRejected) void refreshFaucet()
+        throw err
+      }
       const msg = err instanceof Error ? err.message : String(err)
       if (/FaucetCooldown/i.test(msg)) throw new WibeError(WibeErrorCode.TransactionFailed, 'Wheel is on cooldown — come back later.')
       if (/FaucetEmpty/i.test(msg)) throw new WibeError(WibeErrorCode.TransactionFailed, 'Prize pool is empty.')
       if (/rejected/i.test(msg)) throw new WibeError(WibeErrorCode.WalletRejected)
       throw new WibeError(WibeErrorCode.TransactionFailed, msg)
     } finally {
+      cancelPending = null
       spinning.value = false
     }
+  }
+
+  /** Un-stick a spin whose approve popup was hidden without approve/reject. */
+  function cancelSpin() {
+    cancelPending?.(new WibeError(WibeErrorCode.WalletRejected, 'Spin cancelled — nothing was sent.'))
   }
 
   return {
@@ -140,5 +162,6 @@ export function useWheel() {
     isConfigured: casino.isConfigured,
     refreshFaucet,
     spin,
+    cancelSpin,
   }
 }
