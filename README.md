@@ -1,12 +1,12 @@
-# 🎰 Vibe-Code Challenge: Build a Crypto Casino in a Weekend (May 30–31)
+# Brutal wibe
 
-Challenge brief — see original task below.
+**Brutal wibe** (`truebrutal`) — brutalist on-chain crypto casino on **Solana devnet**. Connect Phantom, deposit test SPL tokens, play Glitch Roll (dice) and Corrupted Reels (slot), verify every roll on Solana Explorer. FUN mode works without a wallet; LIVE mode uses the deployed Anchor program.
+
+**Live (Netlify):** [truebrutal.netlify.app](https://truebrutal.netlify.app) — deploys from GitHub, Nuxt static SPA (`pnpm build` → `.output/public`).
 
 ---
 
 ## Brutal wibe (this repo)
-
-**Brutal wibe** — brutalist on-chain casino on Solana devnet.
 
 ### Architecture
 
@@ -26,7 +26,17 @@ pnpm test:e2e         # Playwright smoke
 pnpm build            # → .output/public (static SPA)
 ```
 
-**Deploy from Git:** Vercel / Netlify / Cloudflare — see [`ai/specs/deploy.md`](ai/specs/deploy.md).
+### Netlify (production)
+
+| | |
+|---|---|
+| **Site** | [truebrutal.netlify.app](https://truebrutal.netlify.app) |
+| **Trigger** | Push to GitHub → Netlify build |
+| **Build** | `pnpm build` ([`netlify.toml`](netlify.toml)) |
+| **Publish** | `.output/public` |
+| **Env** | 4× `NUXT_PUBLIC_*` in Netlify dashboard — see [`.env.example`](.env.example) |
+
+FUN works without env; LIVE needs devnet program id + token mint. Details: [`ai/specs/deploy.md`](ai/specs/deploy.md).
 
 **Tester wallet (Phantom devnet):** [`iterations/help.md`](iterations/help.md)
 
@@ -51,11 +61,15 @@ pnpm copy-idl
 
 ### Status
 
-Platform base ready for Cloud operator — see [`ai/CONTEXT.md`](ai/CONTEXT.md).
+**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). Sprint context: [`ai/CONTEXT.md`](ai/CONTEXT.md).
 
 ---
 
 ## Challenge (original)
+
+# 🎰 Vibe-Code Challenge: Build a Crypto Casino in a Weekend (May 30–31)
+
+Challenge brief — see original task below.
 
 Hi! We're running a frontend-engineer assessment, and instead of LeetCode we're launching a real build challenge. **48 hours from the start: 30.05.2026 at 06:00 GMT+3.**
 

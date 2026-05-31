@@ -13,7 +13,7 @@
 - [x] Buffer polyfill (`vite-plugin-node-polyfills`) — lobby boot OK
 - [x] e2e 4/4, build OK, deploy docs updated
 - [ ] **PO:** LIVE QA (deposit → play → withdraw)
-- [ ] **PO:** Netlify env (4× `NUXT_PUBLIC_*`) + deploy URL
+- [x] **Live URL:** [truebrutal.netlify.app](https://truebrutal.netlify.app) (Netlify, GitHub deploy)
 - [ ] **PO:** commit it.12 + hash in README (agent does NOT commit)
 
 ### Devnet env (local + Netlify)
@@ -33,7 +33,7 @@ NUXT_PUBLIC_CASINO_TOKEN_MINT=He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox
 |-------------|--------|
 | Testnet only | ✅ devnet |
 | Verifiable on-chain | ✅ program live + Fair tab |
-| Public URL | ⏳ PO Netlify deploy |
+| Public URL | ✅ [truebrutal.netlify.app](https://truebrutal.netlify.app) |
 | Casino edge | ✅ 200 bps on-chain + FUN |
 | Wallet → deposit → play → withdraw | ✅ wired + devnet deploy; PO LIVE QA |
 | Two playable games | ✅ FUN + LIVE Dice/Slot |
