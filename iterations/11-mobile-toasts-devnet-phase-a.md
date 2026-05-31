@@ -61,32 +61,29 @@ Viewport был `fixed bottom-4 right-4 w-full max-w-sm` — на 320px stack в
 
 `pnpm/action-setup` с `version: 10` конфликтовал с `packageManager: pnpm@10.6.5` в `package.json`. Убран `version` из workflow — версия только из `packageManager`.
 
-## После it.11 — LIVE devnet (следующая итерация, PO + Cursor)
+## PO — commit checklist (it.11)
+
+Файлы для коммита it.11:
+
+- `.github/workflows/ci.yml` — pnpm fix (без `version: 10`)
+- `iterations/11-mobile-toasts-devnet-phase-a.md`, `iterations/help.md`
+- toasts, wallet UX, mobile QA (см. таблицы выше)
+
+После push — hash в [`iterations/README.md`](./README.md).
+
+**Код it.12 (LIVE wire + FUN/LIVE fix)** — в рабочей копии, отчёт [`12-live-wire-fun-live-fix.md`](./12-live-wire-fun-live-fix.md). PO может закоммитить отдельно или вместе с it.11.
+
+## После it.11 — LIVE devnet (PO deploy + QA)
 
 | Шаг | Действие |
 |-----|----------|
-| 1 | `anchor keys sync` → `anchor build` → `anchor deploy --provider.cluster devnet` |
-| 2 | SPL mint + `initialize(house_edge_bps)` |
-| 3 | `.env` / Netlify: 4× `NUXT_PUBLIC_*` |
-| 4 | `pnpm copy-idl` → wire `useCasinoProgram` |
-| 5 | LIVE в играх + QA deposit → play → withdraw |
+| 1 | [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) — toolchain + Phantom faucet |
+| 2 | `anchor build` → `anchor deploy` → `pnpm copy-idl` |
+| 3 | SPL mint + `initialize(house_edge_bps: 200)` |
+| 4 | `.env` / Netlify: 4× `NUXT_PUBLIC_*` (реальные id) |
+| 5 | LIVE QA: deposit → play → withdraw |
 
-Спека: [`ai/specs/testnet-readiness.md`](../ai/specs/testnet-readiness.md), [`04-plan-dice-game.md`](./04-plan-dice-game.md).
-
-```mermaid
-flowchart LR
-  subgraph it11 [It.11 PO commit]
-    T[Toasts]
-    W[Wallet modals]
-    P[Phantom Phase A]
-  end
-  subgraph later [Next iter TBD]
-    D[anchor deploy]
-    C[useCasinoProgram]
-    Q[LIVE QA]
-  end
-  T --> W --> P --> D --> C --> Q
-```
+Wire фронта: ✅ `useCasinoProgram`, `CasinoActions`, segmented FUN/LIVE.
 
 | | |
 |---|---|

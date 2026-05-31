@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
-declare_id!("Wibe1111111111111111111111111111111111111");
+declare_id!("BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw");
 
 pub const CASINO_CONFIG_SEED: &[u8] = b"casino_config";
 pub const CASINO_VAULT_SEED: &[u8] = b"casino_vault";
@@ -69,9 +69,10 @@ pub mod wibe_casino {
             .ok_or(WibeError::MathOverflow)?;
 
         let config = &ctx.accounts.casino_config;
+        let config_key = config.key();
         let seeds = &[
             CASINO_VAULT_SEED,
-            config.key().as_ref(),
+            config_key.as_ref(),
             &[config.vault_bump],
         ];
         let signer = &[&seeds[..]];

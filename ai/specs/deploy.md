@@ -11,7 +11,7 @@
 | `NUXT_PUBLIC_CASINO_PROGRAM_ID` | base58 program id after `anchor deploy` |
 | `NUXT_PUBLIC_CASINO_TOKEN_MINT` | SPL mint on devnet |
 
-Copy from [`.env.example`](../../.env.example). Invalid values → fullscreen error overlay (by design).
+Copy from [`.env.example`](../../.env.example). For **LIVE devnet** on Netlify/Vercel, set all four vars to real values (see comments in `.env.example`). Placeholders or empty → FUN-only; partial config → fatal overlay.
 
 ## Vercel (recommended)
 

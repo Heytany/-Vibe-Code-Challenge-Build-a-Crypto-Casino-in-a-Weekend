@@ -100,6 +100,7 @@
       "connectFirst": "Connect Phantom for live mode",
       "insufficient": "Not enough balance — deposit first",
       "modeLabel": "Game mode",
+      "modeNow": "Now:",
       "funMode": "FUN",
       "liveMode": "LIVE",
       "funBanner": "// fun mode — no wallet, virtual credits, identical to on-chain math",

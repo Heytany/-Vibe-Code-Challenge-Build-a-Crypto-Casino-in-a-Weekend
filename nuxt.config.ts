@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
@@ -96,6 +98,39 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'static',
+  },
+
+  build: {
+    transpile: ['@coral-xyz/anchor', '@solana/spl-token'],
+  },
+
+  vite: {
+    plugins: [
+      nodePolyfills({
+        include: ['buffer', 'process'],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+      }),
+    ],
+    resolve: {
+      alias: {
+        buffer: 'buffer/',
+      },
+    },
+    define: {
+      global: 'globalThis',
+    },
+    optimizeDeps: {
+      include: ['buffer', '@solana/spl-token', '@coral-xyz/anchor'],
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
+        },
+      },
+    },
   },
 
   // Nuxt auto-maps NUXT_PUBLIC_* from .env — do not use process.env here

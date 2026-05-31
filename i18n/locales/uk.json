@@ -100,6 +100,7 @@
       "connectFirst": "Підключи Phantom для live-режиму",
       "insufficient": "Недостатньо балансу — зроби депозит",
       "modeLabel": "Режим гри",
+      "modeNow": "Зараз:",
       "funMode": "FUN",
       "liveMode": "LIVE",
       "funBanner": "// fun-режим — без гаманця, віртуальні кредити, математика як on-chain",

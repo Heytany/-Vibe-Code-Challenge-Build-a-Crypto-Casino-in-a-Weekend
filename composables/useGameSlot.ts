@@ -29,7 +29,19 @@ export interface SlotFunSpinMeta {
   bet: number
 }
 
-export type SlotSpinMeta = SlotFunSpinMeta | null
+export interface SlotLiveSpinMeta {
+  mode: 'live'
+  signature: string
+  reels: [number, number, number]
+  multiplier: number
+  won: boolean
+  userSeed: bigint
+  nonce: bigint
+  blockhashBase58: string
+  bet: number
+}
+
+export type SlotSpinMeta = SlotFunSpinMeta | SlotLiveSpinMeta | null
 
 const SYMBOLS = ['7', 'X', '#', '?', '!', '0']
 
@@ -119,15 +131,35 @@ export function useGameSlot() {
     }
   }
 
-  async function spinLive(_banditEl?: HTMLElement | null) {
+  async function spinLive(banditEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
     spinning.value = true
+    won.value = null
     try {
-      throw new WibeError(
-        WibeErrorCode.TransactionFailed,
-        'Live mode: wire useCasinoProgram.playSlot — see iterations/04-plan-dice-game.md',
-      )
+      const { playSlot } = useCasinoProgram()
+      const userSeed = randomU64()
+
+      await playSlotSpin(banditEl ?? null)
+
+      const res = await playSlot({ bet: bet.value, userSeed })
+
+      reels.value = res.reels
+      won.value = res.won
+      lastMeta.value = {
+        mode: 'live',
+        signature: res.signature,
+        reels: res.reels,
+        multiplier: res.multiplier,
+        won: res.won,
+        userSeed: res.userSeed,
+        nonce: res.nonce,
+        blockhashBase58: res.blockhashBase58,
+        bet: res.bet,
+      }
+
+      if (res.won && banditEl) playWinBurst(banditEl)
+      return lastMeta.value
     } finally {
       spinning.value = false
     }

@@ -6,9 +6,11 @@
 
 ## Что это
 
-**Brutal wibe** — тестовое on-chain казино на **Solana devnet**. Реальных денег нет. Кошелёк нужен чтобы проверить подключение; депозит и LIVE-игры — после итерации 12 (deploy + wire).
+**Brutal wibe** — тестовое on-chain казино на **Solana devnet**. Реальных денег нет. Кошелёк нужен для LIVE; deposit / on-chain play работают при **реальных** `NUXT_PUBLIC_*` (program + mint задеплоены — см. it.12).
 
 **FUN mode** (Dice / Slot) работает **без кошелька** и **без** переменных `NUXT_PUBLIC_*`.
+
+> Placeholder id из `.env.example` (`Wibe1111…`, `Token1111…`) **не включают LIVE** — только FUN.
 
 ---
 
@@ -84,14 +86,18 @@ pnpm dev
 3. Кнопка показывает адрес `Ab12…xy89`.
 4. **Disconnect** — обычный клик, без анимации.
 
-### Шаг E — что работает / не работает (it.11)
+### Шаг E — что работает / не работает
 
 | Действие | Статус |
 |----------|--------|
 | FUN Dice / Slot без кошелька | ✅ |
 | Connect / Disconnect Phantom | ✅ |
-| Переключение LIVE | ⚠️ алерт «нет программы» / «нет кошелька» — ожидаемо |
-| Deposit / withdraw / on-chain play | ❌ после deploy + wire |
+| Переключение LIVE без wallet / без deploy | ⚠️ segmented radio + alert — highlight не переключается |
+| Deposit / withdraw / on-chain play | ✅ при реальных env + Phantom devnet (it.12) |
+
+Program: `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw` · Mint: `He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox`
+
+Runbook: [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md) · Netlify env: [`ai/specs/deploy.md`](../ai/specs/deploy.md)
 
 ---
 
@@ -134,7 +140,7 @@ pnpm dev
 | Phantom не открывается | Расширение установлено? Pop-up не заблокирован? На мобилке — браузер Phantom |
 | «Rejected» / LINK FAILED | Cancel в Phantom или не devnet |
 | Красный экран env | Частично заполнен `.env` — заполните все 4 или очистите |
-| LIVE не включается | Норма до deploy — нужен program id + mint в env |
+| LIVE не включается | Нужны wallet + **реальные** program id и mint (не `Wibe1111…` / `Token1111…`) |
 | Тост обрезан | Обновите до it.11+; проверьте 320px |
 | Нет анимаций | Reduce motion — норма |
 | Баланс казино 0 | Контракт не задеплоен — [`ai/CONTEXT.md`](../ai/CONTEXT.md) |
@@ -149,4 +155,4 @@ pnpm dev
 
 Отчёты итераций: [`iterations/`](./). Агент читает последний файл перед работой.
 
-**Дальше (после it.11):** deploy Anchor + wire `useCasinoProgram` — см. [`ai/specs/testnet-readiness.md`](../ai/specs/testnet-readiness.md).
+**Дальше:** deploy Anchor — [`scripts/devnet-deploy.md`](../scripts/devnet-deploy.md), wire уже в коде (`useCasinoProgram`).

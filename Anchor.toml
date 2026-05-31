@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-wibe_casino = "Wibe1111111111111111111111111111111111111"
+wibe_casino = "BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw"
 
 [programs.localnet]
-wibe_casino = "Wibe1111111111111111111111111111111111111"
+wibe_casino = "BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw"
 
 [registry]
 url = "https://api.apr.dev"

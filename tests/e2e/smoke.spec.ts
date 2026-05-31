@@ -28,9 +28,11 @@ test.describe('lobby', () => {
 test.describe('i18n', () => {
   test('locale switcher changes UI language', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Русский' }).click()
+    await page.getByRole('button', { name: /^EN\b/i }).click()
+    await page.getByRole('menuitem', { name: 'RU' }).click()
     await expect(page.getByRole('button', { name: 'Подключить Phantom' })).toBeVisible()
-    await page.getByRole('button', { name: 'Українська' }).click()
+    await page.getByRole('button', { name: /^RU\b/i }).click()
+    await page.getByRole('menuitem', { name: 'UK' }).click()
     await expect(page.getByRole('button', { name: 'Підключити Phantom' })).toBeVisible()
   })
 })

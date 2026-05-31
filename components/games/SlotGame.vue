@@ -160,6 +160,8 @@
             </label>
           </div>
 
+          <WalletCasinoActions :panel-el="panelRef" class="mb-6" />
+
           <p class="text-xs text-[var(--bw-muted)] font-mono mb-6 whitespace-normal">
             <UiLocaleText path="games.slot.payoutHint" tag="span" />
           </p>

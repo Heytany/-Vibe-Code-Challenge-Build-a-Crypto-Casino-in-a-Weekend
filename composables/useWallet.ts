@@ -4,6 +4,7 @@
  * @see ai/AGENT_ONBOARDING.md
  * @failure-modes: No extension → WALLET_NOT_CONNECTED; user reject → WALLET_REJECTED
  */
+import type { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
 
@@ -12,6 +13,8 @@ interface PhantomProvider {
   publicKey: PublicKey | null
   connect: () => Promise<{ publicKey: PublicKey }>
   disconnect: () => Promise<void>
+  signTransaction: <T extends Transaction | VersionedTransaction>(transaction: T) => Promise<T>
+  signAllTransactions: <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
   on: (event: string, handler: (...args: unknown[]) => void) => void
   removeListener: (event: string, handler: (...args: unknown[]) => void) => void
 }
@@ -34,6 +37,13 @@ export function useWallet() {
     if (!url) return null
     return new Connection(url, 'confirmed')
   })
+
+  function requirePublicKey(): PublicKey {
+    if (!publicKey.value) {
+      throw new WibeError(WibeErrorCode.WalletNotConnected)
+    }
+    return new PublicKey(publicKey.value)
+  }
 
   async function connect() {
     const phantom = getPhantom()
@@ -60,6 +70,32 @@ export function useWallet() {
     }
     connected.value = false
     publicKey.value = null
+  }
+
+  async function signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> {
+    const phantom = getPhantom()
+    if (!phantom?.publicKey) {
+      throw new WibeError(WibeErrorCode.WalletNotConnected)
+    }
+    try {
+      return await phantom.signTransaction(transaction)
+    } catch {
+      throw new WibeError(WibeErrorCode.WalletRejected)
+    }
+  }
+
+  async function signAllTransactions<T extends Transaction | VersionedTransaction>(
+    transactions: T[],
+  ): Promise<T[]> {
+    const phantom = getPhantom()
+    if (!phantom?.publicKey) {
+      throw new WibeError(WibeErrorCode.WalletNotConnected)
+    }
+    try {
+      return await phantom.signAllTransactions(transactions)
+    } catch {
+      throw new WibeError(WibeErrorCode.WalletRejected)
+    }
   }
 
   function syncFromPhantom() {
@@ -90,5 +126,8 @@ export function useWallet() {
     connection,
     connect,
     disconnect,
+    signTransaction,
+    signAllTransactions,
+    requirePublicKey,
   }
 }

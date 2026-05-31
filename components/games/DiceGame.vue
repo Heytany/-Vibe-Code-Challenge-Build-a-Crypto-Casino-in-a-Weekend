@@ -155,6 +155,8 @@
             </label>
           </div>
 
+          <WalletCasinoActions :panel-el="panelRef" class="mb-6" />
+
           <div class="space-y-4 mb-6">
             <div class="space-y-2">
               <span class="text-xs uppercase font-bold block">

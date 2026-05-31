@@ -62,8 +62,9 @@ iterations/NN-kratkoe-nazvanie.md
 | 9 | _(PO коммитит)_ — fixes: toast crash, Netlify env, word-wrap, mode header, speed radio + devnet readiness (Claude) | [09-fixes-deploy-readiness.md](./09-fixes-deploy-readiness.md) | 31.05.2026 · Claude (Cowork) |
 | 10 | _(PO коммитит)_ — polish: slot split win, Reka UI, mobile header, copy, UX fixes (Claude) | [10-polish-reka-copy.md](./10-polish-reka-copy.md) | 31.05.2026 · Claude (Cowork) |
 | 11 | _(PO коммитит)_ — mobile toasts, wallet modals, Phantom Phase A | [11-mobile-toasts-devnet-phase-a.md](./11-mobile-toasts-devnet-phase-a.md) | 30.05.2026 · Cursor |
+| 12 | _(PO коммитит)_ — LIVE devnet wire, program deploy, Buffer fix, Netlify-ready | [12-live-wire-fun-live-fix.md](./12-live-wire-fun-live-fix.md) | 31.05.2026 · Cursor |
 
-**QA:** FUN — `/games/dice`, `/games/slot` без Phantom · 404 → `/games/nope`
+**QA:** FUN — `/games/dice`, `/games/slot` без Phantom · LIVE — devnet deposit/play/withdraw · 404 → `/games/nope`
 
 ---
 

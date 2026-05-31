@@ -15,6 +15,7 @@ node_modules
 
 # Anchor / Solana
 target/
+.cargo-anchor/
 .anchor/
 test-ledger/
 **/*.rs.bk

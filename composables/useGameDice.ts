@@ -138,17 +138,42 @@ export function useGameDice() {
     }
   }
 
-  async function rollLive(_diceEl?: HTMLElement | null) {
+  async function rollLive(diceEl?: HTMLElement | null) {
     if (!connected.value) throw new WibeError(WibeErrorCode.WalletNotConnected)
     validateBet()
     playing.value = true
+    won.value = null
     try {
-      // Live path — wired in iteration 4 (useCasinoProgram.playDice)
-      lastRoll.value = null
-      throw new WibeError(
-        WibeErrorCode.TransactionFailed,
-        'Live mode: deploy program and wire useCasinoProgram.playDice — see iterations/04-plan-dice-game.md',
-      )
+      const { playDice } = useCasinoProgram()
+      const userSeed = randomU64()
+      const rollUnder = direction.value === 'under'
+
+      await playDiceTumble(diceEl ?? null)
+
+      const res = await playDice({
+        bet: bet.value,
+        target: target.value,
+        rollUnder,
+        userSeed,
+      })
+
+      lastRoll.value = res.roll
+      won.value = res.won
+      lastMeta.value = {
+        mode: 'live',
+        signature: res.signature,
+        roll: res.roll,
+        won: res.won,
+        userSeed: res.userSeed,
+        nonce: res.nonce,
+        blockhashBase58: res.blockhashBase58,
+        rollUnder: res.rollUnder,
+        target: res.target,
+        bet: res.bet,
+      }
+
+      if (res.won && diceEl) playWinBurst(diceEl)
+      return lastMeta.value
     } finally {
       playing.value = false
     }
