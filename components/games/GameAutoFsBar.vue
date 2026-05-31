@@ -90,6 +90,16 @@
         <UiLocaleText :path="isFullscreen ? 'games.auto.exit' : 'games.auto.fullscreen'" tag="span" />
       </button>
     </div>
+
+    <UiPrimitivesBrutalAlert
+      v-model:open="skipPromptOpen"
+      :title="t('games.auto.skipPromptTitle')"
+      :description="t('games.auto.skipPromptBody', { n: skipPromptCount })"
+      :cancel-label="t('games.auto.skipPromptContinue')"
+      :action-label="t('games.auto.skipPromptStop')"
+      @cancel="resolveSkipPrompt('continue')"
+      @action="resolveSkipPrompt('stop')"
+    />
   </div>
 </template>
 
@@ -120,6 +130,29 @@ const rounds = ref(10)
 const endless = ref(false)
 const stopOnWin = ref(false)
 const speed = ref<1 | 2>(1)
+const skipPromptOpen = ref(false)
+const skipPromptCount = ref(0)
+
+let skipPromptResolver: ((choice: 'continue' | 'stop') => void) | null = null
+
+function promptAfterSkips(count: number): Promise<'continue' | 'stop'> {
+  skipPromptCount.value = count
+  skipPromptOpen.value = true
+  return new Promise((resolve) => {
+    skipPromptResolver = resolve
+  })
+}
+
+function resolveSkipPrompt(choice: 'continue' | 'stop') {
+  skipPromptOpen.value = false
+  skipPromptResolver?.(choice)
+  skipPromptResolver = null
+}
+
+function stopAutoRoll() {
+  if (skipPromptResolver) resolveSkipPrompt('stop')
+  stop()
+}
 
 function setSpeed(s: 1 | 2) {
   speed.value = s
@@ -128,7 +161,7 @@ function setSpeed(s: 1 | 2) {
 
 async function onToggleAuto() {
   if (running.value) {
-    stop()
+    stopAutoRoll()
     return
   }
   // controls sit below the game — scroll the monster + dice/reels into view so rolls are visible
@@ -138,6 +171,7 @@ async function onToggleAuto() {
     rounds: endless.value ? Number.POSITIVE_INFINITY : Math.max(1, rounds.value || 1),
     stopOnWin: stopOnWin.value,
     delayMs: 350 / speed.value,
+    onConsecutiveSkips: promptAfterSkips,
   })
 
   // Report why auto-roll stopped (win toasts are already shown per round).
@@ -155,7 +189,10 @@ async function onToggleAuto() {
 }
 
 // restore normal speed when leaving the game
-onUnmounted(() => setMotionSpeed(1))
+onUnmounted(() => {
+  setMotionSpeed(1)
+  if (skipPromptResolver) resolveSkipPrompt('stop')
+})
 </script>
 
 <style scoped>

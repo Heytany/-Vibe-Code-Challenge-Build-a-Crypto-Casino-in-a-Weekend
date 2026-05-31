@@ -6,10 +6,14 @@
  */
 export type AutoPlayActionResult = boolean | 'skip'
 
+export const AUTO_ROLL_SKIP_PROMPT_THRESHOLD = 3
+
 export interface AutoPlayOptions {
   rounds: number // Number.POSITIVE_INFINITY for endless
   stopOnWin?: boolean
   delayMs?: number
+  /** After N consecutive LIVE cancels, await user choice before continuing. */
+  onConsecutiveSkips?: (count: number) => Promise<'continue' | 'stop'>
 }
 
 export type AutoPlayReason = 'rounds' | 'win' | 'cancelled' | 'error'
@@ -38,6 +42,7 @@ export function useAutoPlay() {
 
     let n = 0
     let wins = 0
+    let consecutiveSkips = 0
     let reason: AutoPlayReason = 'rounds'
     let error: unknown
 
@@ -46,8 +51,22 @@ export function useAutoPlay() {
       try {
         const result = await action()
         if (result === 'skip') {
+          consecutiveSkips += 1
+          if (
+            consecutiveSkips >= AUTO_ROLL_SKIP_PROMPT_THRESHOLD
+            && opts.onConsecutiveSkips
+            && !cancelled
+          ) {
+            const choice = await opts.onConsecutiveSkips(consecutiveSkips)
+            consecutiveSkips = 0
+            if (choice === 'stop' || cancelled) {
+              reason = 'cancelled'
+              break
+            }
+          }
           continue
         }
+        consecutiveSkips = 0
         won = result
       } catch (e) {
         reason = 'error'

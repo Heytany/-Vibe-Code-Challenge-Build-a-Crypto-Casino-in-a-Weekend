@@ -170,7 +170,11 @@
       "left": "осталось",
       "doneTitle": "Авто-роллы завершены",
       "doneNoWin": "Без выигрыша за {n} раундов",
-      "doneWins": "{wins} выигр. за {n} раундов"
+      "doneWins": "{wins} выигр. за {n} раундов",
+      "skipPromptTitle": "Продолжить автороллы?",
+      "skipPromptBody": "Ты отменил {n} раундов подряд — транзакции не ушли в Phantom.",
+      "skipPromptContinue": "Продолжить",
+      "skipPromptStop": "Выключить авторолл"
     }
   },
   "footer": {

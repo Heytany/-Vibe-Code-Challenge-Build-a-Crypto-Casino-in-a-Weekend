@@ -51,7 +51,7 @@ withDefaults(
 )
 
 const open = defineModel<boolean>('open', { default: false })
-const emit = defineEmits<{ action: [] }>()
+const emit = defineEmits<{ action: [], cancel: [] }>()
 
 const titleId = useId()
 const descId = useId()
@@ -82,6 +82,7 @@ onUnmounted(() => {
 })
 
 function onCancel() {
+  emit('cancel')
   open.value = false
 }
 
