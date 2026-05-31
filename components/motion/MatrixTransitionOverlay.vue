@@ -108,6 +108,16 @@ function stopMatrix() {
   cancelAnimationFrame(rafId)
 }
 
+let navigated = false
+
+/** Swap the route under the opaque overlay (mid-animation) so the new page is ready when the
+ * overlay fades — removes the post-animation stall. Guarded so it runs exactly once per transition. */
+function doNavigate(to: string) {
+  if (navigated) return
+  navigated = true
+  router.push(to)
+}
+
 function completeTransition() {
   if (!running) return
   stopMatrix()
@@ -115,7 +125,8 @@ function completeTransition() {
   running = false
   const mainEl = document.querySelector('main')
   if (mainEl) gsap.set(mainEl, { clearProps: 'all' })
-  motionStore.finishMatrix((to) => router.push(to))
+  // finishMatrix always unlocks motion; navigation already happened mid-animation (no-op here).
+  motionStore.finishMatrix((to) => doNavigate(to))
 }
 
 async function runTransition() {
@@ -123,6 +134,7 @@ async function runTransition() {
   if (!target || running) return
 
   running = true
+  navigated = false
   visible.value = true
   await nextTick()
 
@@ -195,6 +207,9 @@ async function runTransition() {
       0.75,
     )
   }
+
+  // navigate at the animation midpoint, while the overlay is fully opaque
+  tl.call(() => doNavigate(target), undefined, MOTION_DURATIONS.route * 0.5)
 
   tl.to(rootRef.value, { opacity: 0, duration: 0.2 }, MOTION_DURATIONS.route - 0.2)
 }

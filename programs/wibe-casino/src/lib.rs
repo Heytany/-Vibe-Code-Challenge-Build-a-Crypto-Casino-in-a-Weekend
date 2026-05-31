@@ -107,11 +107,9 @@ pub mod wibe_casino {
         let user_balance = &mut ctx.accounts.user_balance;
         require!(user_balance.amount >= bet, WibeError::InsufficientBalance);
 
-        let roll = compute_roll(
-            &ctx.accounts.recent_blockhashes,
-            user_seed,
-            user_balance.game_nonce,
-        )?;
+        // Read the RNG blockhash ONCE so the exact bytes hashed are also emitted for verification.
+        let blockhash = read_blockhash_32(&ctx.accounts.recent_blockhashes)?;
+        let roll = compute_roll(&blockhash, user_seed, user_balance.game_nonce);
         user_balance.game_nonce = user_balance
             .game_nonce
             .checked_add(1)
@@ -132,6 +130,7 @@ pub mod wibe_casino {
             target,
             roll_under,
             won,
+            blockhash,
         });
 
         Ok(())
@@ -147,9 +146,11 @@ pub mod wibe_casino {
         let nonce = user_balance.game_nonce;
         user_balance.game_nonce = nonce.checked_add(1).ok_or(WibeError::MathOverflow)?;
 
-        let reel1 = compute_symbol(&ctx.accounts.recent_blockhashes, user_seed, nonce, 0)?;
-        let reel2 = compute_symbol(&ctx.accounts.recent_blockhashes, user_seed, nonce, 1)?;
-        let reel3 = compute_symbol(&ctx.accounts.recent_blockhashes, user_seed, nonce, 2)?;
+        // Read the RNG blockhash ONCE so the exact bytes hashed are also emitted for verification.
+        let blockhash = read_blockhash_32(&ctx.accounts.recent_blockhashes)?;
+        let reel1 = compute_symbol(&blockhash, user_seed, nonce, 0);
+        let reel2 = compute_symbol(&blockhash, user_seed, nonce, 1);
+        let reel3 = compute_symbol(&blockhash, user_seed, nonce, 2);
 
         let payout_multiplier = slot_payout_multiplier(reel1, reel2, reel3);
         let won = payout_multiplier > 0;
@@ -184,15 +185,26 @@ pub mod wibe_casino {
             reel3,
             payout_multiplier,
             won,
+            blockhash,
         });
 
         Ok(())
     }
 }
 
-fn compute_roll(recent_blockhashes: &AccountInfo, user_seed: u64, nonce: u64) -> Result<u8> {
-    let hash = hash_from_inputs(recent_blockhashes, user_seed, nonce, b"dice")?;
-    Ok((hash % 100 + 1) as u8)
+/// First 32 bytes of the RecentBlockhashes sysvar — the RNG seed material. Read once per play so
+/// the exact bytes can be both hashed and emitted in the event for client-side verification.
+fn read_blockhash_32(recent_blockhashes: &AccountInfo) -> Result<[u8; 32]> {
+    let data = recent_blockhashes.try_borrow_data()?;
+    require!(data.len() >= 32, WibeError::InvalidBlockhash);
+    let mut out = [0u8; 32];
+    out.copy_from_slice(&data[0..32]);
+    Ok(out)
+}
+
+fn compute_roll(blockhash: &[u8; 32], user_seed: u64, nonce: u64) -> u8 {
+    let hash = hash_from_inputs(blockhash, user_seed, nonce, b"dice");
+    (hash % 100 + 1) as u8
 }
 
 /// Per-reel nonce stride (64-bit golden ratio). A trailing reel byte under FNV-1a is too weakly
@@ -200,28 +212,15 @@ fn compute_roll(recent_blockhashes: &AccountInfo, user_seed: u64, nonce: u64) ->
 /// each reel hashes with `nonce + reel*STRIDE`. Must match shared/rng-verify.ts SLOT_REEL_STRIDE.
 const SLOT_REEL_STRIDE: u64 = 0x9e3779b97f4a7c15;
 
-fn compute_symbol(
-    recent_blockhashes: &AccountInfo,
-    user_seed: u64,
-    nonce: u64,
-    reel: u8,
-) -> Result<u8> {
+fn compute_symbol(blockhash: &[u8; 32], user_seed: u64, nonce: u64, reel: u8) -> u8 {
     let reel_nonce = nonce.wrapping_add((reel as u64).wrapping_mul(SLOT_REEL_STRIDE));
-    let hash = hash_from_inputs(recent_blockhashes, user_seed, reel_nonce, b"slot")?;
-    Ok((hash % 6) as u8)
+    let hash = hash_from_inputs(blockhash, user_seed, reel_nonce, b"slot");
+    (hash % 6) as u8
 }
 
-fn hash_from_inputs(
-    recent_blockhashes: &AccountInfo,
-    user_seed: u64,
-    nonce: u64,
-    domain: &[u8],
-) -> Result<u64> {
-    let data = recent_blockhashes.try_borrow_data()?;
-    require!(data.len() >= 32, WibeError::InvalidBlockhash);
-
+fn hash_from_inputs(blockhash: &[u8; 32], user_seed: u64, nonce: u64, domain: &[u8]) -> u64 {
     let mut buf = [0u8; 48];
-    buf[..32].copy_from_slice(&data[0..32]);
+    buf[..32].copy_from_slice(blockhash);
     buf[32..40].copy_from_slice(&user_seed.to_le_bytes());
     buf[40..48].copy_from_slice(&nonce.to_le_bytes());
 
@@ -230,7 +229,7 @@ fn hash_from_inputs(
         hash ^= *byte as u64;
         hash = hash.wrapping_mul(0x100000001b3);
     }
-    Ok(hash)
+    hash
 }
 
 fn apply_bet_outcome(
@@ -446,6 +445,8 @@ pub struct DicePlayed {
     pub target: u8,
     pub roll_under: bool,
     pub won: bool,
+    /// Exact 32 bytes hashed on-chain — lets the client recompute & verify the roll deterministically.
+    pub blockhash: [u8; 32],
 }
 
 #[event]
@@ -457,6 +458,8 @@ pub struct SlotPlayed {
     pub reel3: u8,
     pub payout_multiplier: u16,
     pub won: bool,
+    /// Exact 32 bytes hashed on-chain — lets the client recompute & verify the reels deterministically.
+    pub blockhash: [u8; 32],
 }
 
 #[error_code]

@@ -32,8 +32,13 @@
 ```
 hash = fnv1a( blockhash[0..32] || userSeed(u64 LE) || nonce(u64 LE) || domain )
 dice:  roll   = hash % 100 + 1        domain = "dice"
-slot:  symbol = hash % 6              domain = "slot" + reelIndex(byte)
+slot:  symbol = hash % 6              domain = "slot", nonce' = nonce + reel·0x9e3779b97f4a7c15
 ```
+
+> Slot uses a **per-reel nonce stride** (`SLOT_REEL_STRIDE`), NOT a trailing reel byte — a trailing
+> byte under FNV-1a left the three reels always distinct (slot never paid). Matches `lib.rs` +
+> `shared/rng-verify.ts`. The deployed program MUST be built from this version (redeploy if it was
+> deployed before the stride fix), else on-chain results won't match the Fair-tab recompute.
 
 Payouts: dice gross = bet·19500/1e4; slot ×10/×2; minus house edge 200 bps.
 

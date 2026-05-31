@@ -39,6 +39,12 @@ function isAnchorEvent(name: string, expected: string): boolean {
   return name.toLowerCase() === expected.toLowerCase()
 }
 
+/** Coerce an Anchor `[u8;32]` event field (number[]/Buffer/Uint8Array) to 32 bytes, or null. */
+function toBytes32(v: ArrayLike<number> | undefined | null): Uint8Array | null {
+  if (!v || v.length < 32) return null
+  return Uint8Array.from(Array.from(v as ArrayLike<number>).slice(0, 32))
+}
+
 export interface PlayDiceParams {
   bet: number
   target: number
@@ -465,18 +471,24 @@ export function useCasinoProgram() {
       let roll = 0
       let won = false
       let parsed = false
+      let eventBlockhash: Uint8Array | null = null
 
       for (const ev of parser.parseLogs(logs)) {
         if (isAnchorEvent(ev.name, 'dicePlayed')) {
-          const data = ev.data as { roll: number, won: boolean }
+          const data = ev.data as { roll: number, won: boolean, blockhash?: ArrayLike<number> }
           roll = data.roll
           won = data.won
+          eventBlockhash = toBytes32(data.blockhash)
           parsed = true
         }
       }
 
+      // Prefer the blockhash the program actually hashed (emitted in the event) so the Fair-tab
+      // recompute matches honest rolls; fall back to the pre-fetched sysvar bytes (older program).
+      const usedBlockhash = eventBlockhash ?? blockhashBytes
+
       if (!parsed) {
-        roll = computeRoll(blockhashBytes, userSeed, nonceUsed)
+        roll = computeRoll(usedBlockhash, userSeed, nonceUsed)
         won = diceWon(roll, rollUnder, target)
       }
 
@@ -488,8 +500,8 @@ export function useCasinoProgram() {
         won,
         userSeed,
         nonce: nonceUsed,
-        blockhash: blockhashBytes,
-        blockhashBase58,
+        blockhash: usedBlockhash,
+        blockhashBase58: eventBlockhash ? base58Encode(eventBlockhash) : blockhashBase58,
         rollUnder,
         target,
         bet,
@@ -541,6 +553,7 @@ export function useCasinoProgram() {
       let multiplier = 0
       let won = false
       let parsed = false
+      let eventBlockhash: Uint8Array | null = null
 
       for (const ev of parser.parseLogs(logs)) {
         if (isAnchorEvent(ev.name, 'slotPlayed')) {
@@ -550,16 +563,20 @@ export function useCasinoProgram() {
             reel3: number
             payoutMultiplier: number
             won: boolean
+            blockhash?: ArrayLike<number>
           }
           reels = [data.reel1, data.reel2, data.reel3]
           multiplier = data.payoutMultiplier
           won = data.won
+          eventBlockhash = toBytes32(data.blockhash)
           parsed = true
         }
       }
 
+      const usedBlockhash = eventBlockhash ?? blockhashBytes
+
       if (!parsed) {
-        reels = computeReels(blockhashBytes, userSeed, nonceUsed)
+        reels = computeReels(usedBlockhash, userSeed, nonceUsed)
         multiplier = slotPayoutMultiplier(reels[0], reels[1], reels[2])
         won = multiplier > 0
       }
@@ -573,8 +590,8 @@ export function useCasinoProgram() {
         won,
         userSeed,
         nonce: nonceUsed,
-        blockhash: blockhashBytes,
-        blockhashBase58,
+        blockhash: usedBlockhash,
+        blockhashBase58: eventBlockhash ? base58Encode(eventBlockhash) : blockhashBase58,
         bet,
       }
     } catch (err) {
