@@ -1,8 +1,36 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-30 — iteration 7 ready to commit (PO)  
-**Current iteration:** 8 → LIVE wire-up + README challenge  
-**Report:** [`iterations/07-access-denied-ux.md`](../iterations/07-access-denied-ux.md)
+**Last updated:** 2026-05-31 — iteration 9 done (Claude/Cowork), ready to commit (PO)  
+**Current iteration:** 9 → fixes (toast crash, Netlify env, word-wrap, mode header, speed radio) + devnet readiness analysis  
+**Report:** [`iterations/09-fixes-deploy-readiness.md`](../iterations/09-fixes-deploy-readiness.md)
+
+## Iteration 9 — done (PO commit) ⏳
+
+- [x] Toast crash on fast rolls fixed (hoisted `showError` in Dice/Slot)
+- [x] **Netlify deploy fix:** env-validation no longer fatal when chain env empty → FUN homepage loads
+- [x] `ACCESS DENIED` wraps as whole words on mobile (`DancingText` word groups)
+- [x] Game title + FUN/LIVE toggle + mode explanation moved above the hero
+- [x] Speed control = segmented radio (clear state); auto-bar responsive at 320px
+- [x] **Devnet readiness analysis:** [`specs/testnet-readiness.md`](specs/testnet-readiness.md) — FUN 100%, LIVE ~50% (program written, not deployed/wired)
+- [x] **🐛 Slot RNG fix:** reels used a trailing domain byte → never paid (0% pairs). Now per-reel nonce stride (`+reel·0x9e3779b97f4a7c15`) in `lib.rs` + `rng-verify` → ~44% pairs. **Live needs program redeploy.**
+- [x] Roll/spin button no longer jumps height (loading face single-line); ∞ toggle is a clear ON/OFF checkbox
+- [ ] **PO host:** `anchor build && deploy` (RNG changed!) → set `NUXT_PUBLIC_*` in Netlify for LIVE; `pnpm build`/e2e; commit
+
+---
+
+
+## Iteration 8 — done (PO commit) ⏳
+
+- [x] iOS/mobile: overlays anchored to visual viewport, `overscroll-behavior` fixes header detach (ADR-018)
+- [x] Matrix + crack centered on current screen, fullscreen on iOS (`useViewportAnchor`, `getVisualViewport`)
+- [x] Provably-fair "Fair" tab in both games — recompute via `rng-verify` (ADR-015)
+- [x] Auto-roll + speed ×2 + fullscreen game mode (`GameAutoFsBar`, `useAutoPlay`, `useFullscreen`) (ADR-016)
+- [x] Slot split-panel win animation 2/3 bands, alternating inverted code-sweep (ADR-017)
+- [ ] **PO host:** `pnpm build`, `pnpm test:e2e`, `pnpm test:motion`; verify iOS Safari on device; commit
+- Prior blocker: stale `.git/index.lock` — `rm -f .git/index.lock` if it reappears.
+
+---
+
 
 ## Iteration 7 — ready (PO commit) ⏳
 

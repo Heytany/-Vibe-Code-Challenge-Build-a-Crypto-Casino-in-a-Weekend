@@ -58,6 +58,8 @@ iterations/NN-kratkoe-nazvanie.md
 | 5 | `ca5fae0` — glitch roll dice + fun mode (Claude/Cursor) | [05-dice-glitch-roll.md](./05-dice-glitch-roll.md) | 30.05.2026 · **~1 ч PO · $20 Cursor** |
 | 6 | `8ddfcaa` — corrupted reels slot + layout polish | [06-slot-corrupted-reels.md](./06-slot-corrupted-reels.md) | 30.05.2026 · **~15 мин PO** финал + slot hero |
 | 7 | _(PO коммитит)_ — access denied UX, toasts, offline | [07-access-denied-ux.md](./07-access-denied-ux.md) | 30.05.2026 · **~30 мин PO** |
+| 8 | _(PO коммитит)_ — mobile/iOS motion, provably-fair, auto-roll/fullscreen, slot split (Claude) | [08-mobile-motion-fair-automation.md](./08-mobile-motion-fair-automation.md) | 31.05.2026 · Claude (Cowork) |
+| 9 | _(PO коммитит)_ — fixes: toast crash, Netlify env, word-wrap, mode header, speed radio + devnet readiness (Claude) | [09-fixes-deploy-readiness.md](./09-fixes-deploy-readiness.md) | 31.05.2026 · Claude (Cowork) |
 
 **QA:** FUN — `/games/dice`, `/games/slot` без Phantom · 404 → `/games/nope`
 

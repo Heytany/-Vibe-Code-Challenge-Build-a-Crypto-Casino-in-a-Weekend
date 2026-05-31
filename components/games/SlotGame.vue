@@ -1,5 +1,17 @@
 <template>
   <div class="bw-dice-page space-y-6">
+    <header class="bw-game-head max-w-xl mx-auto w-full">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <h1 class="text-xl md:text-2xl font-bold uppercase bw-accent">
+          <UiLocaleText path="games.slot.title" tag="span" />
+        </h1>
+        <GamesGameModeToggle />
+      </div>
+      <p class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal">
+        <UiLocaleText :path="isFun ? 'games.common.modeExplainFun' : 'games.common.modeExplainLive'" tag="span" />
+      </p>
+    </header>
+
     <div class="bw-dice-hero-stage">
       <MotionMatrixPanelBackdrop ref="matrixBackdropRef" />
       <div class="bw-dice-hero-stage__fg">
@@ -29,17 +41,9 @@
 
     <div ref="panelRef" class="bw-dice-controls max-w-xl mx-auto w-full">
       <UiBrokenPanel tilt="right">
-        <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
-          <div>
-            <p class="text-[var(--bw-muted)] text-sm font-mono mb-1">
-              <UiLocaleText path="games.slot.subtitle" tag="span" />
-            </p>
-            <h2 class="text-xl font-bold uppercase bw-accent">
-              <UiLocaleText path="games.slot.title" tag="span" />
-            </h2>
-          </div>
-          <GamesGameModeToggle />
-        </div>
+        <p class="text-[var(--bw-muted)] text-sm font-mono mb-4">
+          <UiLocaleText path="games.slot.subtitle" tag="span" />
+        </p>
 
         <div class="bw-dice-tabs" role="tablist">
           <button
@@ -61,6 +65,16 @@
             @click="activeTab = 'rules'"
           >
             <UiLocaleText path="games.slot.tabRules" tag="span" />
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="bw-dice-tabs__btn"
+            :class="{ 'is-active': activeTab === 'fair' }"
+            :aria-selected="activeTab === 'fair'"
+            @click="activeTab = 'fair'"
+          >
+            <UiLocaleText path="games.slot.tabFair" tag="span" />
           </button>
         </div>
 
@@ -145,6 +159,8 @@
             <UiLocaleText path="games.slot.payoutHint" tag="span" />
           </p>
 
+          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="spinning" />
+
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
               <UiLocaleText path="common.back" tag="span" />
@@ -179,6 +195,14 @@
               <UiLocaleText path="games.slot.rulesRng" tag="span" />
             </p>
           </div>
+
+          <div
+            role="tabpanel"
+            class="bw-game-tabpanel"
+            :class="{ 'is-inactive': activeTab !== 'fair' }"
+          >
+            <GamesProvablyFair game="slot" :meta="lastMeta" :slot-symbol-char="slotSymbolChar" />
+          </div>
         </div>
       </UiBrokenPanel>
     </div>
@@ -200,33 +224,52 @@ const {
   isSuperWin,
   lastPayoutDelta,
   lastMultiplier,
+  lastMeta,
   spin,
   resetFunBalance,
   slotSymbolChar,
 } = useGameSlot()
 
-const activeTab = ref<'play' | 'rules'>('play')
+const activeTab = ref<'play' | 'rules' | 'fair'>('play')
 const panelRef = ref<HTMLElement | null>(null)
 const banditRef = ref<ComponentPublicInstance | null>(null)
-const matrixBackdropRef = ref<{ play: (intense?: boolean) => Promise<void> } | null>(null)
+const matrixBackdropRef = ref<{
+  play: (intense?: boolean) => Promise<void>
+  playSplit: (segments: number, intense?: boolean) => Promise<void>
+} | null>(null)
 const { touched: betTouched, invalid: betInvalid, markTouched: markBetTouched, validateBetOrToast } = useBetField(bet)
-const { showWin } = useBrutalToast()
+const { showWin, showError } = useBrutalToast()
 
 onMounted(() => {
   playGameEnter(panelRef.value)
 })
 
+/** segments for the split win animation: triple (×10) → 3, any pair (×2) → 2, else 1 */
+function winSegments(): number {
+  const m = lastMultiplier.value
+  if (m && m >= 10) return 3
+  if (m && m >= 2) return 2
+  return 1
+}
+
+/** One spin; resolves to whether it won. Throws on invalid/insufficient so auto-roll stops. */
+async function playOnce(): Promise<boolean> {
+  if (!validateBetOrToast()) throw new Error('invalid-bet')
+  const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
+  await spin(el)
+  if (won.value) {
+    showWin(lastPayoutDelta.value, isSuperWin.value)
+    // split the code-transition across N bands by matched lines (2 → normal+invert, 3 → normal+invert+normal)
+    await matrixBackdropRef.value?.playSplit(winSegments(), isSuperWin.value)
+  }
+  return Boolean(won.value)
+}
+
 async function onSpin() {
-  if (!validateBetOrToast()) return
   try {
-    const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
-    await spin(el)
-    if (won.value) {
-      showWin(lastPayoutDelta.value, isSuperWin.value)
-      await matrixBackdropRef.value?.play(isSuperWin.value)
-    }
+    await playOnce()
   } catch (e) {
-    useBrutalToast().showError(e)
+    if ((e as Error)?.message !== 'invalid-bet') showError(e)
   }
 }
 

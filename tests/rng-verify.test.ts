@@ -34,9 +34,9 @@ describe('rng-verify — fixed vectors', () => {
     expect(hashFromInputs(BLOCKHASH, 42n, 0n, DOMAIN_DICE)).toBe(0x3760d68fa571fa3cn)
   })
 
-  it('slot reel vectors', () => {
-    expect(computeReels(BLOCKHASH, 42n, 0n)).toEqual([1, 0, 5])
-    expect(computeReels(BLOCKHASH, 777n, 9n)).toEqual([2, 3, 4])
+  it('slot reel vectors (per-reel nonce stride)', () => {
+    expect(computeReels(BLOCKHASH, 42n, 0n)).toEqual([3, 4, 0])
+    expect(computeReels(BLOCKHASH, 777n, 9n)).toEqual([4, 3, 5])
   })
 })
 

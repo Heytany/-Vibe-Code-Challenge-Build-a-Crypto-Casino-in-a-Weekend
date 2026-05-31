@@ -50,7 +50,8 @@
       "rulesStep3": "Win chance equals the percentage of outcomes in your favour (before house edge).",
       "rulesStep4": "FUN mode uses the same FNV-1a RNG math as on-chain play — virtual credits only.",
       "rulesRng": "// live: outcome = hash(blockhash ‖ seed ‖ nonce ‖ \"dice\") mod 100 + 1 — verifiable on Explorer",
-      "superWin": "// JACKPOT — extreme roll or ≤5% odds"
+      "superWin": "// JACKPOT — extreme roll or ≤5% odds",
+      "tabFair": "Fair"
     },
     "slot": {
       "title": "Corrupted Reels",
@@ -70,7 +71,8 @@
       "rulesStep3": "No match — you lose the bet.",
       "rulesStep4": "FUN mode uses the same FNV-1a RNG as on-chain — virtual credits only.",
       "rulesRng": "// live: each reel = hash(blockhash ‖ seed ‖ nonce ‖ \"slot\"+index) mod 6",
-      "superWin": "// TRIPLE — all reels match"
+      "superWin": "// TRIPLE — all reels match",
+      "tabFair": "Fair"
     },
     "common": {
       "bet": "Bet",
@@ -97,7 +99,44 @@
       "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",
       "liveModeHint": "Real devnet tokens via Phantom",
       "liveModeLocked": "Connect Phantom + deployed program for live mode",
-      "resetFun": "Reset fun credits"
+      "resetFun": "Reset fun credits",
+      "modeExplainFun": "// fun mode — no wallet, virtual credits, same RNG math",
+      "modeExplainLive": "// live mode — Phantom on devnet, real on-chain bets, verifiable on Explorer"
+    },
+    "fair": {
+      "title": "Provably fair",
+      "intro": "Every roll is derived from public inputs by FNV-1a hashing. Recompute it yourself — if it matches, the casino did not cheat.",
+      "formula": "hash = FNV-1a( blockhash[0..32] · seed(LE) · nonce(LE) · domain )",
+      "blockhash": "Blockhash",
+      "seed": "Your seed",
+      "nonce": "Nonce",
+      "domain": "Domain",
+      "result": "Result",
+      "recompute": "Recompute & verify",
+      "matchOk": "MATCH — recomputed locally, identical",
+      "matchFail": "MISMATCH — do not trust",
+      "funNote": "Fun mode uses a simulated blockhash with the SAME math as on-chain. Switch to LIVE for a real Solana tx you can open in the explorer.",
+      "liveNote": "Open the transaction in Solana Explorer and recompute the hash yourself.",
+      "explorer": "Open in Solana Explorer",
+      "noPlay": "Play a round first, then verify it here."
+    },
+    "auto": {
+      "title": "Auto-roll",
+      "rounds": "Rounds",
+      "infinite": "∞",
+      "betPerRoll": "Bet / roll",
+      "start": "Auto start",
+      "stop": "Stop",
+      "stopOnWin": "Stop on win",
+      "speed": "Speed",
+      "x1": "1×",
+      "x2": "2×",
+      "fullscreen": "Fullscreen",
+      "exit": "Exit fullscreen",
+      "left": "left",
+      "doneTitle": "Auto-roll finished",
+      "doneNoWin": "No win in {n} rounds",
+      "doneWins": "{wins} win(s) in {n} rounds"
     }
   },
   "footer": {

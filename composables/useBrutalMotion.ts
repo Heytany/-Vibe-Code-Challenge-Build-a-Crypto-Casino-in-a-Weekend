@@ -240,6 +240,11 @@ export function useBrutalMotion() {
     })
   }
 
+  /** Global animation speed multiplier (e.g. 2 = x2 fast auto-roll). Affects all GSAP. */
+  function setMotionSpeed(multiplier: number) {
+    gsap.globalTimeline.timeScale(multiplier > 0 ? multiplier : 1)
+  }
+
   return {
     prefersReducedMotion,
     playRouteTransition,
@@ -251,5 +256,6 @@ export function useBrutalMotion() {
     playSlotSpin,
     playLocaleSwitch,
     playThemeSwitch,
+    setMotionSpeed,
   }
 }

@@ -60,6 +60,7 @@
  * @see shared/crack-geometry.ts
  */
 import gsap from 'gsap'
+import { getVisualViewport } from '~/shared/motion'
 import { buildCrackWeb, buildGlassShards, type CrackStroke, type GlassShard } from '~/shared/crack-geometry'
 
 const motionStore = useMotionStore()
@@ -84,8 +85,9 @@ function setShardRef(el: unknown, i: number) {
 }
 
 async function animateCrack() {
-  size.w = window.innerWidth
-  size.h = window.innerHeight
+  const vp = getVisualViewport()
+  size.w = vp.width
+  size.h = vp.height
   const cx = size.w / 2
   const cy = size.h / 2
 

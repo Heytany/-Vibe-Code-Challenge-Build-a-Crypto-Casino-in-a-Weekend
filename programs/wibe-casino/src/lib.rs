@@ -194,15 +194,19 @@ fn compute_roll(recent_blockhashes: &AccountInfo, user_seed: u64, nonce: u64) ->
     Ok((hash % 100 + 1) as u8)
 }
 
+/// Per-reel nonce stride (64-bit golden ratio). A trailing reel byte under FNV-1a is too weakly
+/// mixed and made the three reels mod 6 ALWAYS distinct (slot could never pay pairs/triples), so
+/// each reel hashes with `nonce + reel*STRIDE`. Must match shared/rng-verify.ts SLOT_REEL_STRIDE.
+const SLOT_REEL_STRIDE: u64 = 0x9e3779b97f4a7c15;
+
 fn compute_symbol(
     recent_blockhashes: &AccountInfo,
     user_seed: u64,
     nonce: u64,
     reel: u8,
 ) -> Result<u8> {
-    let mut domain = b"slot".to_vec();
-    domain.push(reel);
-    let hash = hash_from_inputs(recent_blockhashes, user_seed, nonce, &domain)?;
+    let reel_nonce = nonce.wrapping_add((reel as u64).wrapping_mul(SLOT_REEL_STRIDE));
+    let hash = hash_from_inputs(recent_blockhashes, user_seed, reel_nonce, b"slot")?;
     Ok((hash % 6) as u8)
 }
 

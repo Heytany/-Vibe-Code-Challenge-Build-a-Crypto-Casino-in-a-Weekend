@@ -1,7 +1,7 @@
 <template>
   <ToastRoot
     v-model:open="open"
-    class="bw-panel bw-panel--broken p-4 grid gap-1 data-[state=open]:animate-in data-[state=closed]:animate-out"
+    class="bw-panel bw-panel--broken p-4 pr-16 grid gap-1 data-[state=open]:animate-in data-[state=closed]:animate-out"
     :class="variantClass"
   >
     <ToastTitle class="font-bold uppercase text-sm tracking-wide">

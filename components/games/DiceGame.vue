@@ -1,5 +1,17 @@
 <template>
   <div class="bw-dice-page space-y-6">
+    <header class="bw-game-head max-w-xl mx-auto w-full">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <h1 class="text-xl md:text-2xl font-bold uppercase bw-accent">
+          <UiLocaleText path="games.dice.title" tag="span" />
+        </h1>
+        <GamesGameModeToggle />
+      </div>
+      <p class="text-xs font-mono text-[var(--bw-muted)] mt-1 whitespace-normal">
+        <UiLocaleText :path="isFun ? 'games.common.modeExplainFun' : 'games.common.modeExplainLive'" tag="span" />
+      </p>
+    </header>
+
     <div class="bw-dice-hero-stage">
       <MotionMatrixPanelBackdrop ref="matrixBackdropRef" />
       <div class="bw-dice-hero-stage__fg">
@@ -27,17 +39,9 @@
 
     <div ref="panelRef" class="bw-dice-controls max-w-xl mx-auto w-full">
       <UiBrokenPanel>
-        <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
-          <div>
-            <p class="text-[var(--bw-muted)] text-sm font-mono mb-1">
-              <UiLocaleText path="games.dice.subtitle" tag="span" />
-            </p>
-            <h2 class="text-xl font-bold uppercase bw-accent">
-              <UiLocaleText path="games.dice.title" tag="span" />
-            </h2>
-          </div>
-          <GamesGameModeToggle />
-        </div>
+        <p class="text-[var(--bw-muted)] text-sm font-mono mb-4">
+          <UiLocaleText path="games.dice.subtitle" tag="span" />
+        </p>
 
         <div class="bw-dice-tabs" role="tablist">
           <button
@@ -59,6 +63,16 @@
             @click="activeTab = 'rules'"
           >
             <UiLocaleText path="games.dice.tabRules" tag="span" />
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="bw-dice-tabs__btn"
+            :class="{ 'is-active': activeTab === 'fair' }"
+            :aria-selected="activeTab === 'fair'"
+            @click="activeTab = 'fair'"
+          >
+            <UiLocaleText path="games.dice.tabFair" tag="span" />
           </button>
         </div>
 
@@ -176,6 +190,8 @@
             </div>
           </div>
 
+          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="playing" />
+
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
               <UiLocaleText path="common.back" tag="span" />
@@ -210,6 +226,14 @@
               <UiLocaleText path="games.dice.rulesRng" tag="span" />
             </p>
           </div>
+
+          <div
+            role="tabpanel"
+            class="bw-game-tabpanel"
+            :class="{ 'is-inactive': activeTab !== 'fair' }"
+          >
+            <GamesProvablyFair game="dice" :meta="lastMeta" />
+          </div>
         </div>
       </UiBrokenPanel>
     </div>
@@ -233,32 +257,39 @@ const {
   effectiveBalance,
   isSuperWin,
   lastPayoutDelta,
+  lastMeta,
   roll,
   resetFunBalance,
 } = useGameDice()
 
-const activeTab = ref<'play' | 'rules'>('play')
+const activeTab = ref<'play' | 'rules' | 'fair'>('play')
 const panelRef = ref<HTMLElement | null>(null)
 const diceCubeRef = ref<ComponentPublicInstance | null>(null)
 const matrixBackdropRef = ref<{ play: (intense?: boolean) => Promise<void> } | null>(null)
 const { touched: betTouched, invalid: betInvalid, markTouched: markBetTouched, validateBetOrToast } = useBetField(bet)
-const { showWin } = useBrutalToast()
+const { showWin, showError } = useBrutalToast()
 
 onMounted(() => {
   playGameEnter(panelRef.value)
 })
 
+/** One round; resolves to whether it won. Throws on invalid/insufficient so auto-roll stops. */
+async function playOnce(): Promise<boolean> {
+  if (!validateBetOrToast()) throw new Error('invalid-bet')
+  const el = (diceCubeRef.value?.$el as HTMLElement | undefined) ?? null
+  await roll(el)
+  if (won.value) {
+    showWin(lastPayoutDelta.value, isSuperWin.value)
+    await matrixBackdropRef.value?.play(isSuperWin.value)
+  }
+  return Boolean(won.value)
+}
+
 async function onRoll() {
-  if (!validateBetOrToast()) return
   try {
-    const el = (diceCubeRef.value?.$el as HTMLElement | undefined) ?? null
-    await roll(el)
-    if (won.value) {
-      showWin(lastPayoutDelta.value, isSuperWin.value)
-      await matrixBackdropRef.value?.play(isSuperWin.value)
-    }
+    await playOnce()
   } catch (e) {
-    useBrutalToast().showError(e)
+    if ((e as Error)?.message !== 'invalid-bet') showError(e)
   }
 }
 

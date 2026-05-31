@@ -50,7 +50,8 @@
       "rulesStep3": "Шанс = частка результатів на твою користь (до house edge).",
       "rulesStep4": "FUN — та сама FNV-1a математика, що on-chain; лише віртуальні кредити.",
       "rulesRng": "// live: результат = hash(blockhash ‖ seed ‖ nonce ‖ \"dice\") mod 100 + 1 — перевірка в Explorer",
-      "superWin": "// ДЖЕКПОТ — екстремальний ролл або шанс ≤5%"
+      "superWin": "// ДЖЕКПОТ — екстремальний ролл або шанс ≤5%",
+      "tabFair": "Чесність"
     },
     "slot": {
       "title": "Corrupted Reels",
@@ -70,7 +71,8 @@
       "rulesStep3": "Немає збігів — програш ставки.",
       "rulesStep4": "FUN — та сама FNV-1a, що on-chain; віртуальні кредити.",
       "rulesRng": "// live: кожен барабан = hash(blockhash ‖ seed ‖ nonce ‖ \"slot\"+index) mod 6",
-      "superWin": "// ТРІЙКА — усі барабани збіглися"
+      "superWin": "// ТРІЙКА — усі барабани збіглися",
+      "tabFair": "Чесність"
     },
     "common": {
       "bet": "Ставка",
@@ -97,7 +99,44 @@
       "funNote": "Грай одразу. Віртуальний баланс — для devnet підключи Phantom і LIVE.",
       "liveModeHint": "Справжні devnet-токени через Phantom",
       "liveModeLocked": "LIVE: потрібні Phantom і задеплоєна програма",
-      "resetFun": "Скинути fun-кредити"
+      "resetFun": "Скинути fun-кредити",
+      "modeExplainFun": "// fun mode — без гаманця, віртуальні кредити, та сама RNG-математика",
+      "modeExplainLive": "// live mode — Phantom на devnet, реальні ставки on-chain, перевірка в Explorer"
+    },
+    "fair": {
+      "title": "Чесна гра",
+      "intro": "Кожен кидок виводиться з публічних даних хешем FNV-1a. Перерахуй сам — якщо збіглося, казино не шахраювало.",
+      "formula": "hash = FNV-1a( blockhash[0..32] · seed(LE) · nonce(LE) · domain )",
+      "blockhash": "Blockhash",
+      "seed": "Твій seed",
+      "nonce": "Nonce",
+      "domain": "Домен",
+      "result": "Результат",
+      "recompute": "Перерахувати й перевірити",
+      "matchOk": "ЗБІГЛОСЯ — пораховано локально, ідентично",
+      "matchFail": "НЕ ЗБІГЛОСЯ — не довіряй",
+      "funNote": "Fun-режим використовує симульований blockhash з ТІЄЮ Ж математикою, що й on-chain. Перемкнись на LIVE для реальної Solana-транзакції, яку видно в експлорері.",
+      "liveNote": "Відкрий транзакцію в Solana Explorer і перерахуй хеш сам.",
+      "explorer": "Відкрити в Solana Explorer",
+      "noPlay": "Зіграй раунд, потім перевіриш його тут."
+    },
+    "auto": {
+      "title": "Автороли",
+      "rounds": "Раундів",
+      "infinite": "∞",
+      "betPerRoll": "Ставка / рол",
+      "start": "Старт авто",
+      "stop": "Стоп",
+      "stopOnWin": "Стоп при виграші",
+      "speed": "Швидкість",
+      "x1": "1×",
+      "x2": "2×",
+      "fullscreen": "На весь екран",
+      "exit": "Вийти",
+      "left": "залишилось",
+      "doneTitle": "Авто-роли завершені",
+      "doneNoWin": "Без виграшу за {n} раундів",
+      "doneWins": "{wins} виграш. за {n} раундів"
     }
   },
   "footer": {

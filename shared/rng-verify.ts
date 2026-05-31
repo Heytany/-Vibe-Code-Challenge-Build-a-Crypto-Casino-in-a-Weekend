@@ -19,7 +19,13 @@ export const SLOT_PAIR_MULTIPLIER = 2
 export const MAX_HOUSE_EDGE_BPS = 1000
 
 export const DOMAIN_DICE = new TextEncoder().encode('dice')
-const DOMAIN_SLOT_PREFIX = new TextEncoder().encode('slot')
+export const DOMAIN_SLOT = new TextEncoder().encode('slot')
+/**
+ * Per-reel nonce stride (64-bit golden ratio). Each reel hashes with `nonce + reel*STRIDE`
+ * instead of a trailing domain byte — a trailing byte under FNV-1a is too weakly mixed and made
+ * the three reels mod 6 ALWAYS distinct (slot could never pay). Must match lib.rs.
+ */
+export const SLOT_REEL_STRIDE = 0x9e3779b97f4a7c15n
 
 // ── FNV-1a 64-bit (matches Rust wrapping_mul) ───────────────────────────────
 const FNV_OFFSET_BASIS = 0xcbf29ce484222325n
@@ -79,10 +85,8 @@ export function computeSymbol(
   nonce: bigint,
   reel: number,
 ): number {
-  const domain = new Uint8Array(DOMAIN_SLOT_PREFIX.length + 1)
-  domain.set(DOMAIN_SLOT_PREFIX, 0)
-  domain[DOMAIN_SLOT_PREFIX.length] = reel & 0xff
-  const hash = hashFromInputs(blockhash, userSeed, nonce, domain)
+  const reelNonce = (nonce + BigInt(reel) * SLOT_REEL_STRIDE) & U64_MASK
+  const hash = hashFromInputs(blockhash, userSeed, reelNonce, DOMAIN_SLOT)
   return Number(hash % BigInt(SLOT_SYMBOL_COUNT))
 }
 

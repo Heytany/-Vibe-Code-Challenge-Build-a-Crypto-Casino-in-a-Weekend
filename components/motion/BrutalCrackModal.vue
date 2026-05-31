@@ -58,6 +58,10 @@ const modalWrapRef = ref<HTMLElement | null>(null)
 const modalRef = ref<HTMLElement | null>(null)
 const crackRef = ref<{ animateCrack: () => Promise<unknown>; hideCrack: () => void } | null>(null)
 
+// Anchor backdrop to the visible screen so the crack + modal centre on the current viewport (iOS).
+const crackOpenRef = computed(() => motionStore.crackOpen)
+useViewportAnchor(backdropRef, crackOpenRef)
+
 const titleText = computed(() => {
   switch (motionStore.crackPhase) {
     case 'opening':
@@ -184,7 +188,13 @@ function close() {
 <style scoped>
 .bw-motion-crack-backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  /* JS (useViewportAnchor) overrides width/height/transform to the visual viewport. */
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  transform-origin: top left;
   z-index: var(--bw-motion-overlay-z, 500);
   display: flex;
   align-items: center;

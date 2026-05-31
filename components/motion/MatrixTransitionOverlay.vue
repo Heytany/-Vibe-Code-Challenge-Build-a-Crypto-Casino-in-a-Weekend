@@ -22,7 +22,7 @@
  * @failure-modes: overlay mount fail → finishMatrix still navigates
  */
 import gsap from 'gsap'
-import { MATRIX_GLYPHS, MOTION_DURATIONS } from '~/shared/motion'
+import { MATRIX_GLYPHS, MOTION_DURATIONS, getVisualViewport } from '~/shared/motion'
 
 const motionStore = useMotionStore()
 const router = useRouter()
@@ -33,6 +33,9 @@ const scanlineRef = ref<HTMLElement | null>(null)
 const slicesRef = ref<HTMLElement | null>(null)
 const visible = ref(false)
 const sliceCount = 5
+
+// Pin the overlay to the visible screen (iOS visual viewport ≠ layout viewport).
+const { apply: anchorOverlay } = useViewportAnchor(rootRef, visible)
 
 let rafId = 0
 let running = false
@@ -51,8 +54,9 @@ function resizeCanvas() {
   if (!canvas) return
 
   const dpr = window.devicePixelRatio || 1
-  logicalW = window.innerWidth
-  logicalH = window.innerHeight
+  const vp = getVisualViewport()
+  logicalW = vp.width
+  logicalH = vp.height
 
   canvas.width = Math.floor(logicalW * dpr)
   canvas.height = Math.floor(logicalH * dpr)
@@ -128,6 +132,8 @@ async function runTransition() {
     return
   }
 
+  anchorOverlay()
+
   const canvas = canvasRef.value
   if (canvas) {
     ctx = canvas.getContext('2d')
@@ -154,13 +160,13 @@ async function runTransition() {
 
   tl.fromTo(rootRef.value, { opacity: 0 }, { opacity: 1, duration: 0.12 }, 0)
 
-  if (mainEl && slices.length) {
-    const rect = mainEl.getBoundingClientRect()
-    const sliceH = Math.max(rect.height / sliceCount, 40)
+  if (slices.length) {
+    // distribute glitch bars across the FULL visible screen (not the main element)
+    const sliceH = logicalH / sliceCount
     slices.forEach((slice, i) => {
       const el = slice as HTMLElement
       el.style.height = `${sliceH}px`
-      el.style.top = `${rect.top + i * sliceH}px`
+      el.style.top = `${i * sliceH}px`
     })
     tl.to(slices, {
       x: () => (Math.random() > 0.5 ? 1 : -1) * (50 + Math.random() * 100),
@@ -168,6 +174,9 @@ async function runTransition() {
       stagger: 0.05,
       ease: 'power3.inOut',
     }, 0.25)
+  }
+
+  if (mainEl) {
     tl.to(mainEl, { opacity: 0.15, filter: 'hue-rotate(90deg) contrast(1.4)', duration: 0.45 }, 0.3)
   }
 
@@ -206,7 +215,14 @@ onUnmounted(() => {
 <style scoped>
 .bw-motion-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  /* JS (useViewportAnchor) sets exact px width/height/transform from the visual viewport;
+     these are the pre-JS fallback so the overlay always covers the screen. */
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  transform-origin: top left;
   z-index: var(--bw-motion-overlay-z, 500);
   pointer-events: all;
   background: rgba(10, 10, 10, 0.92);
@@ -245,7 +261,7 @@ onUnmounted(() => {
 }
 
 .bw-motion-slice {
-  position: fixed;
+  position: absolute;
   left: 0;
   width: 100%;
   background: rgba(10, 10, 10, 0.75);

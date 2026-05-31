@@ -31,10 +31,14 @@ html {
   font-family: var(--bw-font);
   background: var(--bw-bg);
   color: var(--bw-fg);
+  /* stop iOS rubber-band overscroll that makes the sticky header peel/detach on scroll */
+  overscroll-behavior: none;
 }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
   background:
     repeating-linear-gradient(
       0deg,
@@ -150,6 +154,11 @@ body {
 .bw-corrupt-bar--btn {
   width: 2.75rem;
   margin: 0;
+}
+
+/* keep the loading state the SAME height as the label so the button doesn't jump per game */
+.bw-btn__face--load {
+  flex-direction: row;
 }
 
 /* ── Dancing text (access denied, glitch headings) ─────────────────────── */
@@ -270,6 +279,19 @@ body {
 body.bw-motion-lock {
   pointer-events: none;
   overflow: hidden;
+  /* iOS: fully suppress touch scroll + rubber-band while a full-screen overlay is shown */
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+/* Fullscreen game mode — hide chrome for an immersive play surface (toasts stay, they teleport to body). */
+html.bw-fullscreen-game header,
+html.bw-fullscreen-game footer {
+  display: none;
+}
+
+html.bw-fullscreen-game main {
+  padding-top: 1rem;
 }
 
 .bw-settings-flash {
