@@ -36,6 +36,31 @@ spl-token transfer He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox 1000 <TESTER_ADD
 
 (0 decimals → `1000` = 1000 WIBE.) Tester guide: [`iterations/help.md`](iterations/help.md).
 
+### WIBE Wheel — the free faucet (`/games/wheel`)
+
+Out of WIBE? You don't have to ping the operator. The **WIBE Wheel** is an on-chain faucet that drops free chips straight onto your casino balance — once every 24h, no deposit, no bet.
+
+How it works on the game page:
+
+1. **Connect Phantom (devnet) and switch to LIVE.** The wheel is a real on-chain instruction (`spin_wheel`), so it needs a wallet — there's no FUN version of the faucet.
+2. **Hit Spin.** Phantom asks you to approve one transaction. You pay **only SOL**, never WIBE: a tiny network fee, plus — on your *first ever* spin — a one-time rent deposit (~0.001–0.002 SOL) for the two accounts the spin creates: your `FaucetClaim` (stores the 24h cooldown) and your `UserBalance` (your casino balance, if you never deposited before). Second spin onward: just the fee.
+3. **Win 1–1000 WIBE.** The wheel lands on a skewed prize and the program credits it to your on-chain `UserBalance` and decrements the shared prize pool (`faucet.remaining`). No SPL tokens move on the spin itself — the prize is a balance credit. To pull it into your wallet, do a normal **Withdraw** (that's when the vault actually pays out, which is why the pool is pre-funded).
+4. **24h cooldown.** Enforced on-chain via the cluster clock, per wallet. The page shows the time left; the lobby banner disables itself when the shared pool runs dry.
+
+Operator: the pool is initialized once with `pnpm devnet:faucet` (default 3333 WIBE) and the casino vault must hold at least that much WIBE so withdrawals of wheel winnings stay solvent.
+
+### Why you can trust it (provably fair)
+
+The whole point of the challenge: a paranoid player with a block explorer should be able to prove it's not a scam. Here's what makes Brutal wibe verifiable rather than "trust me":
+
+- **The RNG is deterministic and reproducible.** Every roll is `FNV-1a(blockhash · user_seed · nonce · domain)` — no hidden server seed, no off-chain oracle. The same inputs always produce the same result, on-chain and in the client mirror ([`shared/rng-verify.ts`](shared/rng-verify.ts)).
+- **The program emits the exact blockhash it used.** `DicePlayed` / `SlotPlayed` / `WheelSpun` events carry the literal `blockhash: [u8; 32]` the contract hashed. So the client doesn't *guess* which blockhash to recompute against — it uses the one the chain committed to. That's what makes the **Fair** tab match a live roll byte-for-byte.
+- **You supply half the entropy.** Your `user_seed` is generated client-side per play, so the house can't pre-compute or cherry-pick outcomes in your favor or against you.
+- **The house edge is on-chain and visible.** Dice/slot payouts apply a fixed `house_edge_bps` set at `initialize` — it's in the program, not a UI knob. A casino has an edge by design; here you can read exactly what it is.
+- **Anyone can re-derive a result independently:** pull the tx from [Solana Explorer](https://explorer.solana.com/?cluster=devnet), read the emitted `blockhash`, `user_seed`, `nonce`, and run the same FNV-1a — the Fair tab does this in-browser, but the math is public and you can do it yourself.
+
+Honest scope note: the **Wheel is deliberately *not* presented as a fair-verify game.** Its prize curve is skewed (small wins are common, the 1000 jackpot is rare) — that's a faucet giveaway, not a bet you can lose, so there's no "fairness" to contest. It's still fully on-chain and auditable (`WheelSpun` emits the blockhash and prize), but it intentionally lives outside the Fair tab. Dice and Slot are the games where the provably-fair guarantee matters, and that's where it's wired.
+
 ---
 
 ## Brutal wibe (this repo)
