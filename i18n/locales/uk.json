@@ -28,7 +28,14 @@
   "wallet": {
     "connect": "Підключити Phantom",
     "connecting": "Підключення…",
-    "casinoBalance": "Баланс казино"
+    "casinoBalance": "Баланс казино",
+    "disconnectHint": "Відключити?",
+    "disconnectConfirm": {
+      "title": "Розірвати зв'язок із гаманцем?",
+      "description": "Phantom відв'яжеться від Brutal wibe. Підключити знову можна будь-коли.",
+      "confirm": "Відключити",
+      "cancel": "Залишитися"
+    }
   },
   "games": {
     "dice": {

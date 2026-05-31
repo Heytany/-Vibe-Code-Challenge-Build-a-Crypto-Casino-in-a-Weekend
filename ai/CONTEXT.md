@@ -1,54 +1,33 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-31 — iteration 9 done (Claude/Cowork), ready to commit (PO)  
-**Current iteration:** 9 → fixes (toast crash, Netlify env, word-wrap, mode header, speed radio) + devnet readiness analysis  
-**Report:** [`iterations/09-fixes-deploy-readiness.md`](../iterations/09-fixes-deploy-readiness.md)
+**Last updated:** 2026-05-30 — iteration 11 ready, **PO commit**  
+**Current iteration:** 11  
+**Report:** [`iterations/11-mobile-toasts-devnet-phase-a.md`](../iterations/11-mobile-toasts-devnet-phase-a.md)
+
+## Iteration 11 — ready (PO commit) ⏳
+
+- [x] Toast viewport mobile fix
+- [x] Mobile QA (tabs, overflow-x, header wallet)
+- [x] Wallet UX: crack full-screen scrim, disconnect confirm, BrutalAlert Teleport + viewport anchor
+- [x] Phantom Phase A — PO verified connect/disconnect cycles
+- [x] [`iterations/help.md`](../iterations/help.md) updated
+- [x] CI: pnpm version only from `packageManager` in package.json
+- [ ] **PO:** commit it.11 + hash in README (agent does NOT commit)
+
+---
+
+## Iteration 10 — done (PO commit) ⏳
+
+- [x] Slot split win animation, Reka UI (Dropdown/Slider/RadioGroup), mobile header 2-row, copy fixes
+- [x] Slot RNG fix in `lib.rs` (needs redeploy for LIVE)
+- [ ] **PO:** commit if not yet
 
 ## Iteration 9 — done (PO commit) ⏳
 
-- [x] Toast crash on fast rolls fixed (hoisted `showError` in Dice/Slot)
-- [x] **Netlify deploy fix:** env-validation no longer fatal when chain env empty → FUN homepage loads
-- [x] `ACCESS DENIED` wraps as whole words on mobile (`DancingText` word groups)
-- [x] Game title + FUN/LIVE toggle + mode explanation moved above the hero
-- [x] Speed control = segmented radio (clear state); auto-bar responsive at 320px
-- [x] **Devnet readiness analysis:** [`specs/testnet-readiness.md`](specs/testnet-readiness.md) — FUN 100%, LIVE ~50% (program written, not deployed/wired)
-- [x] **🐛 Slot RNG fix:** reels used a trailing domain byte → never paid (0% pairs). Now per-reel nonce stride (`+reel·0x9e3779b97f4a7c15`) in `lib.rs` + `rng-verify` → ~44% pairs. **Live needs program redeploy.**
-- [x] Roll/spin button no longer jumps height (loading face single-line); ∞ toggle is a clear ON/OFF checkbox
-- [x] **Reka UI adoption (ADR-019):** locale picker → `DropdownMenu`, dice target → `Slider`, under/over → `RadioGroup`; `BrutalTabs` wrapper ready (wire into games next on dev server)
-- [ ] **PO host:** `anchor build && deploy` (RNG changed!) → set `NUXT_PUBLIC_*` in Netlify for LIVE; `pnpm build`/e2e; commit
-- [ ] **Next:** wire `BrutalTabs` into Dice/Slot; speed/∞/stop-on-win → Reka `ToggleGroup`/`Checkbox`
+- [x] Toast crash fix, Netlify env non-fatal when empty, devnet readiness analysis
+- [x] [`specs/testnet-readiness.md`](specs/testnet-readiness.md) — FUN 100%, LIVE ~50%
 
 ---
-
-
-## Iteration 8 — done (PO commit) ⏳
-
-- [x] iOS/mobile: overlays anchored to visual viewport, `overscroll-behavior` fixes header detach (ADR-018)
-- [x] Matrix + crack centered on current screen, fullscreen on iOS (`useViewportAnchor`, `getVisualViewport`)
-- [x] Provably-fair "Fair" tab in both games — recompute via `rng-verify` (ADR-015)
-- [x] Auto-roll + speed ×2 + fullscreen game mode (`GameAutoFsBar`, `useAutoPlay`, `useFullscreen`) (ADR-016)
-- [x] Slot split-panel win animation 2/3 bands, alternating inverted code-sweep (ADR-017)
-- [ ] **PO host:** `pnpm build`, `pnpm test:e2e`, `pnpm test:motion`; verify iOS Safari on device; commit
-- Prior blocker: stale `.git/index.lock` — `rm -f .git/index.lock` if it reappears.
-
----
-
-
-## Iteration 7 — ready (PO commit) ⏳
-
-- [x] `error.vue` + `AccessDeniedScreen` — matrix loop, dancing «Access denied» (EN/RU/UK)
-- [x] Catch-all 404, env fatal → same screen
-- [x] i18n toasts (`errors.codes.*`), `showWin`, offline banner, LIVE `BrutalAlert`
-- [x] `useBetField`, `BrutalSkeleton` on balance, `NuxtLoadingIndicator`
-- [ ] **PO:** commit it.7 + hash в `iterations/README.md`
-
-## Iteration 6 — done ✅
-
-- [x] Slot FUN hero + stable layout — [`06-slot-corrupted-reels.md`](../iterations/06-slot-corrupted-reels.md)
-
-## Iteration 5 — done ✅ (`ca5fae0`)
-
-- [x] Dice FUN — [`05-dice-glitch-roll.md`](../iterations/05-dice-glitch-roll.md)
 
 ## Challenge README — honest status
 
@@ -56,35 +35,37 @@
 |-------------|--------|
 | Testnet only | ✅ config devnet |
 | Verifiable on-chain | ⚠️ math + program ready; LIVE wire-up pending |
-| Public URL | ❌ deploy pending |
+| Public URL | ⚠️ Netlify-ready; PO deploy |
 | Casino edge | ✅ FUN 200 bps + on-chain in `lib.rs` |
-| Wallet → deposit → play → withdraw | ⚠️ connect ✅; FUN play ✅; LIVE it.8 |
+| Wallet → deposit → play → withdraw | ⚠️ connect ✅; FUN play ✅; LIVE pending |
 | Two playable games | ✅ FUN `/games/dice`, `/games/slot` |
-| Error UX | ✅ access denied + i18n toasts (it.7) |
+| Error UX | ✅ access denied + i18n toasts |
+| Mobile UX | ✅ it.11 toast viewport + wallet modals |
 
 ## Dev / QA
 
 ```bash
 pnpm dev                    # :3000
-# FUN: /games/dice, /games/slot — no Phantom
+# FUN: /games/dice, /games/slot — no Phantom, no env
 # 404 smoke: /games/nope
-pnpm test:env && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts && pnpm build
+NUXT_IGNORE_LOCK=1 pnpm build
+pnpm test:env && pnpm test:motion && pnpm exec vitest run tests/rng-verify.test.ts
 ```
 
-Tester: [`iterations/help.md`](../iterations/help.md)
+Tester: [`iterations/help.md`](../iterations/help.md) — **Phase A Phantom connect**
 
-## Next (it.8)
+## After it.11 commit (LIVE devnet — next iteration TBD)
 
-1. `anchor deploy` + `pnpm copy-idl`
-2. `useCasinoProgram` — deposit/withdraw, `rollLive`, `spinLive`
-3. Verify Explorer UI
-4. Vercel public URL
+1. `anchor deploy` + SPL mint + `initialize` + **redeploy** (slot RNG fix)
+2. `pnpm copy-idl` → wire `useCasinoProgram`
+3. Netlify env: 4× `NUXT_PUBLIC_*`
+4. LIVE QA: deposit → play → verify → withdraw
 
-Deploy: [`specs/deploy.md`](specs/deploy.md) · LIVE plan: [`iterations/04-plan-dice-game.md`](../iterations/04-plan-dice-game.md)
+Deploy: [`specs/deploy.md`](specs/deploy.md) · LIVE plan: [`iterations/04-plan-dice-game.md`](../iterations/04-plan-dice-game.md) · readiness: [`specs/testnet-readiness.md`](specs/testnet-readiness.md)
 
 ## Roles
 
 | Agent | Role |
 |-------|------|
-| **Cursor** | Primary — it.8 LIVE on host |
-| **PO** | QA, commits, Phantom devnet, Vercel |
+| **Cursor** | wire LIVE after PO deploy |
+| **PO** | QA, commits, Phantom devnet, Netlify, anchor deploy |

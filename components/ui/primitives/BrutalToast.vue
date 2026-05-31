@@ -1,13 +1,13 @@
 <template>
   <ToastRoot
     v-model:open="open"
-    class="bw-panel bw-panel--broken p-4 pr-16 grid gap-1 data-[state=open]:animate-in data-[state=closed]:animate-out"
+    class="bw-toast bw-panel bw-panel--broken p-4 pr-16 grid gap-1 data-[state=open]:animate-in data-[state=closed]:animate-out"
     :class="variantClass"
   >
-    <ToastTitle class="font-bold uppercase text-sm tracking-wide">
+    <ToastTitle class="bw-toast__title font-bold uppercase text-sm tracking-wide">
       {{ title }}
     </ToastTitle>
-    <ToastDescription v-if="description" class="text-sm whitespace-normal opacity-90">
+    <ToastDescription v-if="description" class="bw-toast__desc text-sm whitespace-normal opacity-90">
       {{ description }}
     </ToastDescription>
     <ToastClose class="absolute top-2 right-2 bw-btn text-xs py-1 px-2 min-h-[44px] min-w-[44px]">

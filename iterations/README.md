@@ -60,6 +60,8 @@ iterations/NN-kratkoe-nazvanie.md
 | 7 | _(PO коммитит)_ — access denied UX, toasts, offline | [07-access-denied-ux.md](./07-access-denied-ux.md) | 30.05.2026 · **~30 мин PO** |
 | 8 | _(PO коммитит)_ — mobile/iOS motion, provably-fair, auto-roll/fullscreen, slot split (Claude) | [08-mobile-motion-fair-automation.md](./08-mobile-motion-fair-automation.md) | 31.05.2026 · Claude (Cowork) |
 | 9 | _(PO коммитит)_ — fixes: toast crash, Netlify env, word-wrap, mode header, speed radio + devnet readiness (Claude) | [09-fixes-deploy-readiness.md](./09-fixes-deploy-readiness.md) | 31.05.2026 · Claude (Cowork) |
+| 10 | _(PO коммитит)_ — polish: slot split win, Reka UI, mobile header, copy, UX fixes (Claude) | [10-polish-reka-copy.md](./10-polish-reka-copy.md) | 31.05.2026 · Claude (Cowork) |
+| 11 | _(PO коммитит)_ — mobile toasts, wallet modals, Phantom Phase A | [11-mobile-toasts-devnet-phase-a.md](./11-mobile-toasts-devnet-phase-a.md) | 30.05.2026 · Cursor |
 
 **QA:** FUN — `/games/dice`, `/games/slot` без Phantom · 404 → `/games/nope`
 

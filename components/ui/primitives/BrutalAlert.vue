@@ -1,50 +1,42 @@
 <template>
-  <AlertDialogRoot :open="open" @update:open="emit('update:open', $event)">
-    <AlertDialogPortal>
-      <AlertDialogOverlay class="fixed inset-0 bg-black/80 z-[200]" />
-      <AlertDialogContent
-        class="fixed left-1/2 top-1/2 z-[201] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 bw-panel bw-panel--broken p-6 focus:outline-none"
-      >
-        <AlertDialogTitle class="text-lg font-bold uppercase mb-2 bw-accent">
-          {{ title }}
-        </AlertDialogTitle>
-        <AlertDialogDescription class="text-sm whitespace-normal mb-6 text-[var(--bw-muted)]">
-          {{ description }}
-        </AlertDialogDescription>
-        <div class="flex flex-wrap gap-3 justify-end">
-          <AlertDialogCancel as-child>
-            <UiBrutalButton :broken="false">
+  <Teleport to="body">
+    <div
+      v-if="open"
+      class="bw-alert-portal"
+      role="alertdialog"
+      aria-modal="true"
+      :aria-labelledby="titleId"
+      :aria-describedby="descId"
+    >
+      <div class="bw-alert-scrim" aria-hidden="true" @click="onCancel" />
+      <div ref="stageRef" class="bw-alert-stage">
+        <div class="bw-alert-content bw-panel bw-panel--broken p-6">
+          <h2 :id="titleId" class="text-lg font-bold uppercase mb-2 bw-accent">
+            {{ title }}
+          </h2>
+          <p :id="descId" class="text-sm whitespace-normal mb-6 text-[var(--bw-muted)]">
+            {{ description }}
+          </p>
+          <div class="flex flex-wrap gap-3 justify-end">
+            <UiBrutalButton :broken="false" @click="onCancel">
               {{ cancelLabel }}
             </UiBrutalButton>
-          </AlertDialogCancel>
-          <AlertDialogAction v-if="actionLabel" as-child>
-            <UiBrutalButton variant="accent" @click="emit('action')">
+            <UiBrutalButton v-if="actionLabel" variant="accent" @click="onAction">
               {{ actionLabel }}
             </UiBrutalButton>
-          </AlertDialogAction>
+          </div>
         </div>
-      </AlertDialogContent>
-    </AlertDialogPortal>
-  </AlertDialogRoot>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 /**
- * @agent-context Brutalist error/confirm dialog — use for blocking errors (env, tx fail).
- * @example <UiPrimitivesBrutalAlert v-model:open="show" :title="..." :description="..." />
- * @see ai/specs/ui-primitives.md
+ * @agent-context Viewport-fixed confirm dialog — Teleport to body + visual viewport anchor (iOS).
+ * Do not use Reka AlertDialogPortal here; nested transforms (header tilt) break fixed centering.
+ * @see components/motion/BrutalCrackModal.vue
  */
-import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogOverlay,
-  AlertDialogPortal,
-  AlertDialogRoot,
-  AlertDialogTitle,
-} from 'reka-ui'
-
 withDefaults(
   defineProps<{
     title: string
@@ -60,4 +52,41 @@ withDefaults(
 
 const open = defineModel<boolean>('open', { default: false })
 const emit = defineEmits<{ action: [] }>()
+
+const titleId = useId()
+const descId = useId()
+const stageRef = ref<HTMLElement | null>(null)
+
+useViewportAnchor(stageRef, open)
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && open.value) onCancel()
+}
+
+watch(open, (isOpen) => {
+  if (!import.meta.client) return
+  if (isOpen) {
+    document.body.classList.add('bw-alert-open')
+    window.addEventListener('keydown', onKeydown)
+  } else {
+    document.body.classList.remove('bw-alert-open')
+    window.removeEventListener('keydown', onKeydown)
+  }
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.classList.remove('bw-alert-open')
+    window.removeEventListener('keydown', onKeydown)
+  }
+})
+
+function onCancel() {
+  open.value = false
+}
+
+function onAction() {
+  emit('action')
+  open.value = false
+}
 </script>

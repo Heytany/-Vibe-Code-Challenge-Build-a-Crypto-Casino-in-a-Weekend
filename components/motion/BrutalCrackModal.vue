@@ -1,38 +1,40 @@
 <template>
   <Teleport to="body">
-    <div
-      v-show="motionStore.crackOpen"
-      ref="backdropRef"
-      class="bw-motion-crack-backdrop"
-      :class="{ 'bw-motion-crack-backdrop--3d': canUse3d }"
-      role="dialog"
-      aria-modal="true"
-      :aria-label="t('motion.wallet.title')"
-    >
-      <ScreenCrackOverlay ref="crackRef" />
-      <div ref="modalWrapRef" class="bw-motion-crack-modal-wrap">
-        <div
-          ref="modalRef"
-          class="bw-motion-crack-modal bw-panel bw-panel--broken"
-        >
-          <p class="text-xs text-[var(--bw-muted)] font-mono mb-2">
-            <UiLocaleText path="motion.wallet.subtitle" tag="span" />
-          </p>
-          <h2 class="text-lg font-bold uppercase mb-3 bw-accent bw-locale-text">
-            {{ titleText }}
-          </h2>
-          <p class="text-sm whitespace-normal mb-4 bw-locale-text">
-            {{ bodyText }}
-          </p>
-          <div v-if="motionStore.crackPhase === 'success'" class="bw-corrupt-bar mb-4" />
-          <UiBrutalButton
-            v-if="showClose"
-            :broken="false"
-            class="w-full"
-            @click="close"
+    <div v-show="motionStore.crackOpen" class="bw-motion-crack-portal">
+      <div class="bw-motion-crack-scrim" aria-hidden="true" />
+      <div
+        ref="backdropRef"
+        class="bw-motion-crack-backdrop"
+        :class="{ 'bw-motion-crack-backdrop--3d': canUse3d }"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="t('motion.wallet.title')"
+      >
+        <ScreenCrackOverlay ref="crackRef" />
+        <div ref="modalWrapRef" class="bw-motion-crack-modal-wrap">
+          <div
+            ref="modalRef"
+            class="bw-motion-crack-modal bw-panel bw-panel--broken"
           >
-            <UiLocaleText path="motion.wallet.close" tag="span" />
-          </UiBrutalButton>
+            <p class="text-xs text-[var(--bw-muted)] font-mono mb-2">
+              <UiLocaleText path="motion.wallet.subtitle" tag="span" />
+            </p>
+            <h2 class="text-lg font-bold uppercase mb-3 bw-accent bw-locale-text">
+              {{ titleText }}
+            </h2>
+            <p class="text-sm whitespace-normal mb-4 bw-locale-text">
+              {{ bodyText }}
+            </p>
+            <div v-if="motionStore.crackPhase === 'success'" class="bw-corrupt-bar mb-4" />
+            <UiBrutalButton
+              v-if="showClose"
+              :broken="false"
+              class="w-full"
+              @click="close"
+            >
+              <UiLocaleText path="motion.wallet.close" tag="span" />
+            </UiBrutalButton>
+          </div>
         </div>
       </div>
     </div>
@@ -57,6 +59,23 @@ const backdropRef = ref<HTMLElement | null>(null)
 const modalWrapRef = ref<HTMLElement | null>(null)
 const modalRef = ref<HTMLElement | null>(null)
 const crackRef = ref<{ animateCrack: () => Promise<unknown>; hideCrack: () => void } | null>(null)
+
+let phaseCloseTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearPhaseCloseTimer() {
+  if (phaseCloseTimer !== null) {
+    clearTimeout(phaseCloseTimer)
+    phaseCloseTimer = null
+  }
+}
+
+function schedulePhaseClose(ms: number) {
+  clearPhaseCloseTimer()
+  phaseCloseTimer = setTimeout(() => {
+    phaseCloseTimer = null
+    close()
+  }, ms)
+}
 
 // Anchor backdrop to the visible screen so the crack + modal centre on the current viewport (iOS).
 const crackOpenRef = computed(() => motionStore.crackOpen)
@@ -134,8 +153,16 @@ function animateModalOpen() {
 watch(
   () => motionStore.crackOpen,
   async (open) => {
-    if (!open) return
+    if (!open) {
+      clearPhaseCloseTimer()
+      crackRef.value?.hideCrack()
+      return
+    }
+    clearPhaseCloseTimer()
     await nextTick()
+    if (modalRef.value) {
+      gsap.set(modalRef.value, { clearProps: 'all', opacity: 1, scale: 1, scaleY: 1, x: 0, y: 0, z: 0 })
+    }
     animateModalOpen()
   },
 )
@@ -152,19 +179,21 @@ watch(
           repeat: 1,
         })
       }
-      setTimeout(() => close(), 1200)
+      schedulePhaseClose(1200)
     }
     if (phase === 'error') {
       if (modalRef.value) {
         gsap.to(modalRef.value, { x: '+=6', duration: 0.05, repeat: 5, yoyo: true, clearProps: 'x' })
       }
       showError(new Error(t('motion.wallet.error')))
-      setTimeout(() => close(), 800)
+      schedulePhaseClose(800)
     }
   },
 )
 
 function close() {
+  if (!motionStore.crackOpen) return
+  clearPhaseCloseTimer()
   if (modalRef.value) {
     const props = canUse3d.value
       ? { rotateX: 55, scale: 0.85, opacity: 0, y: 24, z: -120 }
@@ -175,6 +204,7 @@ function close() {
       duration: 0.28,
       ease: 'power2.in',
       onComplete: () => {
+        if (modalRef.value) gsap.set(modalRef.value, { clearProps: 'all' })
         crackRef.value?.hideCrack()
         motionStore.finishCrack()
       },
@@ -183,9 +213,32 @@ function close() {
     motionStore.finishCrack()
   }
 }
+
+onUnmounted(() => {
+  clearPhaseCloseTimer()
+})
 </script>
 
 <style scoped>
+.bw-motion-crack-portal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--bw-motion-overlay-z, 500);
+  pointer-events: none;
+}
+
+/* Always covers the full layout viewport — separate from the iOS-anchored content layer. */
+.bw-motion-crack-scrim {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  background: rgba(0, 0, 0, 0.72);
+  pointer-events: auto;
+  z-index: 0;
+}
+
 .bw-motion-crack-backdrop {
   position: fixed;
   top: 0;
@@ -195,13 +248,14 @@ function close() {
   height: 100vh;
   height: 100dvh;
   transform-origin: top left;
-  z-index: var(--bw-motion-overlay-z, 500);
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.72);
+  background: transparent;
   padding: 1rem;
   isolation: isolate;
+  pointer-events: none;
 }
 
 .bw-motion-crack-backdrop--3d {
@@ -213,6 +267,7 @@ function close() {
   position: relative;
   z-index: 2;
   transform-style: preserve-3d;
+  pointer-events: auto;
 }
 
 .bw-motion-crack-modal {

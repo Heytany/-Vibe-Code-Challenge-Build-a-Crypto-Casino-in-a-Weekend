@@ -10,9 +10,7 @@
       :variant="toast.variant"
       @update:open="(v) => !v && removeToast(toast.id)"
     />
-    <ToastViewport
-      class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm p-0 outline-none"
-    />
+    <ToastViewport class="bw-toast-viewport" />
   </ToastProvider>
 </template>
 

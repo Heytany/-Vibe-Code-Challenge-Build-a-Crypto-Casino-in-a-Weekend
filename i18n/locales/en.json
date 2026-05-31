@@ -28,7 +28,14 @@
   "wallet": {
     "connect": "Connect Phantom",
     "connecting": "Connecting…",
-    "casinoBalance": "Casino balance"
+    "casinoBalance": "Casino balance",
+    "disconnectHint": "Disconnect?",
+    "disconnectConfirm": {
+      "title": "Sever wallet link?",
+      "description": "Phantom will be unlinked from Brutal wibe. You can reconnect anytime.",
+      "confirm": "Disconnect",
+      "cancel": "Stay linked"
+    }
   },
   "games": {
     "dice": {

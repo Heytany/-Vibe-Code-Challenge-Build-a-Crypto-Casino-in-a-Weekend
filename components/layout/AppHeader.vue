@@ -18,7 +18,7 @@
         <LayoutThemeToggle />
         <LayoutLocaleSwitcher />
       </div>
-      <WalletConnectButton class="w-full sm:w-auto sm:ml-1" />
+      <WalletConnectButton class="w-full sm:w-auto sm:ml-1 min-w-0" />
     </div>
   </header>
 </template>

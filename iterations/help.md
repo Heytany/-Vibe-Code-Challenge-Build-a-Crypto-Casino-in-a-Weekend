@@ -6,7 +6,9 @@
 
 ## Что это
 
-**Brutal wibe** — тестовое on-chain казино на **Solana devnet**. Реальных денег нет. Кошелёк нужен только чтобы проверить подключение и (позже) депозит / игры.
+**Brutal wibe** — тестовое on-chain казино на **Solana devnet**. Реальных денег нет. Кошелёк нужен чтобы проверить подключение; депозит и LIVE-игры — после итерации 12 (deploy + wire).
+
+**FUN mode** (Dice / Slot) работает **без кошелька** и **без** переменных `NUXT_PUBLIC_*`.
 
 ---
 
@@ -14,100 +16,137 @@
 
 ```bash
 pnpm install
-cp .env.example .env
+cp .env.example .env   # опционально — для LIVE позже
 pnpm dev
 ```
 
 Откроется http://localhost:3000
 
-Если красный экран «environment misconfigured» — в `.env` должны быть все строки `NUXT_PUBLIC_*` (можно скопировать из `.env.example` для скелета).
+### Env и красный экран
+
+| Ситуация | Поведение |
+|----------|-----------|
+| `.env` **пустой** или нет файла | FUN работает; LIVE скрыт; в консоли предупреждение |
+| **Все 4** `NUXT_PUBLIC_*` заполнены корректно | FUN + LIVE (после deploy программы) |
+| Заполнена **часть** переменных | Fatal «environment misconfigured» — исправьте или очистите все |
+
+Переменные (для LIVE, после deploy):
+
+- `NUXT_PUBLIC_SOLANA_NETWORK=devnet`
+- `NUXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com`
+- `NUXT_PUBLIC_CASINO_PROGRAM_ID=…`
+- `NUXT_PUBLIC_CASINO_TOKEN_MINT=…`
 
 ---
 
-## 2. Тестовый кошелёк Phantom («для регистрации»)
+## 2. Netlify / preview (FUN-only)
+
+Сайт можно деплоить **без** chain-env — главная и игры в FUN mode загрузятся.
+
+1. Подключить репозиторий к Netlify (см. [`netlify.toml`](../netlify.toml)).
+2. Build: `pnpm build`, publish: `.output/public`.
+3. Env на Netlify **не обязателен** для демо FUN.
+4. Phantom на production URL работает только по **HTTPS**.
+
+---
+
+## 3. Тестовый кошелёк Phantom (Phase A — connect)
 
 ### Шаг A — установить Phantom
 
-1. Браузер **Chrome / Brave / Firefox** (десктоп или мобильный Phantom).
-2. Скачать расширение: https://phantom.app/
-3. **Create a new wallet** — это и есть ваш **тестовый кошелёк**.  
-   Не используйте основной кошелёк с mainnet-деньгами.
+**Десктоп:** Chrome / Brave / Firefox → расширение https://phantom.app/
 
-4. Запишите seed phrase **офлайн** (для теста можно на бумажке; это devnet, не real money).
+**Мобилка:** приложение Phantom (iOS / Android). Открыть сайт в **встроенном браузере Phantom** (Menu → Browser) или Safari/Chrome с расширением (если доступно).
 
-> Phantom = «логин» в приложение. Отдельной регистрации email/пароля в Brutal wibe **нет** — подключили кошелёк = «зарегистрировались».
+1. **Create a new wallet** — отдельный **тестовый** кошелёк, не mainnet с реальными деньгами.
+2. Запишите seed phrase офлайн.
 
-### Шаг B — переключить сеть на Devnet
+> Phantom = «логин». Email/пароля в Brutal wibe нет — connect = «зарегистрировался».
 
-1. Откройте Phantom → **Settings** (шестерёнка).
-2. **Developer Settings** → включить **Testnet Mode**  
-   *или* в настройках сети выбрать **Solana Devnet**.
+### Шаг B — Devnet
 
-Без devnet приложение не сможет работать с тестовыми токенами казино.
+1. Phantom → **Settings** (шестерёнка).
+2. **Developer Settings** → **Testnet Mode**  
+   *или* сеть **Solana Devnet**.
 
-### Шаг C — получить бесплатные devnet-SOL (на gas)
+### Шаг C — devnet-SOL (gas)
 
-1. Скопируйте адрес кошелька в Phantom (клик по имени → Copy address).
-2. Faucet: https://faucet.solana.com/  
-   - Network: **Devnet**  
-   - Вставьте адрес → Request airdrop  
-3. Подождите ~30 сек, баланс SOL появится в Phantom.
+1. Copy address в Phantom.
+2. https://faucet.solana.com/ → **Devnet** → airdrop.
+3. ~30 сек — баланс SOL в Phantom.
 
-Это нужно для будущих транзакций (депозит, ставки). На текущем скелете достаточно для проверки connect.
+Нужно для будущих транзакций (deposit/play). Для проверки **Connect** достаточно.
 
-### Шаг D — подключить к Brutal wibe
+### Шаг D — Connect на сайте
 
-1. На сайте нажмите **«Connect Phantom»** / **«Подключить Phantom»**.
-2. Дождитесь анимации трещины → Phantom спросит разрешение.
-3. Нажмите **Connect** в окне Phantom.
-4. После успеха кнопка покажет сокращённый адрес (`Ab12…xy89`).
+1. **Connect Phantom** / **Подключить Phantom**.
+2. Анимация трещины → Approve в Phantom.
+3. Кнопка показывает адрес `Ab12…xy89`.
+4. **Disconnect** — обычный клик, без анимации.
 
-**Disconnect** — обычный клик без анимации, кошелёк отвязывается.
+### Шаг E — что работает / не работает (it.11)
+
+| Действие | Статус |
+|----------|--------|
+| FUN Dice / Slot без кошелька | ✅ |
+| Connect / Disconnect Phantom | ✅ |
+| Переключение LIVE | ⚠️ алерт «нет программы» / «нет кошелька» — ожидаемо |
+| Deposit / withdraw / on-chain play | ❌ после deploy + wire |
 
 ---
 
-## 3. Что проверять на каждой итерации
+## 4. Мобилка — чеклист
+
+Проверять **320px и 390px** (DevTools) + по возможности iPhone Safari.
 
 | Область | Действие |
 |---------|----------|
-| Язык | EN / RU / UK в шапке — текст меняется, есть короткая анимация |
-| Тема | ☀ / ☾ — день / ночь |
-| Лобби → игра | Карточка Dice или Slot — matrix-переход, открывается страница игры |
-| **Dice (FUN)** | `/games/dice` — roll, 3D-куб, matrix на win |
-| **Slot (FUN)** | `/games/slot` — pull lever, 3 барабана, рычаг + matrix на win |
-| Назад | «← Lobby» — возврат без matrix |
-| Кошелёк | Connect → crack modal → Phantom |
-| Reduced motion | В OS включить «Reduce motion» — переходы без оверлеев, но работают |
-| Мобилка | Узкий viewport — кнопки не меньше 44px, всё читается |
+| Шапка | 2 строки: лого+тема+язык / wallet на всю ширину |
+| Тосты | Win, auto-roll итог, offline — **внутри экрана**, не обрезаны справа |
+| Dice / Slot | 3 таба (Play / Rules / Fair), куб/барабаны, кнопка Roll/Spin |
+| Auto-bar | Rounds, ∞, speed, fullscreen — без горизонтального scroll |
+| Crack modal | Connect — modal по центру, кнопки ≥44px |
+| Access denied | `/games/nope` — заголовок переносится, matrix не ломает layout |
+| Язык / тема | EN / RU / UK, ☀ / ☾ |
+
+**iOS Safari:** hero не должен «прыгать» при скрытии адресной строки (100dvh + viewport anchor).
 
 ---
 
-## 4. Демо с Git (Vercel / Netlify)
+## 5. Что проверять на каждой итерации
 
-Репозиторий подключается к хостингу — см. [`ai/specs/deploy.md`](../ai/specs/deploy.md).
-
-На **production URL** Phantom работает только по **HTTPS**. Локально — `localhost` тоже ок.
-
-Перед показом PO заполняет env на хостинге (program id после деплоя контракта).
+| Область | Действие |
+|---------|----------|
+| Лобби → игра | Matrix-переход, Dice / Slot |
+| **Dice (FUN)** | Roll, 3D-куб, matrix на win, тост выигрыша |
+| **Slot (FUN)** | Spin, 3 барабана, matrix на win |
+| Назад | «← Lobby» |
+| Provably Fair | Tab Fair → recompute после игры |
+| Auto-roll | Старт/стоп, тост итога |
+| Reduced motion | OS «Reduce motion» — без оверлеев, логика работает |
 
 ---
 
-## 5. Частые проблемы
+## 6. Частые проблемы
 
 | Симптом | Решение |
 |---------|---------|
-| Phantom не открывается | Расширение установлено? Не заблокирован pop-up? |
-| «Rejected» / LINK FAILED | Вы нажали Cancel в Phantom или нет devnet |
-| Красный экран env | `.env` или переменные на хостинге не заполнены |
-| Нет анимаций | Reduce motion в системе — это норма |
-| Баланс казино 0 | Контракт ещё не задеплоен — см. [`ai/CONTEXT.md`](../ai/CONTEXT.md) |
+| Phantom не открывается | Расширение установлено? Pop-up не заблокирован? На мобилке — браузер Phantom |
+| «Rejected» / LINK FAILED | Cancel в Phantom или не devnet |
+| Красный экран env | Частично заполнен `.env` — заполните все 4 или очистите |
+| LIVE не включается | Норма до deploy — нужен program id + mint в env |
+| Тост обрезан | Обновите до it.11+; проверьте 320px |
+| Нет анимаций | Reduce motion — норма |
+| Баланс казино 0 | Контракт не задеплоен — [`ai/CONTEXT.md`](../ai/CONTEXT.md) |
 
 ---
 
-## 6. Куда писать баги
+## 7. Куда писать баги
 
-1. Скрин + URL + браузер  
+1. Скрин + URL + браузер / устройство  
 2. Шаги воспроизведения  
-3. Консоль (F12 → Console) — красные строки  
+3. F12 → Console — красные строки  
 
-Отчёты итераций PO ведёт в [`iterations/`](./) — агент (Claude) читает последний файл перед работой.
+Отчёты итераций: [`iterations/`](./). Агент читает последний файл перед работой.
+
+**Дальше (после it.11):** deploy Anchor + wire `useCasinoProgram` — см. [`ai/specs/testnet-readiness.md`](../ai/specs/testnet-readiness.md).
