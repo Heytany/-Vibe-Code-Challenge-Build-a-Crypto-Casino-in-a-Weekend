@@ -150,6 +150,10 @@ export function useGameDice() {
     won.value = null
     lastRoll.value = null
 
+    // supersede any still-pending play so a fresh signature prompt can start cleanly
+    diceSigningCancel?.('user')
+    diceSigningCancel = null
+
     const { playDice } = useCasinoProgram()
     const userSeed = randomU64()
     const rollUnder = direction.value === 'under'

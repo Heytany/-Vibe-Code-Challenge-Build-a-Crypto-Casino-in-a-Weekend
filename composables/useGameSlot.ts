@@ -143,6 +143,10 @@ export function useGameSlot() {
     won.value = null
     reels.value = null
 
+    // supersede any still-pending play so a fresh signature prompt can start cleanly
+    slotSigningCancel?.('user')
+    slotSigningCancel = null
+
     const { playSlot } = useCasinoProgram()
     const userSeed = randomU64()
 

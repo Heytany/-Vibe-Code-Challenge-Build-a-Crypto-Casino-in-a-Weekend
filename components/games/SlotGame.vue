@@ -26,29 +26,31 @@
             />
           </template>
           <template #action>
-            <UiBrutalButton
-              class="bw-slot-spin-btn"
-              variant="accent"
-              :loading="busy && !signing"
-              :disabled="busy"
-              @click="onSpin"
-            >
-              <UiLocaleText path="games.slot.spin" tag="span" />
-            </UiBrutalButton>
-            <button
-              v-if="signing && !isFun"
-              type="button"
-              class="bw-btn text-sm min-h-[44px] mt-2 w-full max-w-[12rem]"
-              @click="cancelPlay"
-            >
-              <UiLocaleText path="games.common.cancelPlay" tag="span" />
-            </button>
-            <p
-              v-if="signing && !isFun"
-              class="text-xs font-mono text-[var(--bw-muted)] text-center mt-2 whitespace-normal"
-            >
-              <UiLocaleText path="games.common.confirmInPhantom" tag="span" />
-            </p>
+            <div class="bw-dice-hero-center">
+              <UiBrutalButton
+                class="bw-slot-spin-btn"
+                variant="accent"
+                :loading="busy && !signing"
+                :disabled="busy"
+                @click="onSpin"
+              >
+                <UiLocaleText path="games.slot.spin" tag="span" />
+              </UiBrutalButton>
+              <button
+                v-if="signing && !isFun"
+                type="button"
+                class="bw-btn text-sm min-h-[44px] w-full max-w-[12rem]"
+                @click="cancelPlay"
+              >
+                <UiLocaleText path="games.common.cancelPlay" tag="span" />
+              </button>
+              <p
+                v-if="signing && !isFun"
+                class="text-xs font-mono text-[var(--bw-muted)] text-center whitespace-normal"
+              >
+                <UiLocaleText path="games.common.confirmInPhantom" tag="span" />
+              </p>
+            </div>
           </template>
         </LobbyMonsterReelsHero>
       </div>
