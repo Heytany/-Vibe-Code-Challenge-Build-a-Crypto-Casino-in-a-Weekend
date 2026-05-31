@@ -6,6 +6,38 @@
 
 ---
 
+## How to play (devnet)
+
+No real money — this runs on **Solana devnet** only. Tokens and SOL are test-only.
+
+### FUN mode — zero setup
+
+Open [truebrutal.netlify.app](https://truebrutal.netlify.app) and play **Glitch Roll** or **Corrupted Reels**. No wallet, no tokens — virtual credits, same FNV-1a RNG as on-chain. Default mode.
+
+### LIVE mode — real on-chain play (Phantom + devnet)
+
+1. **Install a wallet — Phantom** ([phantom.app](https://phantom.app), browser extension or mobile app). On mobile, open the site inside Phantom → *Menu → Browser*.
+2. **Switch Phantom to Devnet:** *Settings → Developer Settings → Testnet Mode* (or select **Solana Devnet**).
+3. **Get devnet SOL** (for transaction fees): copy your address → [faucet.solana.com](https://faucet.solana.com) → Devnet → airdrop ~1 SOL.
+4. **Get WIBE test tokens** — the casino chip. There is **no public WIBE faucet**; the operator sends you some (see below). WIBE mint: `He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox`. In Phantom it may show as “Unknown Token” until metadata refreshes — that's WIBE.
+5. **Connect** on the site → switch to **LIVE** → **Deposit** WIBE into the casino → play. Your casino balance lives on-chain (a `UserBalance` PDA), not in your wallet.
+6. **Withdraw** any time to send WIBE back to your wallet. Every roll is verifiable in the **Fair** tab and on [Solana Explorer](https://explorer.solana.com/?cluster=devnet).
+
+> Each bet is a real on-chain transaction → Phantom asks you to approve every roll. That's the “provably on-chain” trade-off, not a bug.
+
+### Operator: fund a tester with WIBE
+
+From the wallet that holds WIBE (the deploy wallet, ~10 000 from `pnpm devnet:setup`):
+
+```bash
+spl-token transfer He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox 1000 <TESTER_ADDRESS> \
+  --url devnet --fund-recipient --allow-unfunded-recipient
+```
+
+(0 decimals → `1000` = 1000 WIBE.) Tester guide: [`iterations/help.md`](iterations/help.md).
+
+---
+
 ## Brutal wibe (this repo)
 
 ### Architecture
