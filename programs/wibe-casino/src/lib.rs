@@ -12,6 +12,11 @@ declare_id!("BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw");
 pub const CASINO_CONFIG_SEED: &[u8] = b"casino_config";
 pub const CASINO_VAULT_SEED: &[u8] = b"casino_vault";
 pub const USER_BALANCE_SEED: &[u8] = b"user_balance";
+pub const FAUCET_CONFIG_SEED: &[u8] = b"faucet_config";
+pub const FAUCET_CLAIM_SEED: &[u8] = b"faucet_claim";
+
+/// WIBE Wheel faucet cooldown — 24h per wallet.
+pub const FAUCET_COOLDOWN_SECS: i64 = 86_400;
 
 #[program]
 pub mod wibe_casino {
@@ -189,6 +194,72 @@ pub mod wibe_casino {
         });
 
         Ok(())
+    }
+
+    /// Initializes the WIBE Wheel faucet pool. Authority-only. `initial_remaining` must be backed
+    /// by liquidity already sent to the casino vault, so faucet credits stay solvent on withdraw.
+    pub fn init_faucet(ctx: Context<InitFaucet>, initial_remaining: u64) -> Result<()> {
+        let faucet = &mut ctx.accounts.faucet_config;
+        faucet.authority = ctx.accounts.authority.key();
+        faucet.remaining = initial_remaining;
+        faucet.bump = ctx.bumps.faucet_config;
+        Ok(())
+    }
+
+    /// WIBE Wheel — free spin that credits the player's casino balance from the shared faucet pool.
+    /// NOT a paid game: outcome is NOT provably-fair-verified in the UI. 24h cooldown per wallet,
+    /// skewed prize 1..1000 WIBE. Fails with FaucetEmpty when the pool can't cover the prize.
+    pub fn spin_wheel(ctx: Context<SpinWheel>, user_seed: u64) -> Result<()> {
+        let now = Clock::get()?.unix_timestamp;
+        let claim = &mut ctx.accounts.faucet_claim;
+        if claim.last_claim != 0 {
+            require!(
+                now - claim.last_claim >= FAUCET_COOLDOWN_SECS,
+                WibeError::FaucetCooldown
+            );
+        }
+
+        let blockhash = read_blockhash_32(&ctx.accounts.recent_blockhashes)?;
+        let prize = wheel_prize(&blockhash, user_seed, claim.spins);
+
+        let faucet = &mut ctx.accounts.faucet_config;
+        require!(faucet.remaining >= prize, WibeError::FaucetEmpty);
+        faucet.remaining = faucet.remaining.checked_sub(prize).ok_or(WibeError::MathOverflow)?;
+
+        let user_balance = &mut ctx.accounts.user_balance;
+        user_balance.amount = user_balance.amount.checked_add(prize).ok_or(WibeError::MathOverflow)?;
+
+        claim.last_claim = now;
+        claim.spins = claim.spins.checked_add(1).ok_or(WibeError::MathOverflow)?;
+        claim.bump = ctx.bumps.faucet_claim;
+
+        emit!(WheelSpun {
+            player: ctx.accounts.user.key(),
+            prize,
+            blockhash,
+        });
+
+        Ok(())
+    }
+}
+
+/// Skewed wheel prize 1..1000 WIBE — small wins are common, 1000 is near-impossible.
+fn wheel_prize(blockhash: &[u8; 32], user_seed: u64, nonce: u64) -> u64 {
+    let h = hash_from_inputs(blockhash, user_seed, nonce, b"wheel");
+    let bucket = h % 10_000;
+    let span = |lo: u64, hi: u64| lo + (h / 10_000) % (hi - lo + 1);
+    if bucket < 6_000 {
+        span(1, 5)
+    } else if bucket < 8_500 {
+        span(6, 25)
+    } else if bucket < 9_500 {
+        span(26, 100)
+    } else if bucket < 9_900 {
+        span(101, 300)
+    } else if bucket < 9_990 {
+        span(301, 700)
+    } else {
+        1_000
     }
 }
 
@@ -420,6 +491,71 @@ pub struct PlaySlot<'info> {
     pub recent_blockhashes: AccountInfo<'info>,
 }
 
+#[derive(Accounts)]
+pub struct InitFaucet<'info> {
+    #[account(mut, constraint = authority.key() == casino_config.authority)]
+    pub authority: Signer<'info>,
+
+    #[account(
+        seeds = [CASINO_CONFIG_SEED, casino_config.mint.as_ref()],
+        bump = casino_config.bump
+    )]
+    pub casino_config: Account<'info, CasinoConfig>,
+
+    #[account(
+        init,
+        payer = authority,
+        space = 8 + FaucetConfig::INIT_SPACE,
+        seeds = [FAUCET_CONFIG_SEED, casino_config.key().as_ref()],
+        bump
+    )]
+    pub faucet_config: Account<'info, FaucetConfig>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct SpinWheel<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    #[account(
+        seeds = [CASINO_CONFIG_SEED, casino_config.mint.as_ref()],
+        bump = casino_config.bump
+    )]
+    pub casino_config: Account<'info, CasinoConfig>,
+
+    #[account(
+        mut,
+        seeds = [FAUCET_CONFIG_SEED, casino_config.key().as_ref()],
+        bump = faucet_config.bump
+    )]
+    pub faucet_config: Account<'info, FaucetConfig>,
+
+    #[account(
+        init_if_needed,
+        payer = user,
+        space = 8 + FaucetClaim::INIT_SPACE,
+        seeds = [FAUCET_CLAIM_SEED, casino_config.key().as_ref(), user.key().as_ref()],
+        bump
+    )]
+    pub faucet_claim: Account<'info, FaucetClaim>,
+
+    #[account(
+        init_if_needed,
+        payer = user,
+        space = 8 + UserBalance::INIT_SPACE,
+        seeds = [USER_BALANCE_SEED, casino_config.key().as_ref(), user.key().as_ref()],
+        bump
+    )]
+    pub user_balance: Account<'info, UserBalance>,
+
+    /// CHECK: recent blockhashes sysvar for wheel RNG
+    pub recent_blockhashes: AccountInfo<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
 #[account]
 #[derive(InitSpace)]
 pub struct CasinoConfig {
@@ -435,6 +571,22 @@ pub struct CasinoConfig {
 pub struct UserBalance {
     pub amount: u64,
     pub game_nonce: u64,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct FaucetConfig {
+    pub authority: Pubkey,
+    pub remaining: u64,
+    pub bump: u8,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct FaucetClaim {
+    pub last_claim: i64,
+    pub spins: u64,
+    pub bump: u8,
 }
 
 #[event]
@@ -462,6 +614,13 @@ pub struct SlotPlayed {
     pub blockhash: [u8; 32],
 }
 
+#[event]
+pub struct WheelSpun {
+    pub player: Pubkey,
+    pub prize: u64,
+    pub blockhash: [u8; 32],
+}
+
 #[error_code]
 pub enum WibeError {
     #[msg("Invalid bet amount or parameters")]
@@ -476,4 +635,8 @@ pub enum WibeError {
     InvalidHouseEdge,
     #[msg("Invalid blockhash data")]
     InvalidBlockhash,
+    #[msg("Wheel faucet pool is empty")]
+    FaucetEmpty,
+    #[msg("Wheel is on cooldown — try again later")]
+    FaucetCooldown,
 }

@@ -175,6 +175,22 @@
       "skipPromptBody": "Ты отменил {n} раундов подряд — транзакции не ушли в Phantom.",
       "skipPromptContinue": "Продолжить",
       "skipPromptStop": "Выключить авторолл"
+    },
+    "wheel": {
+      "title": "WIBE Wheel",
+      "slogan": "Out of luck? Just hack it up!",
+      "tagline": "// бесплатный спин — монстр придавлен колесом",
+      "spin": "Крутить колесо",
+      "spinning": "Крутится…",
+      "prizeFund": "Призовой фонд",
+      "cooldown": "Кулдаун — через {h}ч {m}м",
+      "poolEmpty": "Фонд исчерпан — колесо офлайн",
+      "connectFirst": "Подключи Phantom (devnet), чтобы крутить",
+      "won": "Выигрыш {prize} WIBE → на баланс казино",
+      "notVerified": "// фасет — пополняет баланс казино, не provably-fair",
+      "back": "← В лобби",
+      "bannerCta": "Крутить колесо",
+      "bannerHint": "Бесплатные WIBE на баланс казино · 1/день"
     }
   },
   "footer": {

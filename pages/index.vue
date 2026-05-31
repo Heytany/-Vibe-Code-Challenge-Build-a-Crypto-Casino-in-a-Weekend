@@ -56,6 +56,8 @@
         </button>
       </template>
     </LobbyMonsterHero>
+
+    <LobbyWheelBanner />
   </div>
 </template>
 

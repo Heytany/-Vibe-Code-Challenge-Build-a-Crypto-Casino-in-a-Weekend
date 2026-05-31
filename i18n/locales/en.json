@@ -179,6 +179,22 @@
       "skipPromptBody": "You cancelled {n} rounds in a row — no transaction was sent to Phantom.",
       "skipPromptContinue": "Continue",
       "skipPromptStop": "Stop auto-roll"
+    },
+    "wheel": {
+      "title": "WIBE Wheel",
+      "slogan": "Out of luck? Just hack it up!",
+      "tagline": "// free spin — the monster is pinned under the wheel",
+      "spin": "Spin the wheel",
+      "spinning": "Spinning…",
+      "prizeFund": "Prize pool",
+      "cooldown": "On cooldown — back in {h}h {m}m",
+      "poolEmpty": "Prize pool drained — wheel offline",
+      "connectFirst": "Connect Phantom (devnet) to spin",
+      "won": "You won {prize} WIBE → casino balance",
+      "notVerified": "// faucet — credits your casino balance, not provably-fair",
+      "back": "← Lobby",
+      "bannerCta": "Spin the Wheel",
+      "bannerHint": "Free WIBE for your casino balance · 1/day"
     }
   },
   "footer": {

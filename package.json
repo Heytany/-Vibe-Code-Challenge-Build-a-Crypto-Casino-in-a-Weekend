@@ -18,7 +18,8 @@
     "anchor:build": "anchor build --no-idl",
     "devnet:balance": "node scripts/devnet-airdrop.mjs",
     "devnet:setup": "node scripts/devnet-setup.mjs",
-    "devnet:token-meta": "node scripts/devnet-token-metadata.mjs"
+    "devnet:token-meta": "node scripts/devnet-token-metadata.mjs",
+    "devnet:faucet": "node scripts/devnet-faucet-init.mjs"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",
