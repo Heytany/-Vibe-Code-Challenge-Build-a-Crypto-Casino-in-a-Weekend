@@ -6,50 +6,63 @@
 
     <div class="bw-auto__grid">
       <label class="bw-auto__field">
-        <span><UiLocaleText path="games.auto.betPerRoll" tag="span" /></span>
+        <span class="bw-auto__field-label"><UiLocaleText path="games.auto.betPerRoll" tag="span" /></span>
         <input v-model.number="bet" type="number" min="1" class="bw-input" :disabled="running">
       </label>
 
-      <label class="bw-auto__field">
-        <span><UiLocaleText path="games.auto.rounds" tag="span" /></span>
-        <input
-          v-model.number="rounds"
-          type="number"
-          min="1"
-          class="bw-input w-full"
-          :class="{ 'bw-auto__dim': endless }"
-          :disabled="running || endless"
-        >
-        <label class="bw-auto__inf" :class="{ 'is-on': endless }">
-          <input v-model="endless" type="checkbox" class="bw-check" :disabled="running">
-          <span>{{ endless ? '∞ ON' : '∞ OFF' }}</span>
-        </label>
-      </label>
+      <div class="bw-auto__field">
+        <span class="bw-auto__field-label"><UiLocaleText path="games.auto.rounds" tag="span" /></span>
+        <div class="bw-auto__rounds-row">
+          <input
+            v-model.number="rounds"
+            type="number"
+            min="1"
+            class="bw-input bw-auto__rounds-input"
+            :class="{ 'bw-auto__dim': endless }"
+            :disabled="running || endless"
+            :aria-label="t('games.auto.rounds')"
+          >
+          <button
+            type="button"
+            class="bw-auto__inf"
+            :class="{ 'is-on': endless }"
+            :disabled="running"
+            :aria-pressed="endless"
+            :aria-label="endless ? t('games.auto.infiniteOn') : t('games.auto.infiniteOff')"
+            :title="endless ? t('games.auto.infiniteOn') : t('games.auto.infiniteOff')"
+            @click="endless = !endless"
+          >
+            <Infinity :size="26" :stroke-width="2.5" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div class="bw-auto__rowline">
-      <span class="bw-auto__label"><UiLocaleText path="games.auto.speed" tag="span" /></span>
-      <div class="bw-seg" role="radiogroup" :aria-label="t('games.auto.speed')">
-        <button
-          type="button"
-          role="radio"
-          class="bw-seg__opt"
-          :class="{ 'is-on': speed === 1 }"
-          :aria-checked="speed === 1"
-          @click="setSpeed(1)"
-        >
-          <UiLocaleText path="games.auto.x1" tag="span" />
-        </button>
-        <button
-          type="button"
-          role="radio"
-          class="bw-seg__opt"
-          :class="{ 'is-on': speed === 2 }"
-          :aria-checked="speed === 2"
-          @click="setSpeed(2)"
-        >
-          <UiLocaleText path="games.auto.x2" tag="span" />
-        </button>
+    <div class="bw-auto__settings">
+      <div class="bw-auto__speed-row">
+        <span class="bw-auto__label"><UiLocaleText path="games.auto.speed" tag="span" /></span>
+        <div class="bw-seg" role="radiogroup" :aria-label="t('games.auto.speed')">
+          <button
+            type="button"
+            role="radio"
+            class="bw-seg__opt"
+            :class="{ 'is-on': speed === 1 }"
+            :aria-checked="speed === 1"
+            @click="setSpeed(1)"
+          >
+            <UiLocaleText path="games.auto.x1" tag="span" />
+          </button>
+          <button
+            type="button"
+            role="radio"
+            class="bw-seg__opt"
+            :class="{ 'is-on': speed === 2 }"
+            :aria-checked="speed === 2"
+            @click="setSpeed(2)"
+          >
+            <UiLocaleText path="games.auto.x2" tag="span" />
+          </button>
+        </div>
       </div>
 
       <label class="bw-auto__check">
@@ -88,6 +101,7 @@
  * @see composables/useAutoPlay.ts, composables/useFullscreen.ts, ai/decisions/016-game-automation-fullscreen.md
  */
 import type { AutoPlayActionResult } from '~/composables/useAutoPlay'
+import { Infinity } from 'lucide-vue-next'
 
 const props = defineProps<{
   play: () => Promise<AutoPlayActionResult>
@@ -180,44 +194,86 @@ onUnmounted(() => setMotionSpeed(1))
 
 .bw-auto__grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 420px) {
+  .bw-auto__grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .bw-auto__field {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
-.bw-auto__field > span {
-  display: block;
+.bw-auto__field-label {
   font-size: 0.65rem;
   text-transform: uppercase;
   font-weight: 700;
-  margin-bottom: 0.25rem;
 }
 
-.bw-auto__rowline {
+.bw-auto__rounds-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5rem;
-  margin-top: 0.6rem;
+  min-width: 0;
+}
+
+.bw-auto__rounds-input {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+
+.bw-auto__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bw-auto__speed-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
 }
 
 .bw-auto__label {
   font-size: 0.65rem;
   text-transform: uppercase;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .bw-auto__check {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.7rem;
-  min-height: 44px;
-  margin-left: auto;
+  gap: 0.75rem;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  border: 3px solid var(--bw-border);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  width: 100%;
+}
+
+.bw-auto__check .bw-check {
+  width: 26px;
+  height: 26px;
+}
+
+.bw-auto__check .bw-check::before {
+  width: 12px;
+  height: 12px;
 }
 
 /* segmented radio for speed — clear current-state */
@@ -254,19 +310,21 @@ onUnmounted(() => setMotionSpeed(1))
 
 /* action row — Start grows, Fullscreen wraps under on narrow screens */
 .bw-auto__actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 0.5rem;
-  margin-top: 0.6rem;
+  margin-top: 0.75rem;
 }
 
-.bw-auto__go {
-  flex: 1 1 8rem;
-  min-width: 0;
+@media (min-width: 480px) {
+  .bw-auto__actions {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
+.bw-auto__go,
 .bw-auto__fs {
-  flex: 1 1 8rem;
+  width: 100%;
   min-width: 0;
 }
 
@@ -281,19 +339,28 @@ onUnmounted(() => setMotionSpeed(1))
 }
 
 .bw-auto__inf {
+  flex: 0 0 48px;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.4rem;
-  min-height: 44px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  cursor: pointer;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0;
+  border: 3px solid var(--bw-border);
+  background: var(--bw-bg);
   color: var(--bw-muted);
+  font-family: var(--bw-font);
+  cursor: pointer;
+}
+
+.bw-auto__inf:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .bw-auto__inf.is-on {
-  color: var(--bw-accent);
+  background: var(--bw-accent);
+  color: var(--bw-bg);
+  border-color: var(--bw-accent);
 }
 </style>

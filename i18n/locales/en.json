@@ -160,6 +160,8 @@
       "title": "Auto-roll",
       "rounds": "Rounds",
       "infinite": "∞",
+      "infiniteOn": "Infinite rounds — on",
+      "infiniteOff": "Infinite rounds — off",
       "betPerRoll": "Bet / roll",
       "start": "Auto start",
       "stop": "Stop",
