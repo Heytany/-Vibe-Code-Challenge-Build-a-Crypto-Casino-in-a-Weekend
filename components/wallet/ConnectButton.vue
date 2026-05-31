@@ -21,6 +21,7 @@
 const { connected, connecting, publicKey, connect, disconnect } = useWallet()
 const { playCrackModal } = useBrutalMotion()
 const motionStore = useMotionStore()
+const { showError } = useBrutalToast()
 
 const truncatedAddress = computed(() => {
   if (!publicKey.value) return ''
@@ -40,7 +41,7 @@ async function onClick() {
       },
     })
   } catch (error) {
-    useBrutalToast().showError(error)
+    showError(error)
   }
 }
 </script>

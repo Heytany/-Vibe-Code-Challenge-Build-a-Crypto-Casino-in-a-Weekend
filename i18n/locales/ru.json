@@ -1,14 +1,14 @@
 {
   "lobby": {
     "title": "Brutal wibe",
-    "subtitle": "Повреждённое on-chain казино. Депозит devnet-токенов, сломанные игры, проверка каждого броска в Solana Explorer.",
+    "subtitle": "Брутальное on-chain казино на Solana devnet. Вноси тестовые токены, играй и проверяй каждый ролл в эксплорере.",
     "status": {
       "wip": "[скелет]"
     },
-    "tagline": "// выбери сломанную игру — монстр держит обе"
+    "tagline": "// выбирай: кости или барабаны"
   },
   "common": {
-    "back": "← Лobby"
+    "back": "← В лобби"
   },
   "toast": {
     "win": {
@@ -34,7 +34,7 @@
     "dice": {
       "title": "Glitch Roll",
       "subtitle": "// dice.exe — corrupted",
-      "desc": "Roll under/over. Исход on-chain из blockhash + ваш seed.",
+      "desc": "Бросай меньше или больше цели. Исход считается on-chain из blockhash и твоего seed.",
       "placeholder": "Логика игры ещё не подключена.",
       "roll": "Бросить",
       "target": "Цель",
@@ -56,7 +56,7 @@
     "slot": {
       "title": "Corrupted Reels",
       "subtitle": "// slot.dll — unstable",
-      "desc": "Три барабана. Пары и тройки платят — house edge on-chain.",
+      "desc": "Три кривых барабана. Пары и тройки платят — house edge применяется on-chain.",
       "placeholder": "Барабаны пока только визуально.",
       "spin": "Крутить",
       "spinAgain": "Крутить ещё",
@@ -95,13 +95,14 @@
       "modeLabel": "Режим игры",
       "funMode": "FUN",
       "liveMode": "LIVE",
-      "funBanner": "// fun mode — без кошелька, виртуальные кредиты, та же RNG-математика",
+      "funBanner": "// fun-режим — без кошелька, виртуальные кредиты, математика как on-chain",
       "funNote": "Играй сразу. Виртуальный баланс — для devnet подключи Phantom и LIVE.",
       "liveModeHint": "Реальные devnet-токены через Phantom",
       "liveModeLocked": "LIVE: нужны Phantom и задеплоенная программа",
       "resetFun": "Сбросить fun-кредиты",
-      "modeExplainFun": "// fun mode — без кошелька, виртуальные кредиты, та же RNG-математика",
-      "modeExplainLive": "// live mode — Phantom на devnet, реальные ставки on-chain, проверка в Explorer"
+      "modeExplainFun": "// fun-режим — без кошелька, виртуальные кредиты, математика как on-chain",
+      "modeExplainLive": "// live-режим — Phantom на devnet, реальные ставки on-chain, проверка в эксплорере",
+      "showResult": "Показывать результат"
     },
     "fair": {
       "title": "Честная игра",
@@ -175,8 +176,8 @@
       "title": "LIVE заблокирован",
       "dismiss": "Остаться в FUN",
       "noWallet": "Подключите Phantom на devnet для LIVE.",
-      "noProgram": "Program не задеployен. Укажите NUXT_PUBLIC_CASINO_PROGRAM_ID после anchor deploy.",
-      "generic": "LIVE требует кошелёк и задеployенный program."
+      "noProgram": "Программа не задеплоена. Укажи NUXT_PUBLIC_CASINO_PROGRAM_ID после anchor deploy.",
+      "generic": "Для LIVE нужен подключённый кошелёк и задеплоенная программа."
     },
     "ENV_INVALID": "Ошибка окружения. Скопируйте .env.example в .env.",
     "unknown": {
@@ -220,7 +221,7 @@
   },
   "seo": {
     "lobby": {
-      "description": "Повреждённое on-chain казино на Solana devnet. Выбери сломанную игру — Glitch Roll или Corrupted Reels — и проверь каждый бросок в Solana Explorer."
+      "description": "Брутальное on-chain казино на Solana devnet. Играй в Glitch Roll или Corrupted Reels и проверяй каждый ролл в Solana Explorer."
     },
     "dice": {
       "description": "Glitch Roll — бросок под/над целью. Исход считается on-chain из недавнего blockhash и твоего seed, проверяемо в Solana Explorer."

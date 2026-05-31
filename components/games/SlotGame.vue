@@ -91,7 +91,12 @@
               <UiLocaleText path="games.common.funBanner" tag="span" />
             </p>
 
-            <div class="bw-game-result-slot">
+            <label class="flex items-center gap-2 text-xs uppercase font-bold mb-3 cursor-pointer">
+              <input v-model="showResult" type="checkbox" class="bw-check">
+              <UiLocaleText path="games.common.showResult" tag="span" />
+            </label>
+
+            <div v-if="showResult" class="bw-game-result-slot">
               <div
                 v-show="reels !== null && won !== null && !spinning"
                 class="bw-dice-result"
@@ -129,30 +134,30 @@
               </div>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2 mb-6">
-            <label class="block space-y-2">
-              <span class="text-xs uppercase font-bold">
+            <div class="grid gap-4 sm:grid-cols-2 items-center mb-6">
+            <div class="font-mono space-y-1 text-center sm:text-left">
+              <span class="text-xs uppercase font-bold block">
+                <UiLocaleText path="games.common.balance" tag="span" />
+              </span>
+              <span class="text-[var(--bw-accent)] text-2xl font-bold">
+                {{ effectiveBalance ?? '—' }}
+                <span v-if="isFun" class="text-[var(--bw-muted)] text-xs ml-1">(fun)</span>
+              </span>
+            </div>
+            <label class="block space-y-2 text-center sm:text-right">
+              <span class="text-xs uppercase font-bold block">
                 <UiLocaleText path="games.common.bet" tag="span" />
               </span>
               <input
                 v-model.number="bet"
                 type="number"
                 min="1"
-                class="bw-input w-full"
+                class="bw-input w-full text-center"
                 :class="{ 'bw-input--invalid': betInvalid && betTouched }"
                 :disabled="spinning"
                 @blur="markBetTouched"
               >
             </label>
-            <div class="text-xs font-mono space-y-1">
-              <span class="uppercase font-bold block">
-                <UiLocaleText path="games.common.balance" tag="span" />
-              </span>
-              <span class="text-[var(--bw-accent)] text-lg">
-                {{ effectiveBalance ?? '—' }}
-                <span v-if="isFun" class="text-[var(--bw-muted)] text-xs ml-1">(fun)</span>
-              </span>
-            </div>
           </div>
 
           <p class="text-xs text-[var(--bw-muted)] font-mono mb-6 whitespace-normal">
@@ -231,6 +236,7 @@ const {
 } = useGameSlot()
 
 const activeTab = ref<'play' | 'rules' | 'fair'>('play')
+const showResult = ref(false)
 const panelRef = ref<HTMLElement | null>(null)
 const banditRef = ref<ComponentPublicInstance | null>(null)
 const matrixBackdropRef = ref<{

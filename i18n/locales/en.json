@@ -1,11 +1,11 @@
 {
   "lobby": {
     "title": "Brutal wibe",
-    "subtitle": "A corrupted on-chain casino. Deposit devnet tokens, play broken games, verify every roll on Solana Explorer.",
+    "subtitle": "A broken-by-design on-chain casino on Solana devnet. Deposit test tokens, play, and verify every roll in the explorer.",
     "status": {
       "wip": "[skeleton]"
     },
-    "tagline": "// pick a broken game — the monster is holding both"
+    "tagline": "// pick your poison — dice or reels"
   },
   "common": {
     "back": "← Lobby"
@@ -95,13 +95,14 @@
       "modeLabel": "Game mode",
       "funMode": "FUN",
       "liveMode": "LIVE",
-      "funBanner": "// fun mode — no wallet, virtual credits, same RNG math",
+      "funBanner": "// fun mode — no wallet, virtual credits, identical to on-chain math",
       "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",
       "liveModeHint": "Real devnet tokens via Phantom",
       "liveModeLocked": "Connect Phantom + deployed program for live mode",
       "resetFun": "Reset fun credits",
-      "modeExplainFun": "// fun mode — no wallet, virtual credits, same RNG math",
-      "modeExplainLive": "// live mode — Phantom on devnet, real on-chain bets, verifiable on Explorer"
+      "modeExplainFun": "// fun mode — no wallet, virtual credits, identical to on-chain math",
+      "modeExplainLive": "// live mode — Phantom on devnet, real on-chain bets, verifiable in the explorer",
+      "showResult": "Show result details"
     },
     "fair": {
       "title": "Provably fair",
@@ -175,8 +176,8 @@
       "title": "LIVE locked",
       "dismiss": "Stay in FUN",
       "noWallet": "Connect Phantom on devnet to unlock LIVE mode.",
-      "noProgram": "Casino program is not deployed. Set NUXT_PUBLIC_CASINO_PROGRAM_ID after anchor deploy.",
-      "generic": "LIVE mode needs wallet + deployed program."
+      "noProgram": "Program not deployed yet. Set NUXT_PUBLIC_CASINO_PROGRAM_ID after anchor deploy.",
+      "generic": "Live mode needs a connected wallet and a deployed program."
     },
     "ENV_INVALID": "Environment misconfigured. Copy .env.example to .env and fill all NUXT_PUBLIC_* values.",
     "unknown": {
@@ -220,7 +221,7 @@
   },
   "seo": {
     "lobby": {
-      "description": "A corrupted on-chain casino on Solana devnet. Pick a broken game — Glitch Roll or Corrupted Reels — and verify every roll on Solana Explorer."
+      "description": "A broken-by-design on-chain casino on Solana devnet. Play Glitch Roll or Corrupted Reels and verify every roll in Solana Explorer."
     },
     "dice": {
       "description": "Glitch Roll — roll under or over a target. The outcome is computed on-chain from the recent blockhash and your seed, verifiable on Solana Explorer."

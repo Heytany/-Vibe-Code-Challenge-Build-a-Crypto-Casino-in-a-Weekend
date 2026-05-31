@@ -21,7 +21,7 @@
           :disabled="running || endless"
         >
         <label class="bw-auto__inf" :class="{ 'is-on': endless }">
-          <input v-model="endless" type="checkbox" :disabled="running">
+          <input v-model="endless" type="checkbox" class="bw-check" :disabled="running">
           <span>{{ endless ? '∞ ON' : '∞ OFF' }}</span>
         </label>
       </label>
@@ -53,7 +53,7 @@
       </div>
 
       <label class="bw-auto__check">
-        <input v-model="stopOnWin" type="checkbox" :disabled="running">
+        <input v-model="stopOnWin" type="checkbox" class="bw-check" :disabled="running">
         <UiLocaleText path="games.auto.stopOnWin" tag="span" />
       </label>
     </div>
@@ -293,11 +293,5 @@ onUnmounted(() => setMotionSpeed(1))
 
 .bw-auto__inf.is-on {
   color: var(--bw-accent);
-}
-
-.bw-auto__inf input {
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--bw-accent);
 }
 </style>

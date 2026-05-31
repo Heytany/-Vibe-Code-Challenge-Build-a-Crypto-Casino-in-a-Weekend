@@ -14,7 +14,9 @@
 - [x] **Devnet readiness analysis:** [`specs/testnet-readiness.md`](specs/testnet-readiness.md) — FUN 100%, LIVE ~50% (program written, not deployed/wired)
 - [x] **🐛 Slot RNG fix:** reels used a trailing domain byte → never paid (0% pairs). Now per-reel nonce stride (`+reel·0x9e3779b97f4a7c15`) in `lib.rs` + `rng-verify` → ~44% pairs. **Live needs program redeploy.**
 - [x] Roll/spin button no longer jumps height (loading face single-line); ∞ toggle is a clear ON/OFF checkbox
+- [x] **Reka UI adoption (ADR-019):** locale picker → `DropdownMenu`, dice target → `Slider`, under/over → `RadioGroup`; `BrutalTabs` wrapper ready (wire into games next on dev server)
 - [ ] **PO host:** `anchor build && deploy` (RNG changed!) → set `NUXT_PUBLIC_*` in Netlify for LIVE; `pnpm build`/e2e; commit
+- [ ] **Next:** wire `BrutalTabs` into Dice/Slot; speed/∞/stop-on-win → Reka `ToggleGroup`/`Checkbox`
 
 ---
 

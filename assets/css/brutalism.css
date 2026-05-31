@@ -1007,6 +1007,111 @@ html.bw-fullscreen-game main {
   outline-offset: -3px;
 }
 
+/* Reka Tabs active state (BrutalTabs wrapper) */
+.bw-dice-tabs__btn[data-state="active"] {
+  background: var(--bw-accent);
+  color: var(--bw-bg);
+}
+
+/* Reka popper wrapper sets inline `z-index: auto` and is fixed at body root, so it falls BEHIND
+   the sticky header (z-50). Lift the wrapper itself above the header (below motion overlays @500). */
+[data-reka-popper-content-wrapper] {
+  z-index: 100 !important;
+}
+
+/* Unify number inputs — drop the system up/down spinners */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Brutalist checkbox — replaces the system checkbox (∞, stop-on-win, etc.) */
+.bw-check {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border: 3px solid var(--bw-border);
+  background: var(--bw-bg);
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+}
+
+.bw-check::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: var(--bw-accent);
+  transform: scale(0);
+  transition: transform 0.08s;
+}
+
+.bw-check:checked::before {
+  transform: scale(1);
+}
+
+.bw-check:checked {
+  box-shadow: inset 0 0 0 2px var(--bw-bg);
+}
+
+.bw-check:focus-visible {
+  outline: 3px solid var(--bw-accent);
+  outline-offset: 2px;
+}
+
+.bw-check:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Reka Slider (dice target) */
+.bw-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  touch-action: none;
+  user-select: none;
+}
+
+.bw-slider__track {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  background: var(--bw-bg);
+  border: 3px solid var(--bw-border);
+}
+
+.bw-slider__range {
+  position: absolute;
+  height: 100%;
+  background: var(--bw-accent);
+}
+
+.bw-slider__thumb {
+  display: block;
+  width: 22px;
+  height: 28px;
+  background: var(--bw-fg);
+  border: 3px solid var(--bw-border);
+  box-shadow: 3px 3px 0 var(--bw-accent);
+  cursor: grab;
+}
+
+.bw-slider__thumb:focus-visible {
+  outline: 3px solid var(--bw-accent);
+  outline-offset: 2px;
+}
+
 .bw-dice-result {
   margin-bottom: 0;
   padding: 1rem;

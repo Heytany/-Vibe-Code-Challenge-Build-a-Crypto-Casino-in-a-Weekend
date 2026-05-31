@@ -92,17 +92,26 @@ function drawMatrix() {
   ctx.fillStyle = 'rgba(10, 10, 10, 0.22)'
   ctx.fillRect(0, 0, logicalW, logicalH)
 
+  const seg = segments.value
+  const colCount = columns.length
   columns.forEach((col, i) => {
     const x = (i + 0.5) * colWidth
+    // which equal band this column sits in, and its flow direction: down / up / down …
+    const band = seg > 1 ? Math.min(seg - 1, Math.floor((i / colCount) * seg)) : 0
+    const dir = band % 2 === 1 ? -1 : 1
     col.chars.forEach((char, j) => {
-      const y = col.y - j * FONT_SIZE
+      const y = col.y - j * FONT_SIZE * dir
       if (y < -FONT_SIZE || y > logicalH) return
       ctx!.fillStyle = j === 0 ? '#39ff14' : `rgba(57, 255, 20, ${0.2 + (1 - j / col.chars.length) * 0.5})`
       ctx!.fillText(char, x, y)
     })
-    col.y += col.speed
-    if (col.y > logicalH + col.chars.length * FONT_SIZE) {
-      col.y = -col.chars.length * FONT_SIZE
+    col.y += col.speed * dir
+    const span = col.chars.length * FONT_SIZE
+    if (dir === 1 && col.y > logicalH + span) {
+      col.y = -span
+      col.chars = col.chars.map(() => MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)])
+    } else if (dir === -1 && col.y < -span) {
+      col.y = logicalH + span
       col.chars = col.chars.map(() => MATRIX_GLYPHS[Math.floor(Math.random() * MATRIX_GLYPHS.length)])
     }
   })
@@ -185,14 +194,16 @@ async function play(intense = false): Promise<void> {
 }
 
 /**
- * Win celebration split across N vertical bands: even bands run an INVERTED code-sweep in the
- * opposite direction. 2 matched symbols → 2 bands (normal + invert); 3 → normal + invert + normal.
+ * Slot win celebration: split the backdrop into N EQUAL vertical bands (N = winning lines —
+ * pair → 2 bands at 50%, triple → 3 at 33%). Each band is a vertical code stream whose flow
+ * direction alternates down / up / down (normal / reverse / normal), with visible dividers.
+ * Dice keeps the plain full-panel `play()`.
  */
 async function playSplit(seg = 2, intense = false): Promise<void> {
   const n = Math.max(1, Math.min(3, Math.round(seg)))
   if (n <= 1) return play(intense)
   if (running) return
-  segments.value = n
+  segments.value = n // drives both the divider bands (template) and per-band rain direction
   running = true
   visible.value = true
   await nextTick()
@@ -210,6 +221,8 @@ async function playSplit(seg = 2, intense = false): Promise<void> {
   resizeCanvas()
   drawMatrix()
 
+  const hold = intense ? 1.7 : 1.25
+
   await new Promise<void>((resolve) => {
     const tl = gsap.timeline({
       onComplete: () => {
@@ -222,21 +235,8 @@ async function playSplit(seg = 2, intense = false): Promise<void> {
       },
     })
 
-    tl.fromTo(root, { opacity: 0 }, { opacity: intense ? 1 : 0.85, duration: 0.15 }, 0)
-
-    const scans = bandScans.slice(0, n).filter(Boolean) as HTMLElement[]
-    scans.forEach((scan, i) => {
-      const invert = i % 2 === 1 // band 2 (index 1) is the inverted one
-      gsap.set(scan, { xPercent: invert ? 120 : -120, opacity: 0 })
-      tl.fromTo(scan, { opacity: 0 }, { opacity: intense ? 0.95 : 0.7, duration: 0.2 }, 0.15)
-      tl.to(
-        scan,
-        { xPercent: invert ? -120 : 120, duration: intense ? 0.7 : 0.5, ease: 'power3.inOut' },
-        0.25,
-      )
-    })
-
-    tl.to(root, { opacity: 0, duration: intense ? 0.4 : 0.3, ease: 'power2.in' }, intense ? 1.2 : 0.9)
+    tl.fromTo(root, { opacity: 0 }, { opacity: intense ? 1 : 0.9, duration: 0.18 }, 0)
+    tl.to(root, { opacity: 0, duration: intense ? 0.45 : 0.32, ease: 'power2.in' }, hold)
   })
 }
 
@@ -292,10 +292,7 @@ onUnmounted(() => {
   border-right: 2px solid rgba(57, 255, 20, 0.45);
 }
 
-/* the inverted (even) band flips the code-sweep tonality — normal / reverse / normal */
-.bw-mpb__band.is-invert {
-  filter: invert(1) hue-rotate(180deg);
-}
+/* even band = reverse flow (handled on the canvas); dividers above make the equal split read */
 
 .bw-mpb__band-scan {
   position: absolute;
