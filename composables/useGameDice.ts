@@ -16,6 +16,10 @@ import {
   randomU64,
 } from '~/shared/fun-mode'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
+import { createPlayGeneration, raceLiveSigning } from '~/shared/live-play-signing'
+
+const dicePlayGen = createPlayGeneration()
+let diceSigningCancel: ((reason?: 'user' | 'timeout') => void) | null = null
 
 export type DiceDirection = 'under' | 'over'
 
@@ -151,17 +155,32 @@ export function useGameDice() {
     const rollUnder = direction.value === 'under'
 
     signing.value = true
-    let res: Awaited<ReturnType<typeof playDice>>
-    try {
-      res = await playDice({
+    const gen = dicePlayGen.next()
+    const race = raceLiveSigning(
+      playDice({
         bet: bet.value,
         target: target.value,
         rollUnder,
         userSeed,
-      })
+      }),
+    )
+    diceSigningCancel = race.cancel
+
+    let res: Awaited<ReturnType<typeof playDice>>
+    try {
+      res = await race.promise
+    } catch (err) {
+      if (err instanceof WibeError && err.code === WibeErrorCode.PlayCancelled) {
+        return null
+      }
+      if (!dicePlayGen.isCurrent(gen)) return null
+      throw err
     } finally {
-      signing.value = false
+      diceSigningCancel = null
+      if (dicePlayGen.isCurrent(gen)) signing.value = false
     }
+
+    if (!dicePlayGen.isCurrent(gen)) return null
 
     playing.value = true
     try {
@@ -194,6 +213,14 @@ export function useGameDice() {
     }
   }
 
+  function cancelPlay() {
+    dicePlayGen.bump()
+    diceSigningCancel?.('user')
+    diceSigningCancel = null
+    signing.value = false
+    playing.value = false
+  }
+
   async function roll(diceEl?: HTMLElement | null) {
     if (isFun.value) return rollFun(diceEl)
     return rollLive(diceEl)
@@ -216,5 +243,6 @@ export function useGameDice() {
     isSuperWin,
     lastPayoutDelta,
     roll,
+    cancelPlay,
   }
 }

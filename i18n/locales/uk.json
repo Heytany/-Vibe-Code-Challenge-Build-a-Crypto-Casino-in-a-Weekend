@@ -98,6 +98,7 @@
       "lose": "МИМО",
       "loseLive": "Ставку списано з балансу казино — дивись смужку вище.",
       "confirmInPhantom": "Підтверди в Phantom — анімація після схвалення.",
+      "cancelPlay": "Скасувати",
       "payout": "Виплата",
       "nonce": "Nonce",
       "seed": "Seed",
@@ -220,6 +221,10 @@
       "WALLET_REJECTED": {
         "title": "Підпис відхилено",
         "message": "Phantom відхилив запит."
+      },
+      "PLAY_CANCELLED": {
+        "title": "Гру скасовано",
+        "message": "Транзакцію не надіслано. Можна знову Roll/Spin."
       },
       "RPC_UNREACHABLE": {
         "title": "RPC недоступний",

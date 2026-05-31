@@ -1,6 +1,6 @@
 /**
  * @agent-context Per-session fun vs live mode — **shared** state across all components.
- * Default FUN; LIVE only when user picks it (wallet + program ready).
+ * Default FUN until wallet + program ready; then auto LIVE on connect.
  * @see ai/decisions/014-fun-mode.md
  */
 import type { GameMode } from '~/shared/fun-mode'
@@ -17,10 +17,12 @@ export function useGameMode() {
 
   if (import.meta.client && !modeWatchRegistered) {
     watch(canLive, (ok) => {
-      if (!ok && mode.value === 'live') {
+      if (ok) {
+        mode.value = 'live'
+      } else if (mode.value === 'live') {
         mode.value = 'fun'
       }
-    })
+    }, { immediate: true })
     modeWatchRegistered = true
   }
 

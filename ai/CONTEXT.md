@@ -10,6 +10,8 @@
 - [x] Event parse fix (`dicePlayed` camelCase) + RNG fallback
 - [x] LIVE: `signing` then animation — не параллельно
 - [x] Win/lose toast + auto-show result panel in LIVE
+- [x] Cancel play + 90s signing timeout; LIVE default on wallet connect
+- [x] Lobby funds bar stays when FUN + connected (WIBE strip for deposit)
 - [x] Removed confusing Max withdraw button
 - [x] `pnpm test:idl` guard + build OK
 

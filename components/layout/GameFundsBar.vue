@@ -1,8 +1,8 @@
 <template>
   <div v-if="show" ref="barRef" class="bw-funds-bar border-b-4 border-[var(--bw-border)] bg-[var(--bw-bg)]">
     <div class="container mx-auto px-4 py-3 max-w-5xl space-y-3">
-      <!-- FUN mode -->
-      <template v-if="isFun">
+      <!-- FUN mode (games only) -->
+      <template v-if="showFunFunds">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div class="font-mono space-y-1 min-w-[8rem]">
             <span class="text-xs uppercase font-bold block text-[var(--bw-muted)]">
@@ -23,8 +23,8 @@
         </div>
       </template>
 
-      <!-- LIVE mode -->
-      <template v-else-if="liveReady">
+      <!-- LIVE funds — games in LIVE, or lobby whenever wallet + env ready -->
+      <template v-else-if="showLiveFunds">
         <div class="flex flex-wrap items-end justify-between gap-4">
           <div class="font-mono space-y-1 min-w-[8rem]">
             <span class="text-xs uppercase font-bold block text-[var(--bw-muted)]">
@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Unified funds bar — FUN refill on games; LIVE balances + deposit on games & lobby.
+ * @agent-context Unified funds bar — FUN on games; LIVE on games + lobby when wallet connected.
  */
 import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
 
@@ -91,14 +91,21 @@ const { balance: funBalance, topUp } = useFunBalance()
 const barRef = ref<HTMLElement | null>(null)
 
 const isGameRoute = computed(() => route.path.startsWith('/games/'))
+const walletReady = computed(() => connected.value && isConfigured.value)
 
-const liveReady = computed(() =>
-  connected.value && isConfigured.value && !isFun.value,
-)
+/** FUN credits strip — only on game pages in FUN mode. */
+const showFunFunds = computed(() => isGameRoute.value && isFun.value)
+
+/** WIBE strip — LIVE on games; on lobby whenever Phantom + env (even if game mode toggle is FUN). */
+const showLiveFunds = computed(() => {
+  if (!walletReady.value) return false
+  if (isGameRoute.value) return !isFun.value
+  return true
+})
 
 const show = computed(() => {
   if (isGameRoute.value) return true
-  return liveReady.value
+  return walletReady.value
 })
 
 const funUnit = computed(() => t('games.common.funUnit'))
@@ -112,7 +119,7 @@ const formattedCasino = computed(() => {
 const formattedWallet = computed(() => formatTokenAmount(walletTokenBalance.value ?? 0))
 
 const needsDeposit = computed(() =>
-  liveReady.value && (casinoBalance.value ?? 0) <= 0,
+  showLiveFunds.value && (casinoBalance.value ?? 0) <= 0,
 )
 
 async function onRefresh() {

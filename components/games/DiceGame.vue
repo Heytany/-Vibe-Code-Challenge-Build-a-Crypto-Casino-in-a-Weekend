@@ -26,11 +26,20 @@
               />
               <UiBrutalButton
                 class="bw-dice-roll-btn"
-                :loading="busy"
+                :loading="busy && !signing"
+                :disabled="busy"
                 @click="onRoll"
               >
                 <UiLocaleText path="games.dice.roll" tag="span" />
               </UiBrutalButton>
+              <button
+                v-if="signing && !isFun"
+                type="button"
+                class="bw-btn text-sm min-h-[44px] mt-2 w-full max-w-[12rem]"
+                @click="cancelPlay"
+              >
+                <UiLocaleText path="games.common.cancelPlay" tag="span" />
+              </button>
               <p
                 v-if="signing && !isFun"
                 class="text-xs font-mono text-[var(--bw-muted)] text-center mt-2 whitespace-normal"
@@ -180,7 +189,7 @@
             </RadioGroupRoot>
           </div>
 
-          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="busy" />
+          <GamesGameAutoFsBar v-model:bet="bet" :play="() => playOnce({ auto: true })" :disabled="busy" />
 
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
@@ -228,6 +237,9 @@
  */
 import { RadioGroupItem, RadioGroupRoot, SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 
+import type { AutoPlayActionResult } from '~/composables/useAutoPlay'
+import { isSkippableLiveRoundError } from '~/shared/live-play-signing'
+
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const {
   isFun,
@@ -239,6 +251,7 @@ const {
   playing,
   signing,
   busy,
+  cancelPlay,
   winChance,
   effectiveBalance,
   isSuperWin,
@@ -260,26 +273,33 @@ onMounted(() => {
   playGameEnter(panelRef.value)
 })
 
-/** One round; resolves to whether it won. Throws on invalid/insufficient so auto-roll stops. */
-async function playOnce(): Promise<boolean> {
+/** One round; `'skip'` = cancelled LIVE round during auto-roll (try next immediately). */
+async function playOnce(opts?: { auto?: boolean }): Promise<AutoPlayActionResult> {
   if (!validateBetOrToast()) throw new Error('invalid-bet')
   const el = (diceCubeRef.value?.$el as HTMLElement | undefined) ?? null
-  await roll(el)
-  if (!isFun.value) showResult.value = true
-  if (won.value) {
-    showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
-    await matrixBackdropRef.value?.play(isSuperWin.value)
-  } else if (won.value === false && !isFun.value) {
-    show(t('games.common.lose'), t('games.common.loseLive'), 'default')
+  try {
+    const meta = await roll(el)
+    if (meta === null) return opts?.auto ? 'skip' : false
+    if (!isFun.value) showResult.value = true
+    if (won.value) {
+      showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
+      await matrixBackdropRef.value?.play(isSuperWin.value)
+    } else if (won.value === false && !isFun.value) {
+      show(t('games.common.lose'), t('games.common.loseLive'), 'default')
+    }
+    return Boolean(won.value)
+  } catch (e) {
+    if (opts?.auto && isSkippableLiveRoundError(e)) return 'skip'
+    throw e
   }
-  return Boolean(won.value)
 }
 
 async function onRoll() {
   try {
     await playOnce()
   } catch (e) {
-    if ((e as Error)?.message !== 'invalid-bet') showError(e)
+    if ((e as Error)?.message === 'invalid-bet') return
+    showError(e)
   }
 }
 

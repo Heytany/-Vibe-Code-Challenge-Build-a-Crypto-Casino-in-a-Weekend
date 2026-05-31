@@ -102,6 +102,7 @@
       "lose": "BUST",
       "loseLive": "Bet settled on casino balance — check the strip above.",
       "confirmInPhantom": "Confirm in Phantom — animation starts after approval.",
+      "cancelPlay": "Cancel",
       "payout": "Payout",
       "nonce": "Nonce",
       "seed": "Seed",
@@ -225,6 +226,10 @@
       "WALLET_REJECTED": {
         "title": "Signature rejected",
         "message": "Phantom declined the request."
+      },
+      "PLAY_CANCELLED": {
+        "title": "Play cancelled",
+        "message": "No transaction was sent. You can roll again."
       },
       "RPC_UNREACHABLE": {
         "title": "RPC dead",

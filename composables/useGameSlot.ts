@@ -14,6 +14,10 @@ import {
 } from '~/shared/fun-mode'
 import { isSlotSuperWin } from '~/shared/slot-super-win'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
+import { createPlayGeneration, raceLiveSigning } from '~/shared/live-play-signing'
+
+const slotPlayGen = createPlayGeneration()
+let slotSigningCancel: ((reason?: 'user' | 'timeout') => void) | null = null
 
 export interface SlotFunSpinMeta {
   mode: 'fun'
@@ -143,12 +147,25 @@ export function useGameSlot() {
     const userSeed = randomU64()
 
     signing.value = true
+    const gen = slotPlayGen.next()
+    const race = raceLiveSigning(playSlot({ bet: bet.value, userSeed }))
+    slotSigningCancel = race.cancel
+
     let res: Awaited<ReturnType<typeof playSlot>>
     try {
-      res = await playSlot({ bet: bet.value, userSeed })
+      res = await race.promise
+    } catch (err) {
+      if (err instanceof WibeError && err.code === WibeErrorCode.PlayCancelled) {
+        return null
+      }
+      if (!slotPlayGen.isCurrent(gen)) return null
+      throw err
     } finally {
-      signing.value = false
+      slotSigningCancel = null
+      if (slotPlayGen.isCurrent(gen)) signing.value = false
     }
+
+    if (!slotPlayGen.isCurrent(gen)) return null
 
     spinning.value = true
     try {
@@ -180,6 +197,14 @@ export function useGameSlot() {
     }
   }
 
+  function cancelPlay() {
+    slotPlayGen.bump()
+    slotSigningCancel?.('user')
+    slotSigningCancel = null
+    signing.value = false
+    spinning.value = false
+  }
+
   async function spin(banditEl?: HTMLElement | null) {
     if (isFun.value) return spinFun(banditEl)
     return spinLive(banditEl)
@@ -199,6 +224,7 @@ export function useGameSlot() {
     lastPayoutDelta,
     lastMultiplier,
     spin,
+    cancelPlay,
     slotSymbolChar,
   }
 }

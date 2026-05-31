@@ -87,8 +87,10 @@
  * document root so body-teleported win toasts stay visible.
  * @see composables/useAutoPlay.ts, composables/useFullscreen.ts, ai/decisions/016-game-automation-fullscreen.md
  */
+import type { AutoPlayActionResult } from '~/composables/useAutoPlay'
+
 const props = defineProps<{
-  play: () => Promise<boolean>
+  play: () => Promise<AutoPlayActionResult>
   disabled?: boolean
 }>()
 

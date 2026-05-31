@@ -6,6 +6,7 @@
 export enum WibeErrorCode {
   WalletNotConnected = 'WALLET_NOT_CONNECTED',
   WalletRejected = 'WALLET_REJECTED',
+  PlayCancelled = 'PLAY_CANCELLED',
   RpcUnreachable = 'RPC_UNREACHABLE',
   ProgramNotConfigured = 'PROGRAM_NOT_CONFIGURED',
   InsufficientBalance = 'INSUFFICIENT_BALANCE',
@@ -19,6 +20,7 @@ export enum WibeErrorCode {
 export const WIBE_ERROR_MESSAGES: Record<WibeErrorCode, string> = {
   [WibeErrorCode.WalletNotConnected]: 'Connect Phantom to continue.',
   [WibeErrorCode.WalletRejected]: 'Wallet rejected the transaction.',
+  [WibeErrorCode.PlayCancelled]: 'Play cancelled — no transaction sent.',
   [WibeErrorCode.RpcUnreachable]: 'Cannot reach Solana RPC. Check NUXT_PUBLIC_SOLANA_RPC_URL.',
   [WibeErrorCode.ProgramNotConfigured]: 'Casino program ID missing. Deploy contract and set NUXT_PUBLIC_CASINO_PROGRAM_ID.',
   [WibeErrorCode.InsufficientBalance]: 'Insufficient casino balance for this bet.',

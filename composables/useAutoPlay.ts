@@ -4,6 +4,8 @@
  * the game settings automation module.
  * @see components/games/GameAutoFsBar.vue, ai/decisions/016-game-automation-fullscreen.md
  */
+export type AutoPlayActionResult = boolean | 'skip'
+
 export interface AutoPlayOptions {
   rounds: number // Number.POSITIVE_INFINITY for endless
   stopOnWin?: boolean
@@ -25,7 +27,7 @@ export function useAutoPlay() {
   let cancelled = false
 
   async function start(
-    action: () => Promise<boolean>,
+    action: () => Promise<AutoPlayActionResult>,
     opts: AutoPlayOptions,
   ): Promise<AutoPlaySummary> {
     if (running.value) return { played: 0, wins: 0, reason: 'cancelled' }
@@ -42,7 +44,11 @@ export function useAutoPlay() {
     while (!cancelled && (!Number.isFinite(rounds) || n < rounds)) {
       let won = false
       try {
-        won = await action()
+        const result = await action()
+        if (result === 'skip') {
+          continue
+        }
+        won = result
       } catch (e) {
         reason = 'error'
         error = e

@@ -29,11 +29,20 @@
             <UiBrutalButton
               class="bw-slot-spin-btn"
               variant="accent"
-              :loading="busy"
+              :loading="busy && !signing"
+              :disabled="busy"
               @click="onSpin"
             >
               <UiLocaleText path="games.slot.spin" tag="span" />
             </UiBrutalButton>
+            <button
+              v-if="signing && !isFun"
+              type="button"
+              class="bw-btn text-sm min-h-[44px] mt-2 w-full max-w-[12rem]"
+              @click="cancelPlay"
+            >
+              <UiLocaleText path="games.common.cancelPlay" tag="span" />
+            </button>
             <p
               v-if="signing && !isFun"
               class="text-xs font-mono text-[var(--bw-muted)] text-center mt-2 whitespace-normal"
@@ -146,7 +155,7 @@
               <UiLocaleText path="games.slot.payoutHint" tag="span" />
             </p>
 
-          <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="busy" />
+          <GamesGameAutoFsBar v-model:bet="bet" :play="() => playOnce({ auto: true })" :disabled="busy" />
 
           <div class="flex flex-wrap gap-4">
             <button type="button" class="bw-btn" @click="goLobby">
@@ -191,6 +200,9 @@
 /**
  * @agent-context Slot UI — monster holds bandit panel; spin under reels.
  */
+import type { AutoPlayActionResult } from '~/composables/useAutoPlay'
+import { isSkippableLiveRoundError } from '~/shared/live-play-signing'
+
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const {
   isFun,
@@ -200,6 +212,7 @@ const {
   spinning,
   signing,
   busy,
+  cancelPlay,
   effectiveBalance,
   isSuperWin,
   lastPayoutDelta,
@@ -233,26 +246,33 @@ function winSegments(): number {
   return 1
 }
 
-/** One spin; resolves to whether it won. Throws on invalid/insufficient so auto-roll stops. */
-async function playOnce(): Promise<boolean> {
+/** One spin; `'skip'` = cancelled LIVE round during auto-roll (try next immediately). */
+async function playOnce(opts?: { auto?: boolean }): Promise<AutoPlayActionResult> {
   if (!validateBetOrToast()) throw new Error('invalid-bet')
   const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
-  await spin(el)
-  if (!isFun.value) showResult.value = true
-  if (won.value) {
-    showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
-    await matrixBackdropRef.value?.playSplit(winSegments(), isSuperWin.value)
-  } else if (won.value === false && !isFun.value) {
-    show(t('games.common.lose'), t('games.common.loseLive'), 'default')
+  try {
+    const meta = await spin(el)
+    if (meta === null) return opts?.auto ? 'skip' : false
+    if (!isFun.value) showResult.value = true
+    if (won.value) {
+      showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
+      await matrixBackdropRef.value?.playSplit(winSegments(), isSuperWin.value)
+    } else if (won.value === false && !isFun.value) {
+      show(t('games.common.lose'), t('games.common.loseLive'), 'default')
+    }
+    return Boolean(won.value)
+  } catch (e) {
+    if (opts?.auto && isSkippableLiveRoundError(e)) return 'skip'
+    throw e
   }
-  return Boolean(won.value)
 }
 
 async function onSpin() {
   try {
     await playOnce()
   } catch (e) {
-    if ((e as Error)?.message !== 'invalid-bet') showError(e)
+    if ((e as Error)?.message === 'invalid-bet') return
+    showError(e)
   }
 }
 
