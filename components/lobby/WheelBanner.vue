@@ -5,11 +5,11 @@
       <span class="bw-wheel-banner__ko">x_x</span>
     </div>
     <div class="bw-wheel-banner__body">
-      <p class="font-bold uppercase bw-accent">{{ t('games.wheel.title') }}</p>
-      <p class="text-sm">{{ t('games.wheel.slogan') }}</p>
+      <UiLocaleText path="games.wheel.title" tag="p" class="font-bold uppercase bw-accent" />
+      <UiLocaleText path="games.wheel.slogan" tag="p" class="text-sm" />
       <p class="text-xs font-mono text-[var(--bw-muted)] mt-1">
-        {{ t('games.wheel.prizeFund') }}: <span class="bw-accent">{{ faucetRemaining ?? '—' }} WIBE</span>
-        · {{ t('games.wheel.bannerHint') }}
+        <UiLocaleText path="games.wheel.prizeFund" />: <span class="bw-accent">{{ faucetRemaining ?? '—' }} WIBE</span>
+        · <UiLocaleText path="games.wheel.bannerHint" />
       </p>
     </div>
     <button
@@ -19,7 +19,7 @@
       :disabled="poolEmpty || motionStore.isLocked"
       @click="goWheel"
     >
-      {{ poolEmpty ? t('games.wheel.poolEmpty') : t('games.wheel.bannerCta') }}
+      <UiLocaleText :path="poolEmpty ? 'games.wheel.poolEmpty' : 'games.wheel.bannerCta'" />
     </button>
   </section>
 </template>
@@ -29,7 +29,6 @@
  * @agent-context Lobby banner → WIBE Wheel faucet. Disabled when the prize pool is drained.
  * @see components/games/WheelGame.vue, composables/useWheel.ts
  */
-const { t } = useI18n()
 const { playRouteTransition } = useBrutalMotion()
 const motionStore = useMotionStore()
 const { faucetRemaining, poolEmpty, refreshFaucet } = useWheel()
