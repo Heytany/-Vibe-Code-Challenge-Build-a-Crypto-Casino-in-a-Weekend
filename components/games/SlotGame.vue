@@ -84,12 +84,17 @@
             class="bw-game-tabpanel"
             :class="{ 'is-inactive': activeTab !== 'play' }"
           >
-            <p
-              v-if="isFun"
-              class="bw-fun-banner text-xs font-mono uppercase mb-4 px-3 py-2 border-2 border-[var(--bw-accent)] text-[var(--bw-accent)]"
-            >
-              <UiLocaleText path="games.common.funBanner" tag="span" />
-            </p>
+            <GamesGamePlayFunds
+              v-model:bet="bet"
+              :is-fun="isFun"
+              :casino-balance="effectiveBalance"
+              :wallet-balance="walletTokenBalance"
+              :disabled="spinning"
+              :bet-invalid="betInvalid"
+              :bet-touched="betTouched"
+              :panel-el="panelRef"
+              @blur-bet="markBetTouched"
+            />
 
             <label class="flex items-center gap-2 text-xs uppercase font-bold mb-3 cursor-pointer">
               <input v-model="showResult" type="checkbox" class="bw-check">
@@ -134,37 +139,9 @@
               </div>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2 items-center mb-6">
-            <div class="font-mono space-y-1 text-center sm:text-left">
-              <span class="text-xs uppercase font-bold block">
-                <UiLocaleText path="games.common.balance" tag="span" />
-              </span>
-              <span class="text-[var(--bw-accent)] text-2xl font-bold">
-                {{ effectiveBalance ?? '—' }}
-                <span v-if="isFun" class="text-[var(--bw-muted)] text-xs ml-1">(fun)</span>
-              </span>
-            </div>
-            <label class="block space-y-2 text-center sm:text-right">
-              <span class="text-xs uppercase font-bold block">
-                <UiLocaleText path="games.common.bet" tag="span" />
-              </span>
-              <input
-                v-model.number="bet"
-                type="number"
-                min="1"
-                class="bw-input w-full text-center"
-                :class="{ 'bw-input--invalid': betInvalid && betTouched }"
-                :disabled="spinning"
-                @blur="markBetTouched"
-              >
-            </label>
-          </div>
-
-          <WalletCasinoActions :panel-el="panelRef" class="mb-6" />
-
-          <p class="text-xs text-[var(--bw-muted)] font-mono mb-6 whitespace-normal">
-            <UiLocaleText path="games.slot.payoutHint" tag="span" />
-          </p>
+            <p class="text-xs text-[var(--bw-muted)] font-mono mb-6 whitespace-normal">
+              <UiLocaleText path="games.slot.payoutHint" tag="span" />
+            </p>
 
           <GamesGameAutoFsBar v-model:bet="bet" :play="playOnce" :disabled="spinning" />
 
@@ -220,6 +197,7 @@
 /**
  * @agent-context Slot UI — monster holds bandit panel; spin under reels.
  */
+const { walletTokenBalance } = useCasinoProgram()
 const { playRouteTransition, playGameEnter } = useBrutalMotion()
 const {
   isFun,
@@ -266,7 +244,7 @@ async function playOnce(): Promise<boolean> {
   const el = (banditRef.value?.$el as HTMLElement | undefined) ?? null
   await spin(el)
   if (won.value) {
-    showWin(lastPayoutDelta.value, isSuperWin.value)
+    showWin(lastPayoutDelta.value, isSuperWin.value, { isLive: !isFun.value })
     // split the code-transition across N bands by matched lines (2 → normal+invert, 3 → normal+invert+normal)
     await matrixBackdropRef.value?.playSplit(winSegments(), isSuperWin.value)
   }

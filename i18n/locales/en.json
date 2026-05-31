@@ -14,7 +14,10 @@
     "win": {
       "title": "WIN",
       "message": "+{delta} credits",
-      "super": "// JACKPOT — +{delta}"
+      "super": "// JACKPOT — +{delta}",
+      "live": "+{delta} WIBE net",
+      "breakEven": "Win — net +0 (bet too small for profit)",
+      "breakEvenLive": "Win — net +0 WIBE (on-chain integer math — try bet ≥ 2)"
     }
   },
   "theme": {
@@ -104,6 +107,12 @@
       "funMode": "FUN",
       "liveMode": "LIVE",
       "funBanner": "// fun mode — no wallet, virtual credits, identical to on-chain math",
+      "funUnit": "fun credits",
+      "walletBalance": "Phantom wallet",
+      "liveBanner": "// live — deposit WIBE from Phantom first. Wallet balance ≠ casino balance.",
+      "liveNeedDeposit": "Casino balance is 0 — use Deposit below before betting.",
+      "minBetHint": "On-chain uses integer tokens: bet 1 can win but net profit may round to 0. Try ≥ 2 WIBE.",
+      "phantomTokenHint": "Phantom may show Unknown Token — that is devnet WIBE (mint below). Wins stay in casino balance until Withdraw; 10k in wallet is demo mint from setup, not a win payout.",
       "funNote": "Play instantly. Virtual balance only — connect Phantom for devnet live mode.",
       "liveModeHint": "Real devnet tokens via Phantom",
       "liveModeLocked": "Connect Phantom + deployed program for live mode",

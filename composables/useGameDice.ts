@@ -43,9 +43,11 @@ export interface DiceLiveRollMeta {
   userSeed: bigint
   nonce: bigint
   blockhashBase58: string
+  blockhash: Uint8Array
   rollUnder: boolean
   target: number
   bet: number
+  payoutDelta: number
 }
 
 export type DiceRollMeta = DiceFunRollMeta | DiceLiveRollMeta | null
@@ -159,6 +161,9 @@ export function useGameDice() {
 
       lastRoll.value = res.roll
       won.value = res.won
+      const payoutDelta = Number(
+        diceNetDelta(BigInt(res.bet), res.won, FUN_MODE_HOUSE_EDGE_BPS),
+      )
       lastMeta.value = {
         mode: 'live',
         signature: res.signature,
@@ -166,10 +171,12 @@ export function useGameDice() {
         won: res.won,
         userSeed: res.userSeed,
         nonce: res.nonce,
+        blockhash: res.blockhash,
         blockhashBase58: res.blockhashBase58,
         rollUnder: res.rollUnder,
         target: res.target,
         bet: res.bet,
+        payoutDelta,
       }
 
       if (res.won && diceEl) playWinBurst(diceEl)

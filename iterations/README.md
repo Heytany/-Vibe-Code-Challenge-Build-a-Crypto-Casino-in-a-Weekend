@@ -62,9 +62,10 @@ iterations/NN-kratkoe-nazvanie.md
 | 9 | _(PO коммитит)_ — fixes: toast crash, Netlify env, word-wrap, mode header, speed radio + devnet readiness (Claude) | [09-fixes-deploy-readiness.md](./09-fixes-deploy-readiness.md) | 31.05.2026 · Claude (Cowork) |
 | 10 | _(PO коммитит)_ — polish: slot split win, Reka UI, mobile header, copy, UX fixes (Claude) | [10-polish-reka-copy.md](./10-polish-reka-copy.md) | 31.05.2026 · Claude (Cowork) |
 | 11 | _(PO коммитит)_ — mobile toasts, wallet modals, Phantom Phase A | [11-mobile-toasts-devnet-phase-a.md](./11-mobile-toasts-devnet-phase-a.md) | 30.05.2026 · Cursor |
-| 12 | _(PO коммитит)_ — LIVE devnet wire, program deploy, Buffer fix, Netlify-ready | [12-live-wire-fun-live-fix.md](./12-live-wire-fun-live-fix.md) | 31.05.2026 · Cursor |
+| 12 | `e2558e6` — LIVE devnet wire, program deploy, Buffer fix, Netlify | [12-live-wire-fun-live-fix.md](./12-live-wire-fun-live-fix.md) | 31.05.2026 · Cursor |
+| 13 | `a161342` — LIVE UX WIBE, Phantom metadata, Fair fix, win toasts | [13-live-ux-wibe-token-fair-fix.md](./13-live-ux-wibe-token-fair-fix.md) | 31.05.2026 · Cursor |
 
-**QA:** FUN — `/games/dice`, `/games/slot` без Phantom · LIVE — devnet deposit/play/withdraw · 404 → `/games/nope`
+**QA:** FUN — `/games/dice`, `/games/slot` · LIVE — deposit → play → withdraw → Fair verify · [truebrutal.netlify.app](https://truebrutal.netlify.app)
 
 ---
 

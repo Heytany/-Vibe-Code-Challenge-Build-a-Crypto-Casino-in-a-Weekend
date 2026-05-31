@@ -38,7 +38,9 @@ export interface SlotLiveSpinMeta {
   userSeed: bigint
   nonce: bigint
   blockhashBase58: string
+  blockhash: Uint8Array
   bet: number
+  payoutDelta: number
 }
 
 export type SlotSpinMeta = SlotFunSpinMeta | SlotLiveSpinMeta | null
@@ -146,6 +148,9 @@ export function useGameSlot() {
 
       reels.value = res.reels
       won.value = res.won
+      const payoutDelta = Number(
+        slotNetDelta(BigInt(res.bet), res.multiplier, FUN_MODE_HOUSE_EDGE_BPS),
+      )
       lastMeta.value = {
         mode: 'live',
         signature: res.signature,
@@ -154,8 +159,10 @@ export function useGameSlot() {
         won: res.won,
         userSeed: res.userSeed,
         nonce: res.nonce,
+        blockhash: res.blockhash,
         blockhashBase58: res.blockhashBase58,
         bet: res.bet,
+        payoutDelta,
       }
 
       if (res.won && banditEl) playWinBurst(banditEl)

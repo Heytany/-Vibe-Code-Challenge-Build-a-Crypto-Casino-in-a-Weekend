@@ -116,11 +116,12 @@ describe('rng-verify — verification entry points', () => {
   })
 
   it('verifySlot matches honest report', () => {
+    const expected = computeReels(BLOCKHASH, 42n, 0n)
     const res = verifySlot({
       blockhash: BLOCKHASH,
       userSeed: 42n,
       nonce: 0n,
-      reportedReels: [1, 0, 5],
+      reportedReels: expected,
     })
     expect(res.ok).toBe(true)
   })

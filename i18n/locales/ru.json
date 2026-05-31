@@ -14,7 +14,10 @@
     "win": {
       "title": "ВЫИГРЫШ",
       "message": "+{delta} кредитов",
-      "super": "// ДЖЕКПОТ — +{delta}"
+      "super": "// ДЖЕКПОТ — +{delta}",
+      "live": "+{delta} WIBE чистыми",
+      "breakEven": "Выигрыш — чистыми +0 (ставка слишком мала для профита)",
+      "breakEvenLive": "Выигрыш — чистыми +0 WIBE (целочисленная математика — попробуй ставку ≥ 2)"
     }
   },
   "theme": {
@@ -104,6 +107,12 @@
       "funMode": "FUN",
       "liveMode": "LIVE",
       "funBanner": "// fun-режим — без кошелька, виртуальные кредиты, математика как on-chain",
+      "funUnit": "fun-кредиты",
+      "walletBalance": "Кошелёк Phantom",
+      "liveBanner": "// live — сначала депозит WIBE из Phantom. Баланс кошелька ≠ баланс казино.",
+      "liveNeedDeposit": "Баланс казино 0 — сделай Депозит ниже, потом ставь.",
+      "minBetHint": "On-chain целые токены: при ставке 1 выигрыш возможен, но чистый профит может быть 0. Попробуй ≥ 2 WIBE.",
+      "phantomTokenHint": "Phantom может показать Unknown Token — это devnet WIBE (mint ниже). Выигрыш на балансе казино до Withdraw; 10k в кошельке — demo mint при setup, не выплата за win.",
       "funNote": "Играй сразу. Виртуальный баланс — для devnet подключи Phantom и LIVE.",
       "liveModeHint": "Реальные devnet-токены через Phantom",
       "liveModeLocked": "LIVE: нужны Phantom и задеплоенная программа",

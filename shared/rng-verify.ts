@@ -180,6 +180,33 @@ export function verifySlot(input: SlotVerifyInput): {
 // ── Base58 decode (self-contained; blockhash from explorer is base58) ───────
 const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
+/** Encode bytes to base58 (e.g. for blockhash display). */
+export function base58Encode(input: Uint8Array): string {
+  if (input.length === 0) return ''
+  let zeros = 0
+  while (zeros < input.length && input[zeros] === 0) zeros++
+
+  const digits: number[] = [0]
+  for (let i = zeros; i < input.length; i++) {
+    let carry = input[i]
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j] << 8
+      digits[j] = carry % 58
+      carry = (carry / 58) | 0
+    }
+    while (carry > 0) {
+      digits.push(carry % 58)
+      carry = (carry / 58) | 0
+    }
+  }
+
+  let out = '1'.repeat(zeros)
+  for (let i = digits.length - 1; i >= 0; i--) {
+    out += BASE58_ALPHABET[digits[i]]
+  }
+  return out
+}
+
 /** Decode a base58 string (e.g. a Solana blockhash) to bytes. */
 export function base58Decode(input: string): Uint8Array {
   if (input.length === 0) return new Uint8Array(0)

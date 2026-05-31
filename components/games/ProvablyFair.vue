@@ -73,7 +73,7 @@
  * the casino did not cheat. Same math as the on-chain program (README: verifiable on-chain).
  * @see shared/rng-verify.ts, ai/decisions/015-provably-fair.md
  */
-import { verifyDice, verifySlot } from '~/shared/rng-verify'
+import { verifyDice, verifySlot, base58Decode } from '~/shared/rng-verify'
 
 const props = defineProps<{
   game: 'dice' | 'slot'
@@ -95,7 +95,7 @@ function toBytes(v: unknown): Uint8Array {
 }
 
 const blockhashHex = computed(() => {
-  const bh = toBytes(props.meta?.blockhash)
+  const bh = resolveBlockhash(props.meta)
   return Array.from(bh).map((b) => b.toString(16).padStart(2, '0')).join('')
 })
 const seedStr = computed(() => (props.meta?.userSeed ?? '—').toString())
@@ -115,10 +115,17 @@ const explorerUrl = computed(() => {
   return sig ? `https://explorer.solana.com/tx/${sig}?cluster=devnet` : ''
 })
 
+function resolveBlockhash(m: Record<string, unknown> | null): Uint8Array {
+  if (!m) return new Uint8Array(0)
+  if (m.blockhash instanceof Uint8Array) return m.blockhash
+  if (typeof m.blockhashBase58 === 'string') return base58Decode(m.blockhashBase58)
+  return toBytes(m.blockhash)
+}
+
 function onVerify() {
   const m = props.meta
   if (!m) return
-  const blockhash = toBytes(m.blockhash)
+  const blockhash = resolveBlockhash(m)
   if (props.game === 'dice') {
     const r = verifyDice({
       blockhash,

@@ -8,6 +8,7 @@ import { AnchorProvider, BN, EventParser, Program } from '@coral-xyz/anchor'
 import type { Idl } from '@coral-xyz/anchor'
 import {
   createAssociatedTokenAccountInstruction,
+  getAccount,
   getAssociatedTokenAddressSync,
   getMint,
   TOKEN_PROGRAM_ID,
@@ -24,9 +25,11 @@ import {
   findCasinoVaultPda,
   findUserBalancePda,
 } from '~/shared/casino-pdas'
+import { base58Encode } from '~/shared/rng-verify'
 import { WibeError, WibeErrorCode } from '~/shared/errors'
 
 const casinoBalance = ref<number | null>(null)
+const walletTokenBalance = ref<number | null>(null)
 const loading = ref(false)
 const tokenDecimals = ref<number>(0)
 
@@ -43,6 +46,8 @@ export interface PlayDiceResult {
   won: boolean
   userSeed: bigint
   nonce: bigint
+  /** First 32 bytes of RecentBlockhashes sysvar — same input the program hashes. */
+  blockhash: Uint8Array
   blockhashBase58: string
   rollUnder: boolean
   target: number
@@ -61,6 +66,7 @@ export interface PlaySlotResult {
   won: boolean
   userSeed: bigint
   nonce: bigint
+  blockhash: Uint8Array
   blockhashBase58: string
   bet: number
 }
@@ -181,14 +187,36 @@ export function useCasinoProgram() {
     return amount.toNumber() / scale
   }
 
+  async function refreshWalletBalance() {
+    if (!connected.value || !publicKey.value || !isConfigured.value) {
+      walletTokenBalance.value = null
+      return
+    }
+
+    const conn = connection.value
+    if (!conn) return
+
+    try {
+      await ensureTokenDecimals()
+      const { mint, user } = getAccounts()
+      const userAta = getAssociatedTokenAddressSync(mint, user)
+      const acc = await getAccount(conn, userAta)
+      walletTokenBalance.value = fromBaseUnits(new BN(acc.amount.toString()))
+    } catch {
+      walletTokenBalance.value = 0
+    }
+  }
+
   async function refreshBalance() {
     if (!connected.value || !publicKey.value) {
       casinoBalance.value = null
+      walletTokenBalance.value = null
       return
     }
 
     if (!isConfigured.value) {
       casinoBalance.value = null
+      walletTokenBalance.value = null
       return
     }
 
@@ -199,6 +227,7 @@ export function useCasinoProgram() {
       const { userBalance } = getAccounts()
       const acc = await fetchUserBalanceAccount(program, userBalance)
       casinoBalance.value = acc ? fromBaseUnits(acc.amount) : 0
+      await refreshWalletBalance()
     } catch (err) {
       throw mapAnchorError(err)
     } finally {
@@ -272,19 +301,15 @@ export function useCasinoProgram() {
     }
   }
 
-  async function parseTxBlockhash(signature: string): Promise<string> {
+  async function fetchRngBlockhashBytes(): Promise<Uint8Array> {
     const conn = connection.value
     if (!conn) throw new WibeError(WibeErrorCode.RpcUnreachable)
 
-    const tx = await conn.getTransaction(signature, {
-      commitment: 'confirmed',
-      maxSupportedTransactionVersion: 0,
-    })
-    const blockhash = tx?.transaction.message.recentBlockhash
-    if (!blockhash) {
-      throw new WibeError(WibeErrorCode.TransactionFailed, 'Could not read tx blockhash')
+    const info = await conn.getAccountInfo(SYSVAR_RECENT_BLOCKHASHES_PUBKEY)
+    if (!info?.data || info.data.length < 32) {
+      throw new WibeError(WibeErrorCode.TransactionFailed, 'Could not read recent blockhashes sysvar')
     }
-    return blockhash
+    return info.data.slice(0, 32)
   }
 
   async function playDice(params: PlayDiceParams): Promise<PlayDiceResult> {
@@ -315,7 +340,8 @@ export function useCasinoProgram() {
         })
         .rpc()
 
-      const blockhashBase58 = await parseTxBlockhash(signature)
+      const blockhashBytes = await fetchRngBlockhashBytes()
+      const blockhashBase58 = base58Encode(blockhashBytes)
 
       const tx = await connection.value!.getTransaction(signature, {
         commitment: 'confirmed',
@@ -342,6 +368,7 @@ export function useCasinoProgram() {
         won,
         userSeed: BigInt(userSeedBn.toString()),
         nonce: nonceUsed,
+        blockhash: blockhashBytes,
         blockhashBase58,
         rollUnder,
         target,
@@ -378,7 +405,8 @@ export function useCasinoProgram() {
         })
         .rpc()
 
-      const blockhashBase58 = await parseTxBlockhash(signature)
+      const blockhashBytes = await fetchRngBlockhashBytes()
+      const blockhashBase58 = base58Encode(blockhashBytes)
 
       const tx = await connection.value!.getTransaction(signature, {
         commitment: 'confirmed',
@@ -414,6 +442,7 @@ export function useCasinoProgram() {
         won,
         userSeed: BigInt(userSeedBn.toString()),
         nonce: nonceUsed,
+        blockhash: blockhashBytes,
         blockhashBase58,
         bet,
       }
@@ -427,6 +456,7 @@ export function useCasinoProgram() {
       refreshBalance().catch(() => {})
     } else {
       casinoBalance.value = null
+      walletTokenBalance.value = null
     }
   })
 
@@ -436,6 +466,7 @@ export function useCasinoProgram() {
     isConfigured,
     tokenDecimals: readonly(tokenDecimals),
     casinoBalance: readonly(casinoBalance),
+    walletTokenBalance: readonly(walletTokenBalance),
     loading: readonly(loading),
     refreshBalance,
     deposit,

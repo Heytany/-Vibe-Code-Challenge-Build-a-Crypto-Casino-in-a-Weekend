@@ -2,7 +2,7 @@
   <div v-if="showPanel" class="bw-casino-actions space-y-2">
     <p class="text-xs uppercase font-bold">
       <UiLocaleText path="wallet.casinoBalance" tag="span" />
-      <span class="text-[var(--bw-accent)] ml-1">{{ formattedBalance }}</span>
+      <span class="text-[var(--bw-accent)] ml-1">{{ formattedBalance }} {{ TOKEN_SYMBOL }}</span>
     </p>
 
     <div class="flex flex-wrap gap-2 items-end">
@@ -10,6 +10,7 @@
         <span class="text-xs uppercase font-bold block">
           <UiLocaleText path="games.common.deposit" tag="span" /> /
           <UiLocaleText path="games.common.withdraw" tag="span" />
+          ({{ TOKEN_SYMBOL }})
         </span>
         <input
           v-model.number="amount"
@@ -54,6 +55,8 @@
 /**
  * @agent-context Deposit / withdraw controls for LIVE mode on game pages.
  */
+import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
+
 const props = defineProps<{
   panelEl?: HTMLElement | null
 }>()
@@ -69,10 +72,7 @@ const busy = ref(false)
 
 const showPanel = computed(() => !isFun.value && connected.value && isConfigured.value)
 
-const formattedBalance = computed(() => {
-  if (casinoBalance.value === null) return '—'
-  return casinoBalance.value.toLocaleString()
-})
+const formattedBalance = computed(() => formatTokenAmount(casinoBalance.value))
 
 const maxWithdraw = computed(() => casinoBalance.value ?? 0)
 const canDeposit = computed(() => amount.value > 0 && !busy.value)

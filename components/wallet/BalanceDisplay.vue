@@ -14,13 +14,16 @@
 
 <script setup lang="ts">
 /**
- * @agent-context Displays in-casino balance from useCasinoProgram (stub until on-chain wired).
+ * @agent-context Displays in-casino balance from useCasinoProgram on lobby.
  */
+import { formatTokenAmount, TOKEN_SYMBOL } from '~/shared/format-tokens'
+
 const { connected } = useWallet()
-const { casinoBalance, loading } = useCasinoProgram()
+const { casinoBalance, loading, isConfigured } = useCasinoProgram()
 
 const formattedBalance = computed(() => {
-  if (casinoBalance.value === null) return '—'
-  return casinoBalance.value.toLocaleString()
+  const amount = formatTokenAmount(casinoBalance.value)
+  if (!isConfigured.value || casinoBalance.value === null) return amount
+  return `${amount} ${TOKEN_SYMBOL}`
 })
 </script>

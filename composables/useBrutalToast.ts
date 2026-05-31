@@ -45,13 +45,29 @@ export function useBrutalToast() {
     pushToast(title, description, 'success')
   }
 
-  function showWin(delta: number | null, superWin = false) {
+  function showWin(
+    delta: number | null,
+    superWin = false,
+    opts?: { isLive?: boolean },
+  ) {
     if (delta === null) return
-    pushToast(
-      t('toast.win.title'),
-      superWin ? t('toast.win.super', { delta }) : t('toast.win.message', { delta }),
-      'success',
-    )
+
+    if (delta === 0) {
+      pushToast(
+        t('toast.win.title'),
+        opts?.isLive ? t('toast.win.breakEvenLive') : t('toast.win.breakEven'),
+        'success',
+      )
+      return
+    }
+
+    const messageKey = superWin
+      ? 'toast.win.super'
+      : opts?.isLive
+        ? 'toast.win.live'
+        : 'toast.win.message'
+
+    pushToast(t('toast.win.title'), t(messageKey, { delta }), 'success')
   }
 
   function fromCode(code: WibeErrorCode) {
