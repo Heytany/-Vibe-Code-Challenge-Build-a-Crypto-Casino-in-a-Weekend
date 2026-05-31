@@ -55,7 +55,11 @@ Viewport был `fixed bottom-4 right-4 w-full max-w-sm` — на 320px stack в
 - [x] Disconnect confirm по центру **экрана** (в т.ч. после scroll на game page)
 - [x] Crack-modal фон на весь viewport
 - [ ] DevTools 320/390 — тосты win / auto-roll (PO)
-- [ ] **Коммит + hash в README** — делает PO
+- [ ] **Коммит + hash в README** — делает PO (включить `.github/workflows/ci.yml` — pnpm fix)
+
+### CI (GitHub Actions)
+
+`pnpm/action-setup` с `version: 10` конфликтовал с `packageManager: pnpm@10.6.5` в `package.json`. Убран `version` из workflow — версия только из `packageManager`.
 
 ## После it.11 — LIVE devnet (следующая итерация, PO + Cursor)
 
