@@ -1,4 +1,4 @@
-# Brutal wibe
+# Brutal wibe :first_place_medal: 1st Place
 
 **Brutal wibe** (`truebrutal`) — brutalist on-chain crypto casino on **Solana devnet**. Connect Phantom, deposit test SPL tokens, play Glitch Roll (dice) and Corrupted Reels (slot), verify every roll on Solana Explorer. FUN mode works without a wallet; LIVE mode uses the deployed Anchor program.
 
