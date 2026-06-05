@@ -1,8 +1,8 @@
 # Sprint context (live)
 
-**Last updated:** 2026-05-31 — **final / it.19**  
-**Current iteration:** 19 (marathon close)  
-**Report:** [`iterations/19-final-marathon.md`](../iterations/19-final-marathon.md)
+**Last updated:** 2026-06-06 — **it.20**  
+**Current iteration:** 20 (README + MIT license)  
+**Report:** [`iterations/20-readme-license.md`](../iterations/20-readme-license.md)
 
 ## Submission-ready ✅
 
@@ -16,6 +16,14 @@
 | Casino edge | ✅ 200 bps on-chain |
 | Two games | ✅ Dice + Slot (+ Wheel faucet it.18) |
 | Polished UX | ✅ FUN/LIVE, funds bar, i18n, mobile, motion |
+| Public README + license | ✅ it.20 — blocks, token screenshot, MIT |
+
+## Iteration 20 — README + LICENSE (docs-only) ✅
+
+- [x] README restructured — no medal in title, 🥇 footnote on Challenge
+- [x] `public/wibe-token-phantom.png` + WIBE mint section
+- [x] Wheel / trust / known limits documented in prose (no code changes)
+- [x] `LICENSE` (MIT) + `package.json` license field
 
 ## Iteration 19 — final hotfixes ✅
 
@@ -23,7 +31,7 @@
 - [x] `GameAutoFsBar` — mobile autoroll, Lucide ∞, skip-prompt после 3 cancel
 - [x] `live-play-mutex` — очередь LIVE sign, fix Phantom freeze после reject
 - [x] `useWheel` — cancelSpin при скрытом popup
-- [x] Wheel page tabs: How it works + Trust (+ SOL rent note) — **commit pending PO**
+- [x] Wheel page tabs: How it works + Trust (+ SOL rent note)
 
 ## Iteration 18 — WIBE Wheel ✅
 
@@ -72,12 +80,18 @@ pnpm build
 pnpm devnet:faucet   # after program deploy with wheel ix
 ```
 
-Tester: [`iterations/help.md`](../iterations/help.md) · Final: [`iterations/19-final-marathon.md`](../iterations/19-final-marathon.md)
+Tester: [`iterations/help.md`](../iterations/help.md) · Latest: [`iterations/20-readme-license.md`](../iterations/20-readme-license.md)
 
 ## Roles
 
 | Agent | Role |
 |-------|------|
 | **Claude (Cowork)** | it.3, 8–10, 17–18 — **4 Cloud session limits** |
-| **Cursor** | it.11–19 — **>$40 on-demand** (+ $26 overage it.12–15, $20 included earlier) |
+| **Cursor** | it.11–20 — **>$40 on-demand** |
 | **PO** | deploy, commits, Notion submission |
+
+## Known limitations (documented in README it.20)
+
+- Dice: fixed 1.95× gross multiplier (not odds-adjusted)
+- Wheel UI: prize pool may show `—` until Phantom connected
+- Wheel animation may not match exact prize tier (cosmetic)

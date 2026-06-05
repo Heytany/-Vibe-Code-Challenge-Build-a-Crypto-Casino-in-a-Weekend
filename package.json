@@ -1,6 +1,7 @@
 {
   "name": "brutal-wibe",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev --open --port 3000",

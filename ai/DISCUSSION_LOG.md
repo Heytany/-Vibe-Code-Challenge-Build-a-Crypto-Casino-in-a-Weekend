@@ -52,3 +52,15 @@ at 25%/75%, panel grid `1fr 1fr`, `clamp()` sizing, fits viewport at 320px → d
 
 **Open questions:** monster art is hard-coded to exactly two panels — revisit if a third
 game is added.
+
+---
+
+## 2026-06-06 — Iteration 20: README + MIT (docs-only)
+
+**Participants:** Human (PO), Cursor (architect)
+
+**Decision:** it.20 scope = documentation only — restructure [`README.md`](../README.md) into blocks, add WIBE Phantom screenshot, MIT [`LICENSE`](../LICENSE), move 🥇 1st Place from title to Challenge footnote. **No** game code changes, **no** devnet redeploy (PO on new machine without keypairs).
+
+**Deferred:** dice odds-based multiplier, slot payout UX clarity, wheel pool-without-wallet + animation sync — future iteration if needed.
+
+**Open questions:** none

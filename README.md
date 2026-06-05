@@ -1,75 +1,108 @@
-# Brutal wibe :first_place_medal: 1st Place
+# Brutal wibe
 
-**Brutal wibe** (`truebrutal`) — brutalist on-chain crypto casino on **Solana devnet**. Connect Phantom, deposit test SPL tokens, play Glitch Roll (dice) and Corrupted Reels (slot), verify every roll on Solana Explorer. FUN mode works without a wallet; LIVE mode uses the deployed Anchor program.
+**Brutal wibe** (`truebrutal`) — brutalist on-chain crypto casino on **Solana devnet**. FUN mode for instant play; LIVE mode with Phantom for real testnet bets. Every dice/slot roll is verifiable on [Solana Explorer](https://explorer.solana.com/?cluster=devnet).
 
-**Live (Netlify):** [truebrutal.netlify.app](https://truebrutal.netlify.app) — deploys from GitHub, Nuxt static SPA (`pnpm build` → `.output/public`).
+**Live:** [truebrutal.netlify.app](https://truebrutal.netlify.app) · Nuxt 3 static SPA · deploys from GitHub via Netlify
 
 ---
 
-## How to play (devnet)
+## WIBE token (devnet)
 
-No real money — this runs on **Solana devnet** only. Tokens and SOL are test-only.
+Casino chip — SPL mint `He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox` (0 decimals). Phantom may show **“Unknown Token”** or **“Brutal WIBE”** until metadata refreshes — that's normal on devnet.
 
-### FUN mode — zero setup
+![WIBE in Phantom wallet — devnet balance](public/wibe-token-phantom.png)
 
-Open [truebrutal.netlify.app](https://truebrutal.netlify.app) and play **Glitch Roll** or **Corrupted Reels**. No wallet, no tokens — virtual credits, same FNV-1a RNG as on-chain. Default mode.
+There is **no public WIBE faucet**. Operator sends test tokens to testers (see [Fund a tester](#fund-a-tester) below). Out of chips? Use the [WIBE Wheel](#wibe-wheel-faucet) (LIVE + wallet only).
 
-### LIVE mode — real on-chain play (Phantom + devnet)
+---
 
-1. **Install a wallet — Phantom** ([phantom.app](https://phantom.app), browser extension or mobile app). On mobile, open the site inside Phantom → *Menu → Browser*.
-2. **Switch Phantom to Devnet:** *Settings → Developer Settings → Testnet Mode* (or select **Solana Devnet**).
-3. **Get devnet SOL** (for transaction fees): copy your address → [faucet.solana.com](https://faucet.solana.com) → Devnet → airdrop ~1 SOL.
-4. **Get WIBE test tokens** — the casino chip. There is **no public WIBE faucet**; the operator sends you some (see below). WIBE mint: `He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox`. In Phantom it may show as “Unknown Token” until metadata refreshes — that's WIBE.
-5. **Connect** on the site → switch to **LIVE** → **Deposit** WIBE into the casino → play. Your casino balance lives on-chain (a `UserBalance` PDA), not in your wallet.
-6. **Withdraw** any time to send WIBE back to your wallet. Every roll is verifiable in the **Fair** tab and on [Solana Explorer](https://explorer.solana.com/?cluster=devnet).
+## Play now
 
-> Each bet is a real on-chain transaction → Phantom asks you to approve every roll. That's the “provably on-chain” trade-off, not a bug.
+No real money — **Solana devnet only**. Tokens and SOL are test-only.
 
-### Operator: fund a tester with WIBE
+| Mode | Wallet | Balance | Games |
+|------|--------|---------|-------|
+| **FUN** (default) | Not required | Virtual credits (1000) | Dice, Slot |
+| **LIVE** | Phantom on devnet | On-chain casino PDA | Dice, Slot, Wheel |
 
-From the wallet that holds WIBE (the deploy wallet, ~10 000 from `pnpm devnet:setup`):
+### FUN — zero setup
+
+Open [truebrutal.netlify.app](https://truebrutal.netlify.app) → **Glitch Roll** or **Corrupted Reels**. Same FNV-1a RNG math as on-chain; no tokens, no txs.
+
+### LIVE — Phantom + devnet
+
+1. Install [Phantom](https://phantom.app) → switch to **Solana Devnet** (*Settings → Developer Settings → Testnet Mode*).
+2. Get devnet SOL for fees: [faucet.solana.com](https://faucet.solana.com) → Devnet.
+3. Get WIBE from the operator (mint above).
+4. **Connect** on site → **LIVE** → **Deposit** WIBE → play from casino balance.
+5. **Withdraw** any time. Verify rolls in the **Fair** tab.
+
+> Each LIVE bet is an on-chain tx — Phantom asks you to approve every roll. That's the provably-on-chain trade-off, not a bug.
+
+Full tester guide: [`iterations/help.md`](iterations/help.md)
+
+### Fund a tester
+
+From the deploy wallet (~10 000 WIBE from `pnpm devnet:setup`):
 
 ```bash
 spl-token transfer He66seATY4XobvcwC8WZceMH3uncAqEx44T8HtLyttox 1000 <TESTER_ADDRESS> \
   --url devnet --fund-recipient --allow-unfunded-recipient
 ```
 
-(0 decimals → `1000` = 1000 WIBE.) Tester guide: [`iterations/help.md`](iterations/help.md).
+---
 
-### WIBE Wheel — the free faucet (`/games/wheel`)
+## Games
 
-Out of WIBE? You don't have to ping the operator. The **WIBE Wheel** is an on-chain faucet that drops free chips straight onto your casino balance — once every 24h, no deposit, no bet.
+### Glitch Roll (Dice) — `/games/dice`
 
-How it works on the game page:
+Roll under/over a target (2–98). FUN or LIVE. Provably fair via **Fair** tab.
 
-1. **Connect Phantom (devnet) and switch to LIVE.** The wheel is a real on-chain instruction (`spin_wheel`), so it needs a wallet — there's no FUN version of the faucet.
-2. **Hit Spin.** Phantom asks you to approve one transaction. You pay **only SOL**, never WIBE: a tiny network fee, plus — on your *first ever* spin — a one-time rent deposit (~0.001–0.002 SOL) for the two accounts the spin creates: your `FaucetClaim` (stores the 24h cooldown) and your `UserBalance` (your casino balance, if you never deposited before). Second spin onward: just the fee.
-3. **Win 1–1000 WIBE.** The wheel lands on a skewed prize and the program credits it to your on-chain `UserBalance` and decrements the shared prize pool (`faucet.remaining`). No SPL tokens move on the spin itself — the prize is a balance credit. To pull it into your wallet, do a normal **Withdraw** (that's when the vault actually pays out, which is why the pool is pre-funded).
-4. **24h cooldown.** Enforced on-chain via the cluster clock, per wallet. The page shows the time left; the lobby banner disables itself when the shared pool runs dry.
+**Note:** win payout uses a fixed **1.95× gross** multiplier (before house edge) — it does not scale with displayed win chance. High-chance targets are more player-favourable than low-chance ones.
 
-Operator: the pool is initialized once with `pnpm devnet:faucet` (default 3333 WIBE) and the casino vault must hold at least that much WIBE so withdrawals of wheel winnings stay solvent.
+### Corrupted Reels (Slot) — `/games/slot`
 
-### Why you can trust it (provably fair)
+Three reels, pair **×2** or triple **×10** gross multiplier (house edge applied on gross). FUN or LIVE. **Fair** tab verifies reel symbols.
 
-The whole point of the challenge: a paranoid player with a block explorer should be able to prove it's not a scam. Here's what makes Brutal wibe verifiable rather than "trust me":
+**Note:** a pair win shows net profit after edge (e.g. bet 100, ×2 gross → **+96** net, **196** returned to balance).
 
-- **The RNG is deterministic and reproducible.** Every roll is `FNV-1a(blockhash · user_seed · nonce · domain)` — no hidden server seed, no off-chain oracle. The same inputs always produce the same result, on-chain and in the client mirror ([`shared/rng-verify.ts`](shared/rng-verify.ts)).
-- **The program emits the exact blockhash it used.** `DicePlayed` / `SlotPlayed` / `WheelSpun` events carry the literal `blockhash: [u8; 32]` the contract hashed. So the client doesn't *guess* which blockhash to recompute against — it uses the one the chain committed to. That's what makes the **Fair** tab match a live roll byte-for-byte.
-- **You supply half the entropy.** Your `user_seed` is generated client-side per play, so the house can't pre-compute or cherry-pick outcomes in your favor or against you.
-- **The house edge is on-chain and visible.** Dice/slot payouts apply a fixed `house_edge_bps` set at `initialize` — it's in the program, not a UI knob. A casino has an edge by design; here you can read exactly what it is.
-- **Anyone can re-derive a result independently:** pull the tx from [Solana Explorer](https://explorer.solana.com/?cluster=devnet), read the emitted `blockhash`, `user_seed`, `nonce`, and run the same FNV-1a — the Fair tab does this in-browser, but the math is public and you can do it yourself.
+### WIBE Wheel (faucet) — `/games/wheel`
 
-Honest scope note: the **Wheel is deliberately *not* presented as a fair-verify game.** Its prize curve is skewed (small wins are common, the 1000 jackpot is rare) — that's a faucet giveaway, not a bet you can lose, so there's no "fairness" to contest. It's still fully on-chain and auditable (`WheelSpun` emits the blockhash and prize), but it intentionally lives outside the Fair tab. Dice and Slot are the games where the provably-fair guarantee matters, and that's where it's wired.
+Free on-chain chips once every **24h** — **not a bet you can lose**.
+
+| Requirement | Detail |
+|-------------|--------|
+| **Wallet** | Phantom connected on devnet — **required** |
+| **Mode** | **LIVE only** — no FUN version; instruction `spin_wheel` |
+| **Cost** | SOL network fee only; first spin may add ~0.001–0.002 SOL rent for `FaucetClaim` + `UserBalance` PDAs |
+| **Prize** | 1–1000 WIBE (skewed tiers) credited to casino balance; **Withdraw** to move to wallet |
+| **Pool** | Shared on-chain `faucet.remaining`; lobby banner disables when empty |
+
+**UI note:** prize pool may show `—` until you connect Phantom — the pool exists on-chain regardless; connect to spin and see your cooldown.
+
+Operator: initialize pool with `pnpm devnet:faucet` (default 3333 WIBE); vault must hold enough WIBE for withdrawals.
 
 ---
 
-## Brutal wibe (this repo)
+## Trust (provably fair)
 
-### Architecture
+Dice and Slot — a paranoid player with a block explorer can verify outcomes:
 
-- [`AGENTS.md`](AGENTS.md) → [`ai/HANDOFF.md`](ai/HANDOFF.md) for AI agents
-- [`ai/ARCHITECTURE.md`](ai/ARCHITECTURE.md) — system overview
-- [`ai/PLAN.md`](ai/PLAN.md) — full plan
+- **Deterministic RNG:** `FNV-1a(blockhash · user_seed · nonce · domain)` — mirror in [`shared/rng-verify.ts`](shared/rng-verify.ts)
+- **Blockhash in events:** `DicePlayed` / `SlotPlayed` emit the exact bytes hashed — **Fair** tab matches byte-for-byte
+- **Your seed:** client-generated per play — house can't cherry-pick outcomes
+- **House edge on-chain:** `house_edge_bps` set at `initialize` (200 bps on deployed devnet)
+
+**Wheel** is a skewed faucet giveaway — auditable on-chain (`WheelSpun` event) but **outside the Fair tab** by design.
+
+---
+
+## For developers
+
+### Docs for agents
+
+- [`AGENTS.md`](AGENTS.md) → [`ai/HANDOFF.md`](ai/HANDOFF.md)
+- [`ai/ARCHITECTURE.md`](ai/ARCHITECTURE.md) · [`ai/PLAN.md`](ai/PLAN.md)
 
 ### Local dev
 
@@ -77,10 +110,10 @@ Honest scope note: the **Wheel is deliberately *not* presented as a fair-verify 
 pnpm install
 cp .env.example .env
 pnpm dev              # http://localhost:3000
-pnpm test:env         # env contract
-pnpm test:motion      # GSAP / motion unit tests
-pnpm test:e2e         # Playwright smoke
-pnpm build            # → .output/public (static SPA)
+pnpm test:env
+pnpm test:motion
+pnpm test:e2e
+pnpm build            # → .output/public
 ```
 
 ### Netlify (production)
@@ -88,23 +121,21 @@ pnpm build            # → .output/public (static SPA)
 | | |
 |---|---|
 | **Site** | [truebrutal.netlify.app](https://truebrutal.netlify.app) |
-| **Trigger** | Push to GitHub → Netlify build |
 | **Build** | `pnpm build` ([`netlify.toml`](netlify.toml)) |
 | **Publish** | `.output/public` |
-| **Env** | In [`netlify.toml`](netlify.toml) (devnet ids) or override in Netlify dashboard |
+| **Env** | Devnet ids in `netlify.toml` or Netlify dashboard |
 
-FUN works without env; LIVE needs devnet program id + token mint. Details: [`ai/specs/deploy.md`](ai/specs/deploy.md).
+Deploy runbook: [`scripts/devnet-deploy.md`](scripts/devnet-deploy.md) · [`ai/specs/deploy.md`](ai/specs/deploy.md)
 
-**Tester wallet (Phantom devnet):** [`iterations/help.md`](iterations/help.md)
-
-Solana program (requires Anchor + Rust):
+### Anchor program
 
 ```bash
 anchor build && anchor test
 anchor deploy --provider.cluster devnet
 pnpm copy-idl
-# → update NUXT_PUBLIC_CASINO_PROGRAM_ID in .env
 ```
+
+Program id (devnet): `BfdTrxqFfFhe4xA3XniqVWzVkQKX88za5yuA4FRq3ktw`
 
 ### Stack
 
@@ -113,44 +144,40 @@ pnpm copy-idl
 | Chain | Solana devnet |
 | Contract | Anchor (`programs/wibe-casino`) |
 | Frontend | Nuxt 3 SPA, Tailwind, Pinia, i18n |
-| UI primitives | Reka UI (headless) + brutalist wrappers |
+| UI | Reka UI + brutalist wrappers |
 | Wallet | Phantom |
 
 ### Status
 
-**Live on devnet** — [truebrutal.netlify.app](https://truebrutal.netlify.app). FUN + LIVE + WIBE Wheel. Final report: [`iterations/19-final-marathon.md`](iterations/19-final-marathon.md) · QA: [`iterations/help.md`](iterations/help.md).
+**Live on devnet** — FUN + LIVE + WIBE Wheel. Reports: [`iterations/20-readme-license.md`](iterations/20-readme-license.md) · [`iterations/19-final-marathon.md`](iterations/19-final-marathon.md) · QA: [`iterations/help.md`](iterations/help.md)
 
 ---
 
-## Challenge (original)
+## License
 
-# 🎰 Vibe-Code Challenge: Build a Crypto Casino in a Weekend (May 30–31)
+MIT — see [`LICENSE`](LICENSE). Free to read, fork, and learn from; no warranty.
 
-Challenge brief — see original task below.
+---
 
-Hi! We're running a frontend-engineer assessment, and instead of LeetCode we're launching a real build challenge. **48 hours from the start: 30.05.2026 at 06:00 GMT+3.**
+## Challenge (original brief)
 
-- 🥇 1st place: 1,000$ + offer for an AI Engineer role at an international iGaming company
-- 🥈 2nd place: 500$ + candidate offer for an AI Engineer role at an international iGaming company
-- 🥉 3rd place: 200$ + candidate offer for an AI Engineer role at an international iGaming company
+**Vibe-Code Challenge: Build a Crypto Casino in a Weekend** (May 30–31, 2026)
 
-**Task**
+Hi! We're running a frontend-engineer assessment — **48 hours from 30.05.2026 06:00 GMT+3.**
 
-Build a casino on **Solana or Ethereum — your choice; both options are equally valid**. The user must be able to:
+**Task:** Build a casino on Solana or Ethereum. Users must connect a wallet, deposit test tokens, play, win/lose, withdraw. Logic must be **verifiable on-chain**.
 
-1. Connect a wallet (Phantom, MetaMask — whatever fits the chosen network)
-2. Deposit test tokens into the casino
-3. Play a game and win or lose tokens
-4. Withdraw the balance back to their wallet
+**Constraints:** testnet only · public URL · casino has an edge · any frontend stack · polish UX like a real release.
 
-The casino logic must be **verifiable on-chain** — a paranoid player using a block explorer should be able to confirm it's not a scam. *How* you achieve this is up to you.
+**Deadline:** before 1 June 2026 06:00 GMT+3 — submit via Telegram @ryazhenkacustomers.
 
-**Constraints**
+<details>
+<summary>Prize pool (original challenge)</summary>
 
-- **Testnet only** — Solana devnet or an Ethereum testnet (Sepolia / Holesky, etc.). No real money.
-- Deployed to a public URL (Vercel / Cloudflare / Netlify / anything)
-- The casino has an edge — this is a casino, not a charity
-- Any frontend stack you like
-- **We want the product to be as polished as you can make it in 48 hours** — UX, visuals, copy, error states, everything. Build it like you're releasing tomorrow.
+- 🥇 1st place: $1,000 + AI Engineer offer (international iGaming)
+- 🥈 2nd place: $500 + candidate offer
+- 🥉 3rd place: $200 + candidate offer
 
-**Deadline:** `<1 June 2026 06:00 GMT+3>` — send your Notion page with all materials via Telegram: @ryazhenkacustomers.
+</details>
+
+*Brutal wibe placed 🥇 1st in the Vibe-Code Challenge (May 2026).*
